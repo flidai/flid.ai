@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Working explorations for the Flid procedural identity.">
+    <title>Logo Showcase — Flid</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400..700&amp;family=Inter:wght@400..700&amp;family=Space+Grotesk:wght@400..700&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/globals.css">
+    <link rel="stylesheet" href="/assets/showcase.css">
+    <script type="module" src="/assets/showcase.js"></script>
+  </head>
+  <body>
+    <main class="showcase-page">
+      <header class="showcase-header">
+        <a href="/" aria-label="Back to Flid home">FLID / IDENTITY LAB</a>
+        <nav aria-label="Logo showcase navigation">
+          <a href="/">Brand guide ↗</a>
+          <a href="/generator">Generator ↗</a>
+          <span>SHOWCASE · STATIC</span>
+        </nav>
+      </header>
+
+      <section class="showcase-hero">
+        <div class="showcase-hero-copy">
+          <p>Logo system / working masters</p>
+          <h1>One identity. Nine useful lockups.</h1>
+          <span>This page is the exploration lab. Approved decisions live in the brand guide; every sample here is rendered directly by the shared procedural generator.</span>
+        </div>
+        <div class="showcase-hero-preview">
+          <div class="showcase-lockup-logo is-primary" data-primary-lockup></div>
+          <div class="hero-preview-meta"><span>PRIMARY / 12L OPEN FIELD</span><span>12L · 135 MARKS</span></div>
+        </div>
+      </section>
+
+      <section class="showcase-section showcase-system">
+        <div class="showcase-section-heading">
+          <span>01 / COMPLETE LOCKUP SYSTEM</span>
+          <p>Read across to compare construction. Read down to compare density. Every logo uses the same optical size; only the internal detail changes.</p>
+        </div>
+        <div class="showcase-lockup-matrix">
+          <div class="matrix-column-head" aria-hidden="true">
+            <span>Master / role</span><span>Without silhouette / open field</span><span>Silhouette / light</span><span>Silhouette / reversed dark</span>
+          </div>
+          <div data-logo-matrix></div>
+        </div>
+      </section>
+
+      <section class="showcase-section showcase-type-studies">
+        <div class="showcase-section-heading">
+          <span>02 / WORDMARK STUDIES</span>
+          <p>Geist is the approved wordmark typeface. The remaining studies are retained as an archive of the directions considered.</p>
+        </div>
+        <div class="type-study-grid" data-type-studies></div>
+      </section>
+
+      <section class="showcase-section showcase-primary-applications">
+        <div class="showcase-section-heading">
+          <span>03 / PRIMARY APPLICATIONS</span>
+          <p>The 12-layer open field is the default signature. These panels test it on the core dark, accent, and paper surfaces.</p>
+        </div>
+        <div class="application-grid" data-applications></div>
+      </section>
+
+      <section class="showcase-section showcase-reverse-studies">
+        <div class="showcase-section-heading">
+          <span>04 / REVERSE STUDIES</span>
+          <p>Dark-surface treatments rendered at the same scale. The open field remains the approved direction; contained versions are retained as comparisons.</p>
+        </div>
+        <div class="reverse-study-grid" data-reverse-studies></div>
+      </section>
+
+      <section class="showcase-section showcase-scale">
+        <div class="showcase-section-heading">
+          <span>05 / LOCKUP SCALE LADDER</span>
+          <p>Actual reference sizes. Density changes at the labeled thresholds so the mark stays legible instead of mechanically shrinking one complex file.</p>
+        </div>
+        <div class="scale-board" data-scale-board></div>
+      </section>
+
+      <footer class="showcase-footer">
+        <div class="footer-lockup" data-footer-lockup></div>
+        <p>Procedural signal identity · Copenhagen</p>
+        <a href="/">Open approved brand guide ↗</a>
+      </footer>
+    </main>
+  </body>
+</html>

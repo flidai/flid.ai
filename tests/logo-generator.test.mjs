@@ -24,6 +24,8 @@ test("builds a deterministic phyllotaxis model", () => {
     { x: first.marks[0].x, y: first.marks[0].y },
     { x: 50, y: 50 },
   );
+  assert.equal(first.marks[0].kind, "dot");
+  assert.ok(first.marks.slice(1).every((mark) => mark.kind === "curve"));
   assert.ok(Math.abs(first.marks[1].angle - 137.507764) < 0.000001);
   assert.equal(first.marks.filter((mark) => mark.accent).length, 3);
 });
@@ -37,25 +39,98 @@ test("creates an independent, portable SVG with cubic signal marks", () => {
 
   assert.match(svg, /^<svg[^>]+viewBox="0 0 100 100"/);
   assert.match(svg, /<title>Flid procedural signal mark<\/title>/);
+  assert.match(
+    svg,
+    /<circle cx="50" cy="50" r="[^"]+" fill="#f0f1e9"\/>/,
+  );
   assert.match(svg, /<path d="M [^"]+ C [^"]+"/);
   assert.match(svg, /stroke="#44e3ff"/);
-  assert.equal((svg.match(/<g transform=/g) ?? []).length, getMarkCount(9));
+  assert.equal(
+    (svg.match(/<g transform=/g) ?? []).length,
+    getMarkCount(9) - 1,
+  );
   assert.doesNotMatch(svg, /\bQ\b/);
   assert.doesNotMatch(svg, /undefined|NaN/);
 });
 
+test("creates a monochrome signal pattern cut from a circular silhouette", () => {
+  const svg = generateLogoSvg({
+    mode: "silhouette",
+    layers: 8,
+    foreground: "#f0f1e9",
+    accent: "#44e3ff",
+  });
+
+  assert.match(svg, /<mask id="flid-silhouette-8-60"/);
+  assert.match(svg, /<circle cx="50" cy="50" r="45\.5" fill="#fff"\/>/);
+  assert.match(svg, /<circle cx="50" cy="50" r="[^"]+" fill="#000"\/>/);
+  assert.match(
+    svg,
+    /<circle cx="50" cy="50" r="45\.5" fill="#f0f1e9" mask="url\(#flid-silhouette-8-60\)"\/>/,
+  );
+  assert.doesNotMatch(svg, /#44e3ff/);
+});
+
+test("scales the complete silhouette pattern inward without clipping marks", () => {
+  const svg = generateLogoSvg({
+    mode: "silhouette",
+    layers: 12,
+    strokeWidth: 0.58,
+  });
+
+  assert.doesNotMatch(svg, /<clipPath|clip-path=/);
+  assert.match(
+    svg,
+    /<g transform="translate\(50 50\) scale\(0\.82\) translate\(-50 -50\)">.+<\/g><\/mask>/,
+  );
+});
+
+test("reuses the Reduced field stroke weight inside the silhouette", () => {
+  const reducedField = generateLogoSvg({
+    mode: "line",
+    layers: 12,
+    strokeWidth: 0.58,
+  });
+  const silhouette = generateLogoSvg({
+    mode: "silhouette",
+    layers: 12,
+    strokeWidth: 0.58,
+  });
+
+  assert.match(reducedField, /stroke-width="0\.58"/);
+  assert.match(silhouette, /stroke-width="0\.58"/);
+  assert.doesNotMatch(silhouette, /stroke-width="1\.624"/);
+});
+
+test("adds clear space through the viewBox without changing silhouette geometry", () => {
+  const svg = generateLogoSvg({
+    mode: "silhouette",
+    layers: 12,
+    strokeWidth: 0.58,
+    padding: 8,
+  });
+
+  assert.match(svg, /viewBox="-8 -8 116 116"/);
+  assert.match(svg, /<circle cx="50" cy="50" r="45\.5" fill="#fff"\/>/);
+  assert.match(svg, /stroke-width="0\.58"/);
+});
+
 test("clamps unsafe or out-of-range inputs", () => {
   const model = buildLogoModel({
+    mode: "unknown",
     layers: 200,
     curl: -4,
     twist: 500,
     strokeWidth: 20,
+    padding: 200,
     accents: 99,
   });
 
+  assert.equal(model.options.mode, "line");
   assert.equal(model.options.layers, 20);
   assert.equal(model.options.curl, 0.55);
   assert.equal(model.options.twist, 35);
   assert.equal(model.options.strokeWidth, 1.2);
+  assert.equal(model.options.padding, 20);
   assert.equal(model.options.accents, 8);
 });

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Interactive procedural signal-mark generator for Flid.">
+    <title>Signal Mark Generator — Flid</title>
+    <link rel="stylesheet" href="/assets/globals.css">
+    <link rel="stylesheet" href="/assets/generator.css">
+    <script type="module" src="/assets/generator.js"></script>
+  </head>
+  <body>
+    <main class="generator-page">
+      <header class="generator-header">
+        <a href="/" class="generator-brand" aria-label="Back to Flid home"><span class="generator-brand-dot" aria-hidden="true"></span>FLID / SIGNAL LAB</a>
+        <nav aria-label="Signal lab navigation"><a href="/">Brand guide ↗</a><a href="/showcase">Showcase ↗</a><span>PROCEDURAL MARK · STATIC</span></nav>
+      </header>
+
+      <section class="generator-layout">
+        <aside class="generator-panel">
+          <div class="generator-intro">
+            <p class="generator-kicker">Logo generator</p>
+            <h1>Shape the signal.</h1>
+            <p>A deterministic drawing system for exploring the Flid mark—from a dense field to a quieter, reduced form.</p>
+          </div>
+
+          <div class="generator-presets" aria-label="Layer presets">
+            <button type="button" data-preset="full"><span>Full</span><strong>16L</strong></button>
+            <button type="button" class="is-active" data-preset="primary"><span>Primary</span><strong>12L</strong></button>
+            <button type="button" data-preset="essential"><span>Essential</span><strong>8L</strong></button>
+          </div>
+
+          <div class="generator-mode">
+            <span>Output</span>
+            <div role="group" aria-label="Output style">
+              <button type="button" class="is-active" data-mode="line">Line</button>
+              <button type="button" data-mode="silhouette">Silhouette</button>
+            </div>
+          </div>
+
+          <div class="generator-controls">
+            <label class="generator-control"><span>Layers <output for="generator-layers" data-output="layers">12</output></span><input id="generator-layers" data-control="layers" type="range" min="4" max="20" step="1" value="12"></label>
+            <label class="generator-control"><span>Curl <output for="generator-curl" data-output="curl">0.88</output></span><input id="generator-curl" data-control="curl" type="range" min="0.55" max="1.55" step="0.01" value="0.88"></label>
+            <label class="generator-control"><span>Twist <output for="generator-twist" data-output="twist">0°</output></span><input id="generator-twist" data-control="twist" type="range" min="-35" max="35" step="1" value="0"></label>
+            <label class="generator-control"><span>Line weight <output for="generator-strokeWidth" data-output="strokeWidth">0.58</output></span><input id="generator-strokeWidth" data-control="strokeWidth" type="range" min="0.22" max="1.2" step="0.01" value="0.58"></label>
+            <label class="generator-control"><span>Signal accents <output for="generator-accents" data-output="accents">0</output></span><input id="generator-accents" data-control="accents" type="range" min="0" max="8" step="1" value="0"></label>
+            <div class="generator-color-row">
+              <label><span>Field</span><input type="color" data-color="foreground" value="#f0f6fc"></label>
+              <label><span>Signal</span><input type="color" data-color="accent" value="#4493f8"></label>
+            </div>
+          </div>
+
+          <div class="generator-actions">
+            <button type="button" class="export-button" data-export>Export SVG <span aria-hidden="true">↓</span></button>
+            <button type="button" class="reset-button" data-reset>Reset</button>
+          </div>
+        </aside>
+
+        <section class="generator-stage" aria-label="Generated logo preview">
+          <div class="generator-stage-meta generator-stage-meta-top"><span>LIVE VECTOR</span><span>100 × 100</span></div>
+          <div class="generator-preview" data-preview></div>
+          <div class="generator-crosshair" aria-hidden="true"></div>
+          <div class="generator-stage-meta generator-stage-meta-bottom"><span data-mark-meta>135 MARKS · LINE</span><span>137.507764°</span></div>
+        </section>
+      </section>
+
+      <section class="generator-notes">
+        <div><span>01 / OBSERVED</span><p>Repeated open curves advance by the golden angle while radius, scale, and visibility increase outwards.</p></div>
+        <div><span>02 / REBUILT</span><p>Flid uses an independent cubic curve, normalized layer system, and controlled signal accents.</p></div>
+        <div><span>03 / VARIABLE</span><p>Layer count changes structural complexity while keeping the overall silhouette and visual weight stable.</p></div>
+      </section>
+    </main>
+  </body>
+</html>

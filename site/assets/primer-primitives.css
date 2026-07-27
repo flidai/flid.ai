@@ -1,0 +1,37 @@
+/*
+ * Flid color subset from @primer/primitives v11.9.0.
+ * Source: https://github.com/primer/primitives
+ * Functional theme tokens are retained under their upstream names so upgrades
+ * can be reviewed as a small, explicit palette diff.
+ */
+
+:root,
+[data-color-mode="dark"] {
+  color-scheme: dark;
+  --bgColor-default: #0d1117;
+  --bgColor-muted: #151b23;
+  --bgColor-inset: #010409;
+  --fgColor-default: #f0f6fc;
+  --fgColor-muted: #9198a1;
+  --fgColor-accent: #4493f8;
+  --borderColor-default: #3d444d;
+  --borderColor-muted: #3d444db3;
+  --borderColor-accent-emphasis: #1f6feb;
+  --bgColor-accent-emphasis: #1f6feb;
+  --bgColor-accent-muted: #388bfd1a;
+}
+
+[data-color-mode="light"] {
+  color-scheme: light;
+  --bgColor-default: #ffffff;
+  --bgColor-muted: #f6f8fa;
+  --bgColor-inset: var(--bgColor-muted);
+  --fgColor-default: #1f2328;
+  --fgColor-muted: #59636e;
+  --fgColor-accent: #0969da;
+  --borderColor-default: #d1d9e0;
+  --borderColor-muted: #d1d9e0b3;
+  --borderColor-accent-emphasis: #0969da;
+  --bgColor-accent-emphasis: #0969da;
+  --bgColor-accent-muted: #ddf4ff;
+}
