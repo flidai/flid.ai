@@ -1,14 +1,22 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
+
+import PDFDocument from "pdfkit";
+import pngToIco from "png-to-ico";
+import sharp from "sharp";
+import SVGtoPDF from "svg-to-pdfkit";
 
 import { brandSystem } from "../lib/brand-system.mjs";
 import { generateLogoSvg } from "../lib/logo-generator.mjs";
 import { primerColors } from "../lib/primer-colors.mjs";
 import {
+  generateGeistTextOutline,
   generateGeistWordmarkOutline,
   geistWordmark,
 } from "../lib/wordmark-generator.mjs";
+
+const PDF_DATE = new Date("2026-07-28T00:00:00.000Z");
 
 const masters = Object.freeze({
   essential: Object.freeze({
@@ -16,6 +24,7 @@ const masters = Object.freeze({
     strokeWidth: 0.7,
     accents: 0,
     minimumSize: 16,
+    pngBaseSize: 32,
     role: "Small icons and navigation below 64px",
   }),
   primary: Object.freeze({
@@ -23,6 +32,7 @@ const masters = Object.freeze({
     strokeWidth: 0.58,
     accents: 0,
     minimumSize: 64,
+    pngBaseSize: 128,
     role: "Default identity mark",
   }),
   full: Object.freeze({
@@ -30,6 +40,7 @@ const masters = Object.freeze({
     strokeWidth: 0.42,
     accents: 3,
     minimumSize: 144,
+    pngBaseSize: 256,
     role: "Display and editorial use",
   }),
 });
@@ -37,13 +48,23 @@ const masters = Object.freeze({
 const themes = Object.freeze({
   "on-dark": Object.freeze({
     foreground: primerColors.dark.foreground,
+    foregroundMuted: primerColors.dark.foregroundMuted,
     background: primerColors.dark.canvas,
+    border: primerColors.dark.border,
+    accent: primerColors.dark.accent,
   }),
   "on-light": Object.freeze({
     foreground: primerColors.light.foreground,
+    foregroundMuted: primerColors.light.foregroundMuted,
     background: primerColors.light.canvas,
+    border: primerColors.light.border,
+    accent: primerColors.light.accent,
   }),
 });
+
+function assetPath(filename) {
+  return `/brand-assets/${filename}`;
+}
 
 function markOptions(master, foreground, padding = 0) {
   return {
@@ -76,48 +97,283 @@ function createLockupSvg(markSvg, foreground, masterName) {
   ].join("");
 }
 
+function svgArtwork(svg) {
+  return svg
+    .replace(/^<svg[^>]*>/, "")
+    .replace(/<\/svg>$/, "")
+    .replace(/<title>.*?<\/title>/, "")
+    .replace(/<desc>.*?<\/desc>/, "");
+}
+
+function outlinePath(outline, attributes = "") {
+  return `<path ${attributes} fill="${outline.fill}" d="${outline.pathData}"/>`;
+}
+
+function createLinkedInBannerSvg({ variant, themeName }) {
+  const theme = themes[themeName];
+  const dark = themeName === "on-dark";
+  const company = variant === "company";
+  const width = company ? 1128 : 1584;
+  const height = company ? 191 : 396;
+  const fieldDiameter = company ? 340 : 640;
+  const fieldX = company ? -72 : -170;
+  const fieldY = company ? -74 : -122;
+  const contentX = company ? 720 : 980;
+  const wordmark = generateGeistWordmarkOutline({
+    fill: theme.foreground,
+    x: contentX,
+    centerY: company ? 76 : 147,
+    fontSize: company ? 94 : 145,
+  });
+  const descriptor = generateGeistTextOutline({
+    text: company
+      ? "DATA & ARTIFICIAL INTELLIGENCE"
+      : "Building dependable data systems and AI products.",
+    fill: theme.foregroundMuted,
+    x: contentX + (company ? 0 : 4),
+    centerY: company ? 141 : 270,
+    fontSize: company ? 15 : 22,
+  });
+  const domain = generateGeistTextOutline({
+    text: "flid.ai",
+    fill: theme.foregroundMuted,
+    x: company ? contentX : contentX + 4,
+    centerY: company ? 169 : 337,
+    fontSize: company ? 13 : 18,
+  });
+  const decorativeMark = generateLogoSvg({
+    ...markOptions(masters.full, theme.foregroundMuted, 0),
+    accents: 0,
+  });
+  const dividerX = company ? 610 : 800;
+
+  return [
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" role="img" data-linkedin-banner="${variant}" data-color-mode="${dark ? "dark" : "light"}">`,
+    `<title>Flid LinkedIn ${variant} banner - ${dark ? "dark" : "light"}</title>`,
+    `<desc>A cropped procedural field on the left with the Flid wordmark and positioning statement in the safe area on the right.</desc>`,
+    `<rect width="${width}" height="${height}" fill="${theme.background}"/>`,
+    `<g data-decorative-field="full-16-layer" opacity="${dark ? "0.78" : "0.82"}" transform="translate(${fieldX} ${fieldY}) scale(${fieldDiameter / 100})">${svgArtwork(decorativeMark)}</g>`,
+    `<rect x="${dividerX}" y="${company ? 32 : 70}" width="1" height="${company ? 127 : 256}" fill="${theme.border}" opacity="0.52"/>`,
+    `<g data-linkedin-safe-content="right">`,
+    outlinePath(wordmark, 'data-wordmark-outline="flid"'),
+    outlinePath(descriptor, 'data-positioning-outline="true"'),
+    outlinePath(domain, 'data-domain-outline="flid.ai"'),
+    "</g>",
+    "</svg>",
+  ].join("");
+}
+
+function viewBoxDimensions(svg) {
+  const match = svg.match(
+    /viewBox="(?:-?[\d.]+\s+){2}([\d.]+)\s+([\d.]+)"/,
+  );
+  if (!match) throw new Error("SVG is missing a numeric viewBox.");
+  return { width: Number(match[1]), height: Number(match[2]) };
+}
+
 async function writeAsset(outputDirectory, filename, content) {
-  await writeFile(resolve(outputDirectory, filename), `${content}\n`, "utf8");
+  const target = resolve(outputDirectory, filename);
+  await mkdir(resolve(target, ".."), { recursive: true });
+  await writeFile(
+    target,
+    typeof content === "string" ? `${content}\n` : content,
+  );
+}
+
+async function createPdf(svg, title) {
+  const { width, height } = viewBoxDimensions(svg);
+
+  return new Promise((resolvePromise, reject) => {
+    const chunks = [];
+    const document = new PDFDocument({
+      autoFirstPage: true,
+      compress: true,
+      margin: 0,
+      size: [width, height],
+      info: {
+        Title: title,
+        Author: "Flid AI ApS",
+        Creator: "Flid brand asset generator",
+        Producer: "PDFKit + SVG-to-PDFKit",
+        CreationDate: PDF_DATE,
+        ModDate: PDF_DATE,
+      },
+    });
+
+    document.on("data", (chunk) => chunks.push(chunk));
+    document.on("end", () => resolvePromise(Buffer.concat(chunks)));
+    document.on("error", reject);
+    SVGtoPDF(document, svg, 0, 0, {
+      width,
+      height,
+      preserveAspectRatio: "xMinYMin meet",
+    });
+    document.end();
+  });
+}
+
+async function createPng(svg, height) {
+  const { data, info } = await sharp(Buffer.from(svg))
+    .resize({ height, fit: "contain" })
+    .png({ compressionLevel: 9 })
+    .toBuffer({ resolveWithObject: true });
+
+  return { data, width: info.width, height: info.height };
+}
+
+async function exportLogoFiles({
+  outputDirectory,
+  filenameBase,
+  svg,
+  pngBaseSize,
+  title,
+}) {
+  const svgFilename = `${filenameBase}.svg`;
+  const pdfFilename = `pdf/${filenameBase}.pdf`;
+  await Promise.all([
+    writeAsset(outputDirectory, svgFilename, svg),
+    createPdf(svg, title).then((pdf) =>
+      writeAsset(outputDirectory, pdfFilename, pdf),
+    ),
+  ]);
+
+  const png = [];
+  for (const scale of [1, 2, 4]) {
+    const filename = `png/${filenameBase}@${scale}x.png`;
+    const rendered = await createPng(svg, pngBaseSize * scale);
+    await writeAsset(outputDirectory, filename, rendered.data);
+    png.push({
+      scale,
+      width: rendered.width,
+      height: rendered.height,
+      path: assetPath(filename),
+    });
+  }
+
+  return {
+    svg: assetPath(svgFilename),
+    pdf: assetPath(pdfFilename),
+    png,
+  };
+}
+
+async function createSurfacePng({
+  svg,
+  width,
+  height,
+  artworkHeight,
+  background,
+}) {
+  const artwork = await createPng(svg, artworkHeight);
+  return sharp({
+    create: {
+      width,
+      height,
+      channels: 4,
+      background,
+    },
+  })
+    .composite([
+      {
+        input: artwork.data,
+        left: Math.round((width - artwork.width) / 2),
+        top: Math.round((height - artwork.height) / 2),
+      },
+    ])
+    .png({ compressionLevel: 9 })
+    .toBuffer();
+}
+
+function packageReadme() {
+  return `# Flid brand assets
+
+This directory is generated from the approved procedural identity in
+\`lib/brand-system.mjs\`. Do not edit exported files manually.
+
+## Formats
+
+- **SVG** is the canonical digital source and uses vector wordmark outlines.
+- **PNG** exports are transparent and supplied at 1x, 2x, and 4x.
+- **PDF** exports remain vector for print and production workflows.
+- **ICO and fixed-size PNG** files cover browser, app, and touch icons.
+- **Social PNG** files provide 1024px profile images and 1200x630 share cards.
+- **LinkedIn SVG and PNG** files provide company and personal banners in dark
+  and light modes.
+
+## Choosing a master
+
+- **Essential / 8 layers:** icons and navigation below 64px.
+- **Primary / 12 layers:** the default Flid identity.
+- **Full / 16 layers:** large display and editorial use from 144px.
+
+Use \`on-dark\` artwork on dark surfaces and \`on-light\` artwork on light
+surfaces. Preserve the 0.20D mark-to-word gap and 0.25D clear space encoded in
+\`manifest.json\`.
+
+Regenerate everything with:
+
+\`\`\`sh
+npm run assets
+\`\`\`
+`;
 }
 
 export async function generateBrandAssets(outputDirectory) {
+  await rm(outputDirectory, { recursive: true, force: true });
   await mkdir(outputDirectory, { recursive: true });
   const assets = [];
+  const generated = new Map();
 
   for (const [masterName, master] of Object.entries(masters)) {
     for (const [themeName, theme] of Object.entries(themes)) {
-      const markFilename = `mark-${masterName}-${themeName}.svg`;
+      const markId = `mark-${masterName}-${themeName}`;
       const markSvg = generateLogoSvg(
         markOptions(master, theme.foreground, 0),
       );
-      await writeAsset(outputDirectory, markFilename, markSvg);
+      const markFiles = await exportLogoFiles({
+        outputDirectory,
+        filenameBase: markId,
+        svg: markSvg,
+        pngBaseSize: master.pngBaseSize,
+        title: `Flid ${masterName} mark ${themeName}`,
+      });
+      generated.set(markId, markSvg);
       assets.push({
-        id: `mark-${masterName}-${themeName}`,
+        id: markId,
         type: "mark",
         master: masterName,
         theme: themeName,
         status: "approved",
-        path: `/brand-assets/${markFilename}`,
+        path: markFiles.svg,
+        files: markFiles,
         layers: master.layers,
         minimumSize: master.minimumSize,
         role: master.role,
         artworkBox: "tight",
       });
 
-      const lockupFilename = `lockup-${masterName}-${themeName}.svg`;
+      const lockupId = `lockup-${masterName}-${themeName}`;
       const lockupSvg = createLockupSvg(
         markSvg,
         theme.foreground,
         masterName,
       );
-      await writeAsset(outputDirectory, lockupFilename, lockupSvg);
+      const lockupFiles = await exportLogoFiles({
+        outputDirectory,
+        filenameBase: lockupId,
+        svg: lockupSvg,
+        pngBaseSize: master.pngBaseSize,
+        title: `Flid ${masterName} horizontal lockup ${themeName}`,
+      });
+      generated.set(lockupId, lockupSvg);
       assets.push({
-        id: `lockup-${masterName}-${themeName}`,
+        id: lockupId,
         type: "lockup",
         master: masterName,
         theme: themeName,
         status: "approved",
-        path: `/brand-assets/${lockupFilename}`,
+        path: lockupFiles.svg,
+        files: lockupFiles,
         layers: master.layers,
         minimumSize: master.minimumSize,
         role: master.role,
@@ -128,26 +384,179 @@ export async function generateBrandAssets(outputDirectory) {
     }
   }
 
-  const faviconFilename = "favicon.svg";
   const faviconSvg = generateLogoSvg(
     markOptions(masters.essential, primerColors.dark.accent, 8),
   );
-  await writeAsset(outputDirectory, faviconFilename, faviconSvg);
+  const faviconSvgFilename = "favicon.svg";
+  await writeAsset(outputDirectory, faviconSvgFilename, faviconSvg);
+  const faviconPng = [];
+  const faviconBuffers = new Map();
+  for (const [name, size] of [
+    ["favicon/favicon-16.png", 16],
+    ["favicon/favicon-32.png", 32],
+    ["favicon/favicon-48.png", 48],
+    ["favicon/apple-touch-icon.png", 180],
+    ["favicon/icon-192.png", 192],
+    ["favicon/icon-512.png", 512],
+  ]) {
+    const rendered = await createPng(faviconSvg, size);
+    await writeAsset(outputDirectory, name, rendered.data);
+    faviconBuffers.set(size, rendered.data);
+    faviconPng.push({
+      name: name.split("/").at(-1),
+      width: size,
+      height: size,
+      path: assetPath(name),
+    });
+  }
+  const icoFilename = "favicon/favicon.ico";
+  const ico = await pngToIco(
+    [16, 32, 48].map((size) => faviconBuffers.get(size)),
+  );
+  await writeAsset(outputDirectory, icoFilename, ico);
+  const webmanifestFilename = "favicon/site.webmanifest";
+  await writeAsset(
+    outputDirectory,
+    webmanifestFilename,
+    JSON.stringify(
+      {
+        name: "Flid",
+        short_name: "Flid",
+        icons: [
+          {
+            src: "/brand-assets/favicon/icon-192.png",
+            sizes: "192x192",
+            type: "image/png",
+          },
+          {
+            src: "/brand-assets/favicon/icon-512.png",
+            sizes: "512x512",
+            type: "image/png",
+          },
+        ],
+        theme_color: primerColors.dark.canvas,
+        background_color: primerColors.dark.canvas,
+        display: "standalone",
+      },
+      null,
+      2,
+    ),
+  );
   assets.push({
     id: "favicon",
     type: "icon",
     master: "essential",
     theme: "adaptive",
     status: "approved",
-    path: `/brand-assets/${faviconFilename}`,
+    path: assetPath(faviconSvgFilename),
+    files: {
+      svg: assetPath(faviconSvgFilename),
+      ico: assetPath(icoFilename),
+      webmanifest: assetPath(webmanifestFilename),
+      png: faviconPng,
+    },
     layers: masters.essential.layers,
     minimumSize: 16,
-    role: "Browser favicon",
+    role: "Browser, app, and touch icon",
     exportSafetyPadding: 8,
   });
 
+  for (const themeName of Object.keys(themes)) {
+    const suffix = themeName.replace("on-", "");
+    const theme = themes[themeName];
+    const profileFilename = `social/profile-${suffix}-1024.png`;
+    const profile = await createSurfacePng({
+      svg: generated.get(`mark-primary-${themeName}`),
+      width: 1024,
+      height: 1024,
+      artworkHeight: 650,
+      background: theme.background,
+    });
+    await writeAsset(outputDirectory, profileFilename, profile);
+    assets.push({
+      id: `social-profile-${suffix}`,
+      type: "social",
+      master: "primary",
+      theme: themeName,
+      status: "approved",
+      path: assetPath(profileFilename),
+      files: {
+        png: [{
+          width: 1024,
+          height: 1024,
+          path: assetPath(profileFilename),
+        }],
+      },
+      role: "Social profile image",
+    });
+
+    const shareFilename = `social/share-${suffix}-1200x630.png`;
+    const share = await createSurfacePng({
+      svg: generated.get(`lockup-primary-${themeName}`),
+      width: 1200,
+      height: 630,
+      artworkHeight: 220,
+      background: theme.background,
+    });
+    await writeAsset(outputDirectory, shareFilename, share);
+    assets.push({
+      id: `social-share-${suffix}`,
+      type: "social",
+      master: "primary",
+      theme: themeName,
+      status: "approved",
+      path: assetPath(shareFilename),
+      files: {
+        png: [{
+          width: 1200,
+          height: 630,
+          path: assetPath(shareFilename),
+        }],
+      },
+      role: "Open Graph and social sharing image",
+    });
+  }
+
+  for (const variant of ["company", "personal"]) {
+    for (const themeName of Object.keys(themes)) {
+      const suffix = themeName.replace("on-", "");
+      const width = variant === "company" ? 1128 : 1584;
+      const height = variant === "company" ? 191 : 396;
+      const id = `linkedin-${variant}-${suffix}`;
+      const filenameBase = `social/${id}-${width}x${height}`;
+      const svgFilename = `${filenameBase}.svg`;
+      const pngFilename = `${filenameBase}.png`;
+      const svg = createLinkedInBannerSvg({ variant, themeName });
+      const png = await createPng(svg, height);
+      await Promise.all([
+        writeAsset(outputDirectory, svgFilename, svg),
+        writeAsset(outputDirectory, pngFilename, png.data),
+      ]);
+      assets.push({
+        id,
+        type: "linkedin",
+        master: "full",
+        theme: themeName,
+        status: "approved",
+        path: assetPath(pngFilename),
+        files: {
+          svg: assetPath(svgFilename),
+          png: [{
+            width,
+            height,
+            path: assetPath(pngFilename),
+          }],
+        },
+        role: variant === "company"
+          ? "LinkedIn company page banner"
+          : "LinkedIn personal profile banner",
+        safeContentArea: "Right-hand field; keep the lower-left clear",
+      });
+    }
+  }
+
   const manifest = {
-    schemaVersion: 2,
+    schemaVersion: 3,
     brand: brandSystem.identity.spokenName,
     source: {
       generator: "/lib/logo-generator.mjs",
@@ -168,14 +577,23 @@ export async function generateBrandAssets(outputDirectory) {
       typeface: brandSystem.lockup.typeface,
       note: "Geist SemiBold is converted to vector outlines in every lockup export.",
     },
+    formats: {
+      svg: "Canonical portable vector artwork",
+      png: "Transparent 1x, 2x, and 4x raster exports",
+      pdf: "Vector print and production artwork",
+      ico: "Multi-resolution browser favicon",
+    },
     assets,
   };
 
-  await writeFile(
-    resolve(outputDirectory, "manifest.json"),
-    `${JSON.stringify(manifest, null, 2)}\n`,
-    "utf8",
-  );
+  await Promise.all([
+    writeAsset(
+      outputDirectory,
+      "manifest.json",
+      JSON.stringify(manifest, null, 2),
+    ),
+    writeAsset(outputDirectory, "README.md", packageReadme()),
+  ]);
 
   return manifest;
 }
@@ -185,10 +603,10 @@ if (
   import.meta.url === pathToFileURL(resolve(process.argv[1])).href
 ) {
   const outputDirectory = resolve(
-    process.argv[2] ?? "dist/brand-assets",
+    process.argv[2] ?? "brand-assets",
   );
   const manifest = await generateBrandAssets(outputDirectory);
   console.log(
-    `Generated ${manifest.assets.length} brand assets in ${outputDirectory}`,
+    `Generated ${manifest.assets.length} brand asset families in ${outputDirectory}`,
   );
 }

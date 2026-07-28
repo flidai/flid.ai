@@ -50,21 +50,49 @@ function renderAssetLibrary(manifest) {
           : asset.theme === "adaptive"
             ? "is-accent"
             : "is-dark";
-      const label = `${asset.master} ${asset.type}`.replace(
+      const label = asset.id.replaceAll("-", " ").replace(
         /\b\w/g,
         (character) => character.toUpperCase(),
       );
+      const downloads = [];
+      if (asset.files?.svg) {
+        downloads.push({ label: "SVG", path: asset.files.svg });
+      }
+      if (asset.files?.pdf) {
+        downloads.push({ label: "PDF", path: asset.files.pdf });
+      }
+      if (asset.files?.ico) {
+        downloads.push({ label: "ICO", path: asset.files.ico });
+      }
+      for (const png of asset.files?.png ?? []) {
+        const suffix = png.scale
+          ? `${png.scale}×`
+          : png.width === png.height
+            ? `${png.width}`
+            : "";
+        downloads.push({
+          label: `PNG${suffix ? ` ${suffix}` : ""}`,
+          path: png.path,
+        });
+      }
 
       return `
-        <a class="asset-card" href="${asset.path}" download>
-          <div class="asset-preview ${surface}">
+        <article class="asset-card">
+          <a class="asset-preview ${surface}" href="${asset.path}" download>
             <img src="${asset.path}" alt="">
-          </div>
+          </a>
           <footer>
             <strong>${label}</strong>
-            <span>${asset.status.toUpperCase()} · SVG ↓</span>
+            <div class="asset-downloads">
+              ${downloads
+                .map(
+                  ({ label: downloadLabel, path }) =>
+                    `<a href="${path}" download>${downloadLabel} ↓</a>`,
+                )
+                .join("")}
+            </div>
           </footer>
-        </a>`;
+        </article>`;
     })
     .join("");
 }

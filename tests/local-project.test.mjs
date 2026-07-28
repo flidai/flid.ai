@@ -59,11 +59,17 @@ test("keeps the procedural identity independent and shared", async () => {
   assert.doesNotMatch(brand, /generateLogoSvg|React|Next|jsx|tsx/);
 });
 
-test("keeps the brand guide at the root without redundant homepage assets", async () => {
-  await assert.rejects(access(new URL("site/brand/index.html", root)));
+test("keeps the public site at the root and the brand guide as a reference", async () => {
+  await access(new URL("site/brand/index.html", root));
   await assert.rejects(access(new URL("site/assets/home.js", root)));
 
   const rootPage = await readFile(new URL("site/index.html", root), "utf8");
-  assert.match(rootPage, /The source of truth for the Flid identity/i);
-  assert.doesNotMatch(rootPage, /href="\/brand"/);
+  const brandPage = await readFile(
+    new URL("site/brand/index.html", root),
+    "utf8",
+  );
+
+  assert.match(rootPage, /We build products where agents do real work/i);
+  assert.doesNotMatch(rootPage, /href="\/brand\/?"/);
+  assert.match(brandPage, /The source of truth for the Flid identity/i);
 });

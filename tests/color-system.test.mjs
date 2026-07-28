@@ -55,3 +55,21 @@ test("ships the shared Primer palette with the static build", async () => {
 
   assert.match(builtPalette, /export const primerColors/);
 });
+
+test("uses Primer semantic colors throughout the public website", async () => {
+  const home = await read("app/home/home.css");
+
+  assert.doesNotMatch(home, /#[0-9a-f]{3,8}\b/i);
+  for (const token of [
+    "--bgColor-default",
+    "--bgColor-muted",
+    "--fgColor-default",
+    "--fgColor-muted",
+    "--fgColor-accent",
+    "--borderColor-default",
+    "--borderColor-muted",
+    "--bgColor-accent-emphasis",
+  ]) {
+    assert.match(home, new RegExp(`var\\(${token}\\)`));
+  }
+});

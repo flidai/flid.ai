@@ -13,7 +13,7 @@ test("builds a versioned canonical brand asset library", async () => {
     await readBuilt("brand-assets/manifest.json"),
   );
 
-  assert.equal(manifest.schemaVersion, 2);
+  assert.equal(manifest.schemaVersion, 3);
   assert.equal(manifest.brand, "Flid");
   assert.equal(manifest.source.generator, "/lib/logo-generator.mjs");
   assert.equal(manifest.source.specification, "/lib/brand-system.mjs");
@@ -60,7 +60,7 @@ test("exports approved Geist lockups as portable vector outlines", async () => {
 
 test("makes the guide consume generated assets instead of regenerating marks", async () => {
   const [html, script] = await Promise.all([
-    readBuilt("index.html"),
+    readBuilt("brand/index.html"),
     readBuilt("assets/brand.js"),
   ]);
 

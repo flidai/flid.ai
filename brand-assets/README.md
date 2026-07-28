@@ -1,0 +1,31 @@
+# Flid brand assets
+
+This directory is generated from the approved procedural identity in
+`lib/brand-system.mjs`. Do not edit exported files manually.
+
+## Formats
+
+- **SVG** is the canonical digital source and uses vector wordmark outlines.
+- **PNG** exports are transparent and supplied at 1x, 2x, and 4x.
+- **PDF** exports remain vector for print and production workflows.
+- **ICO and fixed-size PNG** files cover browser, app, and touch icons.
+- **Social PNG** files provide 1024px profile images and 1200x630 share cards.
+- **LinkedIn SVG and PNG** files provide company and personal banners in dark
+  and light modes.
+
+## Choosing a master
+
+- **Essential / 8 layers:** icons and navigation below 64px.
+- **Primary / 12 layers:** the default Flid identity.
+- **Full / 16 layers:** large display and editorial use from 144px.
+
+Use `on-dark` artwork on dark surfaces and `on-light` artwork on light
+surfaces. Preserve the 0.20D mark-to-word gap and 0.25D clear space encoded in
+`manifest.json`.
+
+Regenerate everything with:
+
+```sh
+npm run assets
+```
+

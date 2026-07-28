@@ -629,19 +629,28 @@
 
 .asset-card footer {
   border-top: 1px solid var(--guide-line);
+  align-items: flex-start;
 }
 
 .asset-card footer strong {
   font-weight: 520;
 }
 
-.asset-card footer span,
 .asset-manifest-link span {
   color: var(--guide-muted);
 }
 
-.asset-card:hover footer,
-.asset-card:focus-visible footer,
+.asset-downloads {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  color: var(--guide-muted);
+}
+
+.asset-downloads a:hover,
+.asset-downloads a:focus-visible,
+.asset-card:focus-within footer,
 .asset-manifest-link a {
   color: var(--guide-accent);
 }

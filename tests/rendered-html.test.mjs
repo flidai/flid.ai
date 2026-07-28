@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import test from "node:test";
 
 const root = new URL("../", import.meta.url);
@@ -8,15 +8,42 @@ async function readBuiltPage(pathname) {
   return readFile(new URL(`dist/${pathname}`, root), "utf8");
 }
 
-test("builds the Flid brand guide at the root as plain HTML", async () => {
+test("builds the Flid public site at the root as plain HTML", async () => {
   const html = await readBuiltPage("index.html");
 
-  assert.match(html, /<title>Brand Guide — Flid<\/title>/i);
-  assert.match(html, /The source of truth for the Flid identity/i);
-  assert.match(html, /APPROVED PRIMARY LOCKUP/i);
-  assert.match(html, /PRIMARY MINIMUM/i);
+  assert.match(html, /<title>Flid — Agent-native product lab<\/title>/i);
+  assert.match(html, /We build products where agents do real work/i);
+  assert.match(html, /Agents should not be bolted on/i);
+  assert.match(html, /The agent-native BI platform/i);
+  assert.match(html, /LeapView/i);
+  assert.match(html, /Selected field work keeps them honest/i);
+  assert.match(html, /data platform agent-native/i);
+  assert.match(html, /Jacob Østergaard/i);
+  assert.match(html, /jacob-oestergaard\.webp/i);
+  assert.match(html, /leapview-dashboard-dark\.png/i);
+  assert.match(html, /mailto:hello@flid\.ai/i);
   assert.match(html, /Flid AI ApS/i);
+  assert.doesNotMatch(
+    html,
+    /Data foundations|Decision systems|Small team\.<br>Direct collaboration/i,
+  );
   assert.doesNotMatch(html, /_next|react|__next|data-reactroot/i);
+});
+
+test("optimizes the founder portrait for the public site", async () => {
+  const portrait = await stat(
+    new URL("dist/assets/images/jacob-oestergaard.webp", root),
+  );
+
+  assert.ok(portrait.size < 250_000, "founder portrait should stay below 250 KB");
+});
+
+test("ships the LeapView product proof with the public site", async () => {
+  const screenshot = await stat(
+    new URL("dist/assets/images/leapview-dashboard-dark.png", root),
+  );
+
+  assert.ok(screenshot.size < 250_000, "LeapView screenshot should stay below 250 KB");
 });
 
 test("builds the interactive generator as plain HTML and JavaScript", async () => {
@@ -59,7 +86,7 @@ test("builds the logo showcase without an application framework", async () => {
 
 test("builds a normative static brand guide with generator source", async () => {
   const [html, script, brandSystem] = await Promise.all([
-    readBuiltPage("index.html"),
+    readBuiltPage("brand/index.html"),
     readBuiltPage("assets/brand.js"),
     readBuiltPage("lib/brand-system.mjs"),
   ]);
@@ -78,28 +105,33 @@ test("builds a normative static brand guide with generator source", async () => 
   assert.match(brandSystem, /minimumDigitalSize:\s*64/);
 });
 
-test("removes the redundant brand route and stale links", async () => {
+test("keeps the public site and brand reference as distinct routes", async () => {
   const pages = await Promise.all([
     readBuiltPage("index.html"),
+    readBuiltPage("brand/index.html"),
     readBuiltPage("showcase/index.html"),
     readBuiltPage("generator/index.html"),
   ]);
 
-  await assert.rejects(readBuiltPage("brand/index.html"));
-  assert.doesNotMatch(pages.join("\n"), /href="\/brand"/);
+  assert.doesNotMatch(pages[0], /href="\/brand\/?"/);
+  assert.match(pages[1], /Brand Guide — Flid/);
+  assert.match(pages[2], /href="\/brand\/?"/);
+  assert.match(pages[3], /href="\/brand\/?"/);
 });
 
 test("retains responsive and reduced-motion styling", async () => {
-  const [globalCss, showcaseCss, generatorCss, brandCss] = await Promise.all([
+  const [globalCss, homeCss, showcaseCss, generatorCss, brandCss] = await Promise.all([
     readBuiltPage("assets/globals.css"),
+    readBuiltPage("assets/home.css"),
     readBuiltPage("assets/showcase.css"),
     readBuiltPage("assets/generator.css"),
     readBuiltPage("assets/brand.css"),
   ]);
 
-  for (const css of [globalCss, showcaseCss, generatorCss, brandCss]) {
+  for (const css of [globalCss, homeCss, showcaseCss, generatorCss, brandCss]) {
     assert.match(css, /prefers-reduced-motion:\s*reduce/);
   }
+  assert.match(homeCss, /@media\s*\(max-width:\s*720px\)/);
   assert.match(showcaseCss, /--lockup-mark-size:/);
   assert.match(generatorCss, /@media\s*\(max-width:\s*680px\)/);
 });
@@ -107,6 +139,7 @@ test("retains responsive and reduced-motion styling", async () => {
 test("keeps .ai out of visual wordmarks while preserving the domain", async () => {
   const pages = await Promise.all([
     readBuiltPage("index.html"),
+    readBuiltPage("brand/index.html"),
     readBuiltPage("showcase/index.html"),
   ]);
   const combined = pages.join("\n");

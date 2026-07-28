@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "node scripts/server.mjs",
-    "assets": "node scripts/generate-brand-assets.mjs dist/brand-assets",
+    "assets": "node scripts/generate-brand-assets.mjs brand-assets",
     "build": "node scripts/build.mjs",
     "start": "node scripts/server.mjs",
     "test": "npm run build && node --test tests/*.test.mjs",
@@ -15,7 +15,11 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "opentype.js": "1.3.4"
+    "opentype.js": "1.3.4",
+    "pdfkit": "0.19.1",
+    "png-to-ico": "3.0.2",
+    "sharp": "0.35.3",
+    "svg-to-pdfkit": "0.1.8"
   },
   "type": "module"
 }

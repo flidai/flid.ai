@@ -2,17 +2,30 @@ import {
   copyFile,
   cp,
   mkdir,
+  readFile,
+  readdir,
   rm,
+  writeFile,
 } from "node:fs/promises";
-import { dirname, join } from "node:path";
+import { dirname, extname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import sharp from "sharp";
 import { generateBrandAssets } from "./generate-brand-assets.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const output = join(root, "dist");
+const prefixableExtensions = new Set([
+  ".css",
+  ".html",
+  ".js",
+  ".json",
+  ".mjs",
+  ".webmanifest",
+]);
 
 const copiedFiles = [
   ["app/globals.css", "assets/globals.css"],
+  ["app/home/home.css", "assets/home.css"],
   ["app/showcase/showcase.css", "assets/showcase.css"],
   ["app/generator/generator.css", "assets/generator.css"],
   ["app/brand/brand.css", "assets/brand.css"],
@@ -23,24 +36,70 @@ const copiedFiles = [
   ["vendor/geist/LICENSE.txt", "licenses/geist-OFL-1.1.txt"],
 ];
 
-export async function buildSite() {
-  await rm(output, { recursive: true, force: true });
-  await mkdir(output, { recursive: true });
-  await cp(join(root, "site"), output, { recursive: true });
+function normalizeBasePath(basePath) {
+  if (!basePath || basePath === "/") return "";
+  const normalized = `/${basePath}`.replace(/\/+/g, "/").replace(/\/$/, "");
+  if (normalized.includes("..")) {
+    throw new TypeError("SITE_BASE_PATH cannot contain parent traversal.");
+  }
+  return normalized;
+}
+
+export function prefixSitePaths(content, basePath) {
+  const normalized = normalizeBasePath(basePath);
+  if (!normalized) return content;
+
+  return content
+    .replace(/(["'])\/(?!\/)/g, `$1${normalized}/`)
+    .replace(/url\(\/(?!\/)/g, `url(${normalized}/`);
+}
+
+async function applyBasePath(directory, basePath) {
+  if (!normalizeBasePath(basePath)) return;
+
+  for (const entry of await readdir(directory, { withFileTypes: true })) {
+    const pathname = join(directory, entry.name);
+    if (entry.isDirectory()) {
+      await applyBasePath(pathname, basePath);
+    } else if (prefixableExtensions.has(extname(entry.name))) {
+      const source = await readFile(pathname, "utf8");
+      await writeFile(pathname, prefixSitePaths(source, basePath), "utf8");
+    }
+  }
+}
+
+export async function buildSite({
+  outputDirectory = output,
+  basePath = "",
+} = {}) {
+  await rm(outputDirectory, { recursive: true, force: true });
+  await mkdir(outputDirectory, { recursive: true });
+  await cp(join(root, "site"), outputDirectory, { recursive: true });
 
   for (const [source, destination] of copiedFiles) {
-    const target = join(output, destination);
+    const target = join(outputDirectory, destination);
     await mkdir(dirname(target), { recursive: true });
     await copyFile(join(root, source), target);
   }
 
-  await generateBrandAssets(join(output, "brand-assets"));
+  const portraitTarget = join(
+    outputDirectory,
+    "assets/images/jacob-oestergaard.webp",
+  );
+  await mkdir(dirname(portraitTarget), { recursive: true });
+  await sharp(join(root, "Jacob Østergaard 1.png"))
+    .resize(960, 960, { fit: "cover", position: "center" })
+    .webp({ quality: 82, effort: 4 })
+    .toFile(portraitTarget);
+
+  await generateBrandAssets(join(outputDirectory, "brand-assets"));
+  await applyBasePath(outputDirectory, basePath);
 }
 
 if (
   process.argv[1] &&
   import.meta.url === pathToFileURL(process.argv[1]).href
 ) {
-  await buildSite();
+  await buildSite({ basePath: process.env.SITE_BASE_PATH ?? "" });
   console.log("Built static site in dist/");
 }

@@ -1,0 +1,724 @@
+{
+  "schemaVersion": 3,
+  "brand": "Flid",
+  "source": {
+    "generator": "/lib/logo-generator.mjs",
+    "wordmarkGenerator": "/lib/wordmark-generator.mjs",
+    "specification": "/lib/brand-system.mjs",
+    "colorPrimitives": "@primer/primitives@11.9.0"
+  },
+  "geometry": {
+    "curl": 0.88,
+    "twist": 0,
+    "artworkBox": "0 0 100 100",
+    "exportSafetyPadding": 10
+  },
+  "lockup": {
+    "gapRatio": 0.2,
+    "clearSpaceRatio": 0.25,
+    "wordmarkStatus": "approved",
+    "typeface": {
+      "family": "Geist",
+      "weight": 600,
+      "version": "1.7.2",
+      "tracking": 0,
+      "format": "vector outlines"
+    },
+    "note": "Geist SemiBold is converted to vector outlines in every lockup export."
+  },
+  "formats": {
+    "svg": "Canonical portable vector artwork",
+    "png": "Transparent 1x, 2x, and 4x raster exports",
+    "pdf": "Vector print and production artwork",
+    "ico": "Multi-resolution browser favicon"
+  },
+  "assets": [
+    {
+      "id": "mark-essential-on-dark",
+      "type": "mark",
+      "master": "essential",
+      "theme": "on-dark",
+      "status": "approved",
+      "path": "/brand-assets/mark-essential-on-dark.svg",
+      "files": {
+        "svg": "/brand-assets/mark-essential-on-dark.svg",
+        "pdf": "/brand-assets/pdf/mark-essential-on-dark.pdf",
+        "png": [
+          {
+            "scale": 1,
+            "width": 32,
+            "height": 32,
+            "path": "/brand-assets/png/mark-essential-on-dark@1x.png"
+          },
+          {
+            "scale": 2,
+            "width": 64,
+            "height": 64,
+            "path": "/brand-assets/png/mark-essential-on-dark@2x.png"
+          },
+          {
+            "scale": 4,
+            "width": 128,
+            "height": 128,
+            "path": "/brand-assets/png/mark-essential-on-dark@4x.png"
+          }
+        ]
+      },
+      "layers": 8,
+      "minimumSize": 16,
+      "role": "Small icons and navigation below 64px",
+      "artworkBox": "tight"
+    },
+    {
+      "id": "lockup-essential-on-dark",
+      "type": "lockup",
+      "master": "essential",
+      "theme": "on-dark",
+      "status": "approved",
+      "path": "/brand-assets/lockup-essential-on-dark.svg",
+      "files": {
+        "svg": "/brand-assets/lockup-essential-on-dark.svg",
+        "pdf": "/brand-assets/pdf/lockup-essential-on-dark.pdf",
+        "png": [
+          {
+            "scale": 1,
+            "width": 74,
+            "height": 32,
+            "path": "/brand-assets/png/lockup-essential-on-dark@1x.png"
+          },
+          {
+            "scale": 2,
+            "width": 148,
+            "height": 64,
+            "path": "/brand-assets/png/lockup-essential-on-dark@2x.png"
+          },
+          {
+            "scale": 4,
+            "width": 297,
+            "height": 128,
+            "path": "/brand-assets/png/lockup-essential-on-dark@4x.png"
+          }
+        ]
+      },
+      "layers": 8,
+      "minimumSize": 16,
+      "role": "Small icons and navigation below 64px",
+      "gapRatio": 0.2,
+      "wordmarkStatus": "Approved",
+      "typeface": {
+        "family": "Geist",
+        "weight": 600,
+        "version": "1.7.2",
+        "tracking": 0,
+        "format": "vector outlines"
+      }
+    },
+    {
+      "id": "mark-essential-on-light",
+      "type": "mark",
+      "master": "essential",
+      "theme": "on-light",
+      "status": "approved",
+      "path": "/brand-assets/mark-essential-on-light.svg",
+      "files": {
+        "svg": "/brand-assets/mark-essential-on-light.svg",
+        "pdf": "/brand-assets/pdf/mark-essential-on-light.pdf",
+        "png": [
+          {
+            "scale": 1,
+            "width": 32,
+            "height": 32,
+            "path": "/brand-assets/png/mark-essential-on-light@1x.png"
+          },
+          {
+            "scale": 2,
+            "width": 64,
+            "height": 64,
+            "path": "/brand-assets/png/mark-essential-on-light@2x.png"
+          },
+          {
+            "scale": 4,
+            "width": 128,
+            "height": 128,
+            "path": "/brand-assets/png/mark-essential-on-light@4x.png"
+          }
+        ]
+      },
+      "layers": 8,
+      "minimumSize": 16,
+      "role": "Small icons and navigation below 64px",
+      "artworkBox": "tight"
+    },
+    {
+      "id": "lockup-essential-on-light",
+      "type": "lockup",
+      "master": "essential",
+      "theme": "on-light",
+      "status": "approved",
+      "path": "/brand-assets/lockup-essential-on-light.svg",
+      "files": {
+        "svg": "/brand-assets/lockup-essential-on-light.svg",
+        "pdf": "/brand-assets/pdf/lockup-essential-on-light.pdf",
+        "png": [
+          {
+            "scale": 1,
+            "width": 74,
+            "height": 32,
+            "path": "/brand-assets/png/lockup-essential-on-light@1x.png"
+          },
+          {
+            "scale": 2,
+            "width": 148,
+            "height": 64,
+            "path": "/brand-assets/png/lockup-essential-on-light@2x.png"
+          },
+          {
+            "scale": 4,
+            "width": 297,
+            "height": 128,
+            "path": "/brand-assets/png/lockup-essential-on-light@4x.png"
+          }
+        ]
+      },
+      "layers": 8,
+      "minimumSize": 16,
+      "role": "Small icons and navigation below 64px",
+      "gapRatio": 0.2,
+      "wordmarkStatus": "Approved",
+      "typeface": {
+        "family": "Geist",
+        "weight": 600,
+        "version": "1.7.2",
+        "tracking": 0,
+        "format": "vector outlines"
+      }
+    },
+    {
+      "id": "mark-primary-on-dark",
+      "type": "mark",
+      "master": "primary",
+      "theme": "on-dark",
+      "status": "approved",
+      "path": "/brand-assets/mark-primary-on-dark.svg",
+      "files": {
+        "svg": "/brand-assets/mark-primary-on-dark.svg",
+        "pdf": "/brand-assets/pdf/mark-primary-on-dark.pdf",
+        "png": [
+          {
+            "scale": 1,
+            "width": 128,
+            "height": 128,
+            "path": "/brand-assets/png/mark-primary-on-dark@1x.png"
+          },
+          {
+            "scale": 2,
+            "width": 256,
+            "height": 256,
+            "path": "/brand-assets/png/mark-primary-on-dark@2x.png"
+          },
+          {
+            "scale": 4,
+            "width": 512,
+            "height": 512,
+            "path": "/brand-assets/png/mark-primary-on-dark@4x.png"
+          }
+        ]
+      },
+      "layers": 12,
+      "minimumSize": 64,
+      "role": "Default identity mark",
+      "artworkBox": "tight"
+    },
+    {
+      "id": "lockup-primary-on-dark",
+      "type": "lockup",
+      "master": "primary",
+      "theme": "on-dark",
+      "status": "approved",
+      "path": "/brand-assets/lockup-primary-on-dark.svg",
+      "files": {
+        "svg": "/brand-assets/lockup-primary-on-dark.svg",
+        "pdf": "/brand-assets/pdf/lockup-primary-on-dark.pdf",
+        "png": [
+          {
+            "scale": 1,
+            "width": 297,
+            "height": 128,
+            "path": "/brand-assets/png/lockup-primary-on-dark@1x.png"
+          },
+          {
+            "scale": 2,
+            "width": 594,
+            "height": 256,
+            "path": "/brand-assets/png/lockup-primary-on-dark@2x.png"
+          },
+          {
+            "scale": 4,
+            "width": 1188,
+            "height": 512,
+            "path": "/brand-assets/png/lockup-primary-on-dark@4x.png"
+          }
+        ]
+      },
+      "layers": 12,
+      "minimumSize": 64,
+      "role": "Default identity mark",
+      "gapRatio": 0.2,
+      "wordmarkStatus": "Approved",
+      "typeface": {
+        "family": "Geist",
+        "weight": 600,
+        "version": "1.7.2",
+        "tracking": 0,
+        "format": "vector outlines"
+      }
+    },
+    {
+      "id": "mark-primary-on-light",
+      "type": "mark",
+      "master": "primary",
+      "theme": "on-light",
+      "status": "approved",
+      "path": "/brand-assets/mark-primary-on-light.svg",
+      "files": {
+        "svg": "/brand-assets/mark-primary-on-light.svg",
+        "pdf": "/brand-assets/pdf/mark-primary-on-light.pdf",
+        "png": [
+          {
+            "scale": 1,
+            "width": 128,
+            "height": 128,
+            "path": "/brand-assets/png/mark-primary-on-light@1x.png"
+          },
+          {
+            "scale": 2,
+            "width": 256,
+            "height": 256,
+            "path": "/brand-assets/png/mark-primary-on-light@2x.png"
+          },
+          {
+            "scale": 4,
+            "width": 512,
+            "height": 512,
+            "path": "/brand-assets/png/mark-primary-on-light@4x.png"
+          }
+        ]
+      },
+      "layers": 12,
+      "minimumSize": 64,
+      "role": "Default identity mark",
+      "artworkBox": "tight"
+    },
+    {
+      "id": "lockup-primary-on-light",
+      "type": "lockup",
+      "master": "primary",
+      "theme": "on-light",
+      "status": "approved",
+      "path": "/brand-assets/lockup-primary-on-light.svg",
+      "files": {
+        "svg": "/brand-assets/lockup-primary-on-light.svg",
+        "pdf": "/brand-assets/pdf/lockup-primary-on-light.pdf",
+        "png": [
+          {
+            "scale": 1,
+            "width": 297,
+            "height": 128,
+            "path": "/brand-assets/png/lockup-primary-on-light@1x.png"
+          },
+          {
+            "scale": 2,
+            "width": 594,
+            "height": 256,
+            "path": "/brand-assets/png/lockup-primary-on-light@2x.png"
+          },
+          {
+            "scale": 4,
+            "width": 1188,
+            "height": 512,
+            "path": "/brand-assets/png/lockup-primary-on-light@4x.png"
+          }
+        ]
+      },
+      "layers": 12,
+      "minimumSize": 64,
+      "role": "Default identity mark",
+      "gapRatio": 0.2,
+      "wordmarkStatus": "Approved",
+      "typeface": {
+        "family": "Geist",
+        "weight": 600,
+        "version": "1.7.2",
+        "tracking": 0,
+        "format": "vector outlines"
+      }
+    },
+    {
+      "id": "mark-full-on-dark",
+      "type": "mark",
+      "master": "full",
+      "theme": "on-dark",
+      "status": "approved",
+      "path": "/brand-assets/mark-full-on-dark.svg",
+      "files": {
+        "svg": "/brand-assets/mark-full-on-dark.svg",
+        "pdf": "/brand-assets/pdf/mark-full-on-dark.pdf",
+        "png": [
+          {
+            "scale": 1,
+            "width": 256,
+            "height": 256,
+            "path": "/brand-assets/png/mark-full-on-dark@1x.png"
+          },
+          {
+            "scale": 2,
+            "width": 512,
+            "height": 512,
+            "path": "/brand-assets/png/mark-full-on-dark@2x.png"
+          },
+          {
+            "scale": 4,
+            "width": 1024,
+            "height": 1024,
+            "path": "/brand-assets/png/mark-full-on-dark@4x.png"
+          }
+        ]
+      },
+      "layers": 16,
+      "minimumSize": 144,
+      "role": "Display and editorial use",
+      "artworkBox": "tight"
+    },
+    {
+      "id": "lockup-full-on-dark",
+      "type": "lockup",
+      "master": "full",
+      "theme": "on-dark",
+      "status": "approved",
+      "path": "/brand-assets/lockup-full-on-dark.svg",
+      "files": {
+        "svg": "/brand-assets/lockup-full-on-dark.svg",
+        "pdf": "/brand-assets/pdf/lockup-full-on-dark.pdf",
+        "png": [
+          {
+            "scale": 1,
+            "width": 594,
+            "height": 256,
+            "path": "/brand-assets/png/lockup-full-on-dark@1x.png"
+          },
+          {
+            "scale": 2,
+            "width": 1188,
+            "height": 512,
+            "path": "/brand-assets/png/lockup-full-on-dark@2x.png"
+          },
+          {
+            "scale": 4,
+            "width": 2376,
+            "height": 1024,
+            "path": "/brand-assets/png/lockup-full-on-dark@4x.png"
+          }
+        ]
+      },
+      "layers": 16,
+      "minimumSize": 144,
+      "role": "Display and editorial use",
+      "gapRatio": 0.2,
+      "wordmarkStatus": "Approved",
+      "typeface": {
+        "family": "Geist",
+        "weight": 600,
+        "version": "1.7.2",
+        "tracking": 0,
+        "format": "vector outlines"
+      }
+    },
+    {
+      "id": "mark-full-on-light",
+      "type": "mark",
+      "master": "full",
+      "theme": "on-light",
+      "status": "approved",
+      "path": "/brand-assets/mark-full-on-light.svg",
+      "files": {
+        "svg": "/brand-assets/mark-full-on-light.svg",
+        "pdf": "/brand-assets/pdf/mark-full-on-light.pdf",
+        "png": [
+          {
+            "scale": 1,
+            "width": 256,
+            "height": 256,
+            "path": "/brand-assets/png/mark-full-on-light@1x.png"
+          },
+          {
+            "scale": 2,
+            "width": 512,
+            "height": 512,
+            "path": "/brand-assets/png/mark-full-on-light@2x.png"
+          },
+          {
+            "scale": 4,
+            "width": 1024,
+            "height": 1024,
+            "path": "/brand-assets/png/mark-full-on-light@4x.png"
+          }
+        ]
+      },
+      "layers": 16,
+      "minimumSize": 144,
+      "role": "Display and editorial use",
+      "artworkBox": "tight"
+    },
+    {
+      "id": "lockup-full-on-light",
+      "type": "lockup",
+      "master": "full",
+      "theme": "on-light",
+      "status": "approved",
+      "path": "/brand-assets/lockup-full-on-light.svg",
+      "files": {
+        "svg": "/brand-assets/lockup-full-on-light.svg",
+        "pdf": "/brand-assets/pdf/lockup-full-on-light.pdf",
+        "png": [
+          {
+            "scale": 1,
+            "width": 594,
+            "height": 256,
+            "path": "/brand-assets/png/lockup-full-on-light@1x.png"
+          },
+          {
+            "scale": 2,
+            "width": 1188,
+            "height": 512,
+            "path": "/brand-assets/png/lockup-full-on-light@2x.png"
+          },
+          {
+            "scale": 4,
+            "width": 2376,
+            "height": 1024,
+            "path": "/brand-assets/png/lockup-full-on-light@4x.png"
+          }
+        ]
+      },
+      "layers": 16,
+      "minimumSize": 144,
+      "role": "Display and editorial use",
+      "gapRatio": 0.2,
+      "wordmarkStatus": "Approved",
+      "typeface": {
+        "family": "Geist",
+        "weight": 600,
+        "version": "1.7.2",
+        "tracking": 0,
+        "format": "vector outlines"
+      }
+    },
+    {
+      "id": "favicon",
+      "type": "icon",
+      "master": "essential",
+      "theme": "adaptive",
+      "status": "approved",
+      "path": "/brand-assets/favicon.svg",
+      "files": {
+        "svg": "/brand-assets/favicon.svg",
+        "ico": "/brand-assets/favicon/favicon.ico",
+        "webmanifest": "/brand-assets/favicon/site.webmanifest",
+        "png": [
+          {
+            "name": "favicon-16.png",
+            "width": 16,
+            "height": 16,
+            "path": "/brand-assets/favicon/favicon-16.png"
+          },
+          {
+            "name": "favicon-32.png",
+            "width": 32,
+            "height": 32,
+            "path": "/brand-assets/favicon/favicon-32.png"
+          },
+          {
+            "name": "favicon-48.png",
+            "width": 48,
+            "height": 48,
+            "path": "/brand-assets/favicon/favicon-48.png"
+          },
+          {
+            "name": "apple-touch-icon.png",
+            "width": 180,
+            "height": 180,
+            "path": "/brand-assets/favicon/apple-touch-icon.png"
+          },
+          {
+            "name": "icon-192.png",
+            "width": 192,
+            "height": 192,
+            "path": "/brand-assets/favicon/icon-192.png"
+          },
+          {
+            "name": "icon-512.png",
+            "width": 512,
+            "height": 512,
+            "path": "/brand-assets/favicon/icon-512.png"
+          }
+        ]
+      },
+      "layers": 8,
+      "minimumSize": 16,
+      "role": "Browser, app, and touch icon",
+      "exportSafetyPadding": 8
+    },
+    {
+      "id": "social-profile-dark",
+      "type": "social",
+      "master": "primary",
+      "theme": "on-dark",
+      "status": "approved",
+      "path": "/brand-assets/social/profile-dark-1024.png",
+      "files": {
+        "png": [
+          {
+            "width": 1024,
+            "height": 1024,
+            "path": "/brand-assets/social/profile-dark-1024.png"
+          }
+        ]
+      },
+      "role": "Social profile image"
+    },
+    {
+      "id": "social-share-dark",
+      "type": "social",
+      "master": "primary",
+      "theme": "on-dark",
+      "status": "approved",
+      "path": "/brand-assets/social/share-dark-1200x630.png",
+      "files": {
+        "png": [
+          {
+            "width": 1200,
+            "height": 630,
+            "path": "/brand-assets/social/share-dark-1200x630.png"
+          }
+        ]
+      },
+      "role": "Open Graph and social sharing image"
+    },
+    {
+      "id": "social-profile-light",
+      "type": "social",
+      "master": "primary",
+      "theme": "on-light",
+      "status": "approved",
+      "path": "/brand-assets/social/profile-light-1024.png",
+      "files": {
+        "png": [
+          {
+            "width": 1024,
+            "height": 1024,
+            "path": "/brand-assets/social/profile-light-1024.png"
+          }
+        ]
+      },
+      "role": "Social profile image"
+    },
+    {
+      "id": "social-share-light",
+      "type": "social",
+      "master": "primary",
+      "theme": "on-light",
+      "status": "approved",
+      "path": "/brand-assets/social/share-light-1200x630.png",
+      "files": {
+        "png": [
+          {
+            "width": 1200,
+            "height": 630,
+            "path": "/brand-assets/social/share-light-1200x630.png"
+          }
+        ]
+      },
+      "role": "Open Graph and social sharing image"
+    },
+    {
+      "id": "linkedin-company-dark",
+      "type": "linkedin",
+      "master": "full",
+      "theme": "on-dark",
+      "status": "approved",
+      "path": "/brand-assets/social/linkedin-company-dark-1128x191.png",
+      "files": {
+        "svg": "/brand-assets/social/linkedin-company-dark-1128x191.svg",
+        "png": [
+          {
+            "width": 1128,
+            "height": 191,
+            "path": "/brand-assets/social/linkedin-company-dark-1128x191.png"
+          }
+        ]
+      },
+      "role": "LinkedIn company page banner",
+      "safeContentArea": "Right-hand field; keep the lower-left clear"
+    },
+    {
+      "id": "linkedin-company-light",
+      "type": "linkedin",
+      "master": "full",
+      "theme": "on-light",
+      "status": "approved",
+      "path": "/brand-assets/social/linkedin-company-light-1128x191.png",
+      "files": {
+        "svg": "/brand-assets/social/linkedin-company-light-1128x191.svg",
+        "png": [
+          {
+            "width": 1128,
+            "height": 191,
+            "path": "/brand-assets/social/linkedin-company-light-1128x191.png"
+          }
+        ]
+      },
+      "role": "LinkedIn company page banner",
+      "safeContentArea": "Right-hand field; keep the lower-left clear"
+    },
+    {
+      "id": "linkedin-personal-dark",
+      "type": "linkedin",
+      "master": "full",
+      "theme": "on-dark",
+      "status": "approved",
+      "path": "/brand-assets/social/linkedin-personal-dark-1584x396.png",
+      "files": {
+        "svg": "/brand-assets/social/linkedin-personal-dark-1584x396.svg",
+        "png": [
+          {
+            "width": 1584,
+            "height": 396,
+            "path": "/brand-assets/social/linkedin-personal-dark-1584x396.png"
+          }
+        ]
+      },
+      "role": "LinkedIn personal profile banner",
+      "safeContentArea": "Right-hand field; keep the lower-left clear"
+    },
+    {
+      "id": "linkedin-personal-light",
+      "type": "linkedin",
+      "master": "full",
+      "theme": "on-light",
+      "status": "approved",
+      "path": "/brand-assets/social/linkedin-personal-light-1584x396.png",
+      "files": {
+        "svg": "/brand-assets/social/linkedin-personal-light-1584x396.svg",
+        "png": [
+          {
+            "width": 1584,
+            "height": 396,
+            "path": "/brand-assets/social/linkedin-personal-light-1584x396.png"
+          }
+        ]
+      },
+      "role": "LinkedIn personal profile banner",
+      "safeContentArea": "Right-hand field; keep the lower-left clear"
+    }
+  ]
+}
