@@ -29,6 +29,12 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.match(html, /assets\/home\.js/i);
   assert.match(html, /mailto:hello@flid\.ai/i);
   assert.match(html, /Flid AI ApS/i);
+  assert.match(html, /Odense · Denmark/i);
+  assert.match(
+    html,
+    /Flid is Danish for diligence—the care, persistence, and attention behind work made to last\./i,
+  );
+  assert.doesNotMatch(html, /Copenhagen/i);
   assert.match(script, /layers:\s*12/);
   assert.match(script, /curl:\s*0\.88/);
   assert.match(script, /strokeWidth:\s*0\.58/);
@@ -90,6 +96,8 @@ test("builds the logo showcase without an application framework", async () => {
   assert.match(html, /WORDMARK STUDIES/i);
   assert.match(html, /REVERSE STUDIES/i);
   assert.match(html, /LOCKUP SCALE LADDER/i);
+  assert.match(html, /Procedural signal identity · Odense/i);
+  assert.doesNotMatch(html, /Copenhagen/i);
   assert.match(script, /logoVariations/);
   assert.match(script, /mode:\s*"line"/);
   assert.match(script, /layers:\s*12/);
