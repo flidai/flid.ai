@@ -127,8 +127,25 @@ test("includes company and personal LinkedIn banners in both color modes", async
       await read(`dist/${asset.files.svg.slice(1)}`)
     ).toString("utf8");
     assert.match(svg, /data-linkedin-safe-content="center"/);
+    const fieldStart = Number(
+      svg.match(
+        /data-decorative-field="primary-12-layer"[^>]+data-clear-gap="64"[^>]+transform="translate\(([\d.]+)/,
+      )?.[1],
+    );
+    const statementRight = Number(
+      svg.match(/data-statement-right="([\d.]+)"/)?.[1],
+    );
+    assert.ok(Number.isFinite(fieldStart), "banner must record the field start");
+    assert.ok(
+      Number.isFinite(statementRight),
+      "banner must record the statement boundary",
+    );
+    assert.ok(
+      fieldStart - statementRight >= 64,
+      "decorative field must preserve 64px of clearance from the statement",
+    );
     const safeContent = svg.match(
-      /<g data-linkedin-safe-content="center">(.*?)<\/g>/s,
+      /<g data-linkedin-safe-content="center"[^>]*>(.*?)<\/g>/s,
     )?.[1];
     assert.ok(safeContent);
     assert.doesNotMatch(safeContent, /<circle/);

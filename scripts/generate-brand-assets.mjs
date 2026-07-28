@@ -151,8 +151,8 @@ function createLinkedInBannerSvg({ variant, themeName }) {
   const width = company ? 1128 : 1584;
   const height = company ? 191 : 396;
   const fieldDiameter = company ? 310 : 650;
-  const fieldX = company ? 858 : 1090;
   const fieldY = company ? -60 : -127;
+  const clearGap = 64;
   const message = company
     ? "Products where agents do real work."
     : "Building agent-native products.";
@@ -163,6 +163,7 @@ function createLinkedInBannerSvg({ variant, themeName }) {
     centerY: height / 2,
     fontSize: company ? 34 : 56,
   });
+  const fieldX = Math.ceil(statement.bounds.x2 + clearGap);
   const decorativeMark = generateLogoSvg({
     ...markOptions(masters.primary, theme.foreground, 0),
     accents: 0,
@@ -173,8 +174,8 @@ function createLinkedInBannerSvg({ variant, themeName }) {
     `<title>Flid LinkedIn ${variant} banner - ${dark ? "dark" : "light"}</title>`,
     `<desc>The statement ${message} with the approved 12-layer Flid field enlarged and cropped on the right.</desc>`,
     `<rect width="${width}" height="${height}" fill="${theme.background}"/>`,
-    `<g data-decorative-field="primary-12-layer" data-placement="right-crop" opacity="${dark ? "0.34" : "0.2"}" transform="translate(${fieldX} ${fieldY}) scale(${fieldDiameter / 100})">${svgArtwork(decorativeMark)}</g>`,
-    `<g data-linkedin-safe-content="center">`,
+    `<g data-decorative-field="primary-12-layer" data-placement="right-crop" data-clear-gap="${clearGap}" opacity="${dark ? "0.34" : "0.2"}" transform="translate(${fieldX} ${fieldY}) scale(${fieldDiameter / 100})">${svgArtwork(decorativeMark)}</g>`,
+    `<g data-linkedin-safe-content="center" data-statement-right="${statement.bounds.x2}">`,
     outlinePath(statement, 'data-positioning-outline="true"'),
     "</g>",
     "</svg>",
