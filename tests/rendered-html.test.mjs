@@ -29,6 +29,7 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.match(html, /assets\/home\.js/i);
   assert.match(html, /mailto:hello@flid\.ai/i);
   assert.match(html, /Flid AI ApS/i);
+  assert.match(html, /Flid AI ApS · CVR 43463217 · Odense, Denmark/i);
   assert.match(html, /Odense · Denmark/i);
   assert.match(
     html,
