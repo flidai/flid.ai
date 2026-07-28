@@ -108,6 +108,16 @@ function svgArtwork(svg) {
     .replace(/<desc>.*?<\/desc>/, "");
 }
 
+function prepareSmallRasterMark(svg, minimumOpacity) {
+  return svg
+    .replaceAll(' vector-effect="non-scaling-stroke"', "")
+    .replace(
+      / opacity="([\d.]+)"/g,
+      (match, opacity) =>
+        ` opacity="${Math.max(Number(opacity), minimumOpacity)}"`,
+    );
+}
+
 function outlinePath(outline, attributes = "") {
   return `<path ${attributes} fill="${outline.fill}" d="${outline.pathData}"/>`;
 }
@@ -308,7 +318,8 @@ This directory is generated from the approved procedural identity in
 - **ICO and fixed-size PNG** files cover browser, app, and touch icons.
 - **Social PNG** files provide 1024px profile images and 1200x630 share cards.
 - **LinkedIn company-logo PNG** files are square, upload-ready, and include an
-  opaque dark or light background.
+  opaque dark or light background. They retain the 12-layer geometry with
+  documented optical compensation for LinkedIn's small rendered thumbnail.
 - **LinkedIn SVG and PNG** files provide company and personal banners in dark
   and light modes.
 
@@ -505,11 +516,34 @@ export async function generateBrandAssets(outputDirectory) {
 
     const linkedInLogoFilename =
       `social/linkedin-company-logo-${suffix}-1024.png`;
+    const linkedInLogoForeground =
+      themeName === "on-dark" ? "#ffffff" : "#000000";
+    const linkedInLogoOpticalCompensation = {
+      artworkRatio: 0.82,
+      strokeWidth: 0.85,
+      minimumOpacity: 0.7,
+      foreground: linkedInLogoForeground,
+    };
+    const linkedInLogoSvg = prepareSmallRasterMark(
+      generateLogoSvg(
+        markOptions(
+          {
+            ...masters.primary,
+            strokeWidth: linkedInLogoOpticalCompensation.strokeWidth,
+          },
+          linkedInLogoForeground,
+          0,
+        ),
+      ),
+      linkedInLogoOpticalCompensation.minimumOpacity,
+    );
     const linkedInLogo = await createSurfacePng({
-      svg: generated.get(`mark-primary-${themeName}`),
+      svg: linkedInLogoSvg,
       width: 1024,
       height: 1024,
-      artworkHeight: 650,
+      artworkHeight: Math.round(
+        1024 * linkedInLogoOpticalCompensation.artworkRatio,
+      ),
       background: theme.background,
     });
     await writeAsset(outputDirectory, linkedInLogoFilename, linkedInLogo);
@@ -527,7 +561,8 @@ export async function generateBrandAssets(outputDirectory) {
           path: assetPath(linkedInLogoFilename),
         }],
       },
-      role: "Upload-ready LinkedIn company page logo with opaque background",
+      role: "Optically compensated LinkedIn company logo with opaque background",
+      opticalCompensation: linkedInLogoOpticalCompensation,
     });
 
     const shareFilename = `social/share-${suffix}-1200x630.png`;

@@ -11,7 +11,8 @@ This directory is generated from the approved procedural identity in
 - **ICO and fixed-size PNG** files cover browser, app, and touch icons.
 - **Social PNG** files provide 1024px profile images and 1200x630 share cards.
 - **LinkedIn company-logo PNG** files are square, upload-ready, and include an
-  opaque dark or light background.
+  opaque dark or light background. They retain the 12-layer geometry with
+  documented optical compensation for LinkedIn's small rendered thumbnail.
 - **LinkedIn SVG and PNG** files provide company and personal banners in dark
   and light modes.
 

@@ -602,7 +602,13 @@
           }
         ]
       },
-      "role": "Upload-ready LinkedIn company page logo with opaque background"
+      "role": "Optically compensated LinkedIn company logo with opaque background",
+      "opticalCompensation": {
+        "artworkRatio": 0.82,
+        "strokeWidth": 0.85,
+        "minimumOpacity": 0.7,
+        "foreground": "#ffffff"
+      }
     },
     {
       "id": "social-share-dark",
@@ -656,7 +662,13 @@
           }
         ]
       },
-      "role": "Upload-ready LinkedIn company page logo with opaque background"
+      "role": "Optically compensated LinkedIn company logo with opaque background",
+      "opticalCompensation": {
+        "artworkRatio": 0.82,
+        "strokeWidth": 0.85,
+        "minimumOpacity": 0.7,
+        "foreground": "#000000"
+      }
     },
     {
       "id": "social-share-light",

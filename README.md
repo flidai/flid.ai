@@ -89,7 +89,8 @@ Every site build independently regenerates the same package in
 - LinkedIn company (1128x191) and personal (1584x396) banners are included in
   dark and light modes, with editable SVG sources and upload-ready PNG files.
 - Square LinkedIn company-logo PNGs are included with opaque dark and light
-  backgrounds so social platforms cannot replace the intended canvas.
+  backgrounds and documented small-format optical compensation, so the
+  12-layer geometry remains legible after platform scaling.
 - The pinned Geist source and SIL Open Font License live in `vendor/geist/`.
 - `dist/brand-assets/manifest.json` records status, theme, master, minimum size,
   and intended role for every export.

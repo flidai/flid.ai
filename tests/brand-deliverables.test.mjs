@@ -166,6 +166,12 @@ test("includes an opaque dark LinkedIn company logo", async () => {
   assert.ok(asset, "manifest is missing linkedin-company-logo-dark");
   assert.equal(asset.type, "linkedin-logo");
   assert.equal(asset.master, "primary");
+  assert.deepEqual(asset.opticalCompensation, {
+    artworkRatio: 0.82,
+    strokeWidth: 0.85,
+    minimumOpacity: 0.7,
+    foreground: "#ffffff",
+  });
   assert.equal(asset.files.png[0].width, 1024);
   assert.equal(asset.files.png[0].height, 1024);
   assert.equal(
@@ -194,4 +200,26 @@ test("includes an opaque dark LinkedIn company logo", async () => {
   for (let alpha = 3; alpha < data.length; alpha += 4) {
     assert.equal(data[alpha], 255, "LinkedIn logo must not contain transparency");
   }
+
+  const thumbnail = await sharp(png)
+    .resize(68, 68)
+    .removeAlpha()
+    .raw()
+    .toBuffer();
+  let visiblePixels = 0;
+  let maximumContrast = 0;
+  for (let pixel = 0; pixel < thumbnail.length; pixel += 3) {
+    const contrast = Math.max(
+      Math.abs(thumbnail[pixel] - expectedCorner[0]),
+      Math.abs(thumbnail[pixel + 1] - expectedCorner[1]),
+      Math.abs(thumbnail[pixel + 2] - expectedCorner[2]),
+    );
+    if (contrast > 30) visiblePixels += 1;
+    maximumContrast = Math.max(maximumContrast, contrast);
+  }
+  assert.ok(
+    visiblePixels > 300,
+    "LinkedIn logo must remain visible at the platform thumbnail size",
+  );
+  assert.ok(maximumContrast > 120, "LinkedIn logo needs strong local contrast");
 });
