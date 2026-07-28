@@ -112,55 +112,62 @@ function outlinePath(outline, attributes = "") {
   return `<path ${attributes} fill="${outline.fill}" d="${outline.pathData}"/>`;
 }
 
+function generateCenteredTextOutline({
+  text,
+  fill,
+  centerX,
+  centerY,
+  fontSize,
+}) {
+  const measured = generateGeistTextOutline({
+    text,
+    fill,
+    centerY,
+    fontSize,
+  });
+  const measuredCenter = (measured.bounds.x1 + measured.bounds.x2) / 2;
+
+  return generateGeistTextOutline({
+    text,
+    fill,
+    x: centerX - measuredCenter,
+    centerY,
+    fontSize,
+  });
+}
+
 function createLinkedInBannerSvg({ variant, themeName }) {
   const theme = themes[themeName];
   const dark = themeName === "on-dark";
   const company = variant === "company";
   const width = company ? 1128 : 1584;
   const height = company ? 191 : 396;
-  const fieldDiameter = company ? 340 : 640;
-  const fieldX = company ? -72 : -170;
-  const fieldY = company ? -74 : -122;
-  const contentX = company ? 720 : 980;
-  const wordmark = generateGeistWordmarkOutline({
+  const fieldDiameter = company ? 310 : 650;
+  const fieldX = company ? 858 : 1090;
+  const fieldY = company ? -60 : -127;
+  const message = company
+    ? "Products where agents do real work."
+    : "Building agent-native products.";
+  const statement = generateCenteredTextOutline({
+    text: message,
     fill: theme.foreground,
-    x: contentX,
-    centerY: company ? 76 : 147,
-    fontSize: company ? 94 : 145,
-  });
-  const descriptor = generateGeistTextOutline({
-    text: company
-      ? "DATA & ARTIFICIAL INTELLIGENCE"
-      : "Building dependable data systems and AI products.",
-    fill: theme.foregroundMuted,
-    x: contentX + (company ? 0 : 4),
-    centerY: company ? 141 : 270,
-    fontSize: company ? 15 : 22,
-  });
-  const domain = generateGeistTextOutline({
-    text: "flid.ai",
-    fill: theme.foregroundMuted,
-    x: company ? contentX : contentX + 4,
-    centerY: company ? 169 : 337,
-    fontSize: company ? 13 : 18,
+    centerX: company ? 530 : 740,
+    centerY: height / 2,
+    fontSize: company ? 34 : 56,
   });
   const decorativeMark = generateLogoSvg({
-    ...markOptions(masters.primary, theme.foregroundMuted, 0),
+    ...markOptions(masters.primary, theme.foreground, 0),
     accents: 0,
   });
-  const dividerX = company ? 610 : 800;
 
   return [
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" role="img" data-linkedin-banner="${variant}" data-color-mode="${dark ? "dark" : "light"}">`,
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" role="img" data-linkedin-banner="${variant}" data-color-mode="${dark ? "dark" : "light"}" data-message="${message}">`,
     `<title>Flid LinkedIn ${variant} banner - ${dark ? "dark" : "light"}</title>`,
-    `<desc>A cropped procedural field on the left with the Flid wordmark and positioning statement in the safe area on the right.</desc>`,
+    `<desc>The statement ${message} with the approved 12-layer Flid field enlarged and cropped on the right.</desc>`,
     `<rect width="${width}" height="${height}" fill="${theme.background}"/>`,
-    `<g data-decorative-field="primary-12-layer" opacity="${dark ? "0.78" : "0.82"}" transform="translate(${fieldX} ${fieldY}) scale(${fieldDiameter / 100})">${svgArtwork(decorativeMark)}</g>`,
-    `<rect x="${dividerX}" y="${company ? 32 : 70}" width="1" height="${company ? 127 : 256}" fill="${theme.border}" opacity="0.52"/>`,
-    `<g data-linkedin-safe-content="right">`,
-    outlinePath(wordmark, 'data-wordmark-outline="flid"'),
-    outlinePath(descriptor, 'data-positioning-outline="true"'),
-    outlinePath(domain, 'data-domain-outline="flid.ai"'),
+    `<g data-decorative-field="primary-12-layer" data-placement="right-crop" opacity="${dark ? "0.34" : "0.2"}" transform="translate(${fieldX} ${fieldY}) scale(${fieldDiameter / 100})">${svgArtwork(decorativeMark)}</g>`,
+    `<g data-linkedin-safe-content="center">`,
+    outlinePath(statement, 'data-positioning-outline="true"'),
     "</g>",
     "</svg>",
   ].join("");
@@ -583,7 +590,7 @@ export async function generateBrandAssets(outputDirectory) {
         role: variant === "company"
           ? "LinkedIn company page banner"
           : "LinkedIn personal profile banner",
-        safeContentArea: "Right-hand field; keep the lower-left clear",
+        safeContentArea: "Centered statement; keep the lower-left clear",
       });
     }
   }

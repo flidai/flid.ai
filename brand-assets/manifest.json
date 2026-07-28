@@ -694,7 +694,7 @@
         ]
       },
       "role": "LinkedIn company page banner",
-      "safeContentArea": "Right-hand field; keep the lower-left clear"
+      "safeContentArea": "Centered statement; keep the lower-left clear"
     },
     {
       "id": "linkedin-company-light",
@@ -714,7 +714,7 @@
         ]
       },
       "role": "LinkedIn company page banner",
-      "safeContentArea": "Right-hand field; keep the lower-left clear"
+      "safeContentArea": "Centered statement; keep the lower-left clear"
     },
     {
       "id": "linkedin-personal-dark",
@@ -734,7 +734,7 @@
         ]
       },
       "role": "LinkedIn personal profile banner",
-      "safeContentArea": "Right-hand field; keep the lower-left clear"
+      "safeContentArea": "Centered statement; keep the lower-left clear"
     },
     {
       "id": "linkedin-personal-light",
@@ -754,7 +754,7 @@
         ]
       },
       "role": "LinkedIn personal profile banner",
-      "safeContentArea": "Right-hand field; keep the lower-left clear"
+      "safeContentArea": "Centered statement; keep the lower-left clear"
     }
   ]
 }

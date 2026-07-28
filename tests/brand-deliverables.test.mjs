@@ -126,24 +126,34 @@ test("includes company and personal LinkedIn banners in both color modes", async
     const svg = (
       await read(`dist/${asset.files.svg.slice(1)}`)
     ).toString("utf8");
-    assert.match(svg, /data-linkedin-safe-content/);
+    assert.match(svg, /data-linkedin-safe-content="center"/);
     const safeContent = svg.match(
-      /<g data-linkedin-safe-content="right">(.*?)<\/g>/s,
+      /<g data-linkedin-safe-content="center">(.*?)<\/g>/s,
     )?.[1];
     assert.ok(safeContent);
     assert.doesNotMatch(safeContent, /<circle/);
-    assert.match(safeContent, /data-domain-outline="flid\.ai"/);
+    assert.match(safeContent, /data-positioning-outline="true"/);
+    assert.doesNotMatch(svg, /data-domain-outline|data-wordmark-outline|data-divider/);
     assert.doesNotMatch(svg, /<text|font-family/);
   }
 
-  const darkCompany = (
-    await read(
-      "dist/brand-assets/social/linkedin-company-dark-1128x191.svg",
-    )
-  ).toString("utf8");
+  const [darkCompany, darkPersonal] = await Promise.all([
+    read("dist/brand-assets/social/linkedin-company-dark-1128x191.svg")
+      .then((buffer) => buffer.toString("utf8")),
+    read("dist/brand-assets/social/linkedin-personal-dark-1584x396.svg")
+      .then((buffer) => buffer.toString("utf8")),
+  ]);
   assert.match(
     darkCompany,
-    /data-decorative-field="primary-12-layer" opacity="0\.(?:7|8|9)/,
+    /data-message="Products where agents do real work\."/,
+  );
+  assert.match(
+    darkPersonal,
+    /data-message="Building agent-native products\."/,
+  );
+  assert.match(
+    darkCompany,
+    /data-decorative-field="primary-12-layer" data-placement="right-crop"/,
   );
 });
 
