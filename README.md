@@ -91,8 +91,8 @@ Every site build independently regenerates the same package in
 ## GitHub Pages
 
 `.github/workflows/pages.yml` tests, builds, and deploys `dist/` whenever
-`main` is pushed. The build consumes the base path reported by GitHub Pages, so
-it works both as a project site and later at the custom `flid.ai` domain.
+`main` is pushed. The deployment builds with root-relative URLs for the
+configured `flid.ai` custom domain.
 
 Before the first deployment:
 
