@@ -35,6 +35,7 @@ test("provides an official artifact-based GitHub Pages workflow", async () => {
   );
 
   assert.match(workflow, /actions\/configure-pages@v5/);
+  assert.match(workflow, /enablement:\s*true/);
   assert.match(workflow, /actions\/upload-pages-artifact@v5/);
   assert.match(workflow, /actions\/deploy-pages@v4/);
   assert.match(workflow, /SITE_BASE_PATH:.*base_path/);
