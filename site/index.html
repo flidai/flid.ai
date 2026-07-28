@@ -48,12 +48,13 @@
               <a class="button button-secondary" href="#thesis">What agent-native means <span aria-hidden="true">↓</span></a>
             </div>
           </div>
-          <div class="hero-signal" aria-hidden="true">
+          <div class="hero-signal" data-signal-field aria-hidden="true">
             <span class="signal-orbit signal-orbit-outer"></span>
             <span class="signal-orbit signal-orbit-inner"></span>
-            <img src="/brand-assets/mark-primary-on-dark.svg" alt="">
-            <span class="signal-node signal-node-one"></span>
-            <span class="signal-node signal-node-two"></span>
+            <img class="signal-static-mark" src="/brand-assets/mark-primary-on-dark.svg" alt="">
+            <span class="signal-field" data-signal-canvas></span>
+            <span class="signal-node-path signal-node-path-outer"><span class="signal-node"></span></span>
+            <span class="signal-node-path signal-node-path-inner"><span class="signal-node"></span></span>
           </div>
         </div>
         <div class="site-shell hero-meta">
@@ -174,5 +175,6 @@
         </div>
       </footer>
     </main>
+    <script type="module" src="/assets/home.js"></script>
   </body>
 </html>

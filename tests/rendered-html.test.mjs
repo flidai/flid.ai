@@ -9,7 +9,11 @@ async function readBuiltPage(pathname) {
 }
 
 test("builds the Flid public site at the root as plain HTML", async () => {
-  const html = await readBuiltPage("index.html");
+  const [html, script, styles] = await Promise.all([
+    readBuiltPage("index.html"),
+    readBuiltPage("assets/home.js"),
+    readBuiltPage("assets/home.css"),
+  ]);
 
   assert.match(html, /<title>Flid — Agent-native product lab<\/title>/i);
   assert.match(html, /We build products where agents do real work/i);
@@ -21,8 +25,17 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.match(html, /Jacob Østergaard/i);
   assert.match(html, /jacob-oestergaard\.webp/i);
   assert.match(html, /leapview-dashboard-dark\.png/i);
+  assert.match(html, /data-signal-field/i);
+  assert.match(html, /assets\/home\.js/i);
   assert.match(html, /mailto:hello@flid\.ai/i);
   assert.match(html, /Flid AI ApS/i);
+  assert.match(script, /layers:\s*12/);
+  assert.match(script, /curl:\s*0\.88/);
+  assert.match(script, /strokeWidth:\s*0\.58/);
+  assert.match(script, /matchMedia\(["']\(prefers-reduced-motion: reduce\)["']\)/);
+  assert.match(script, /IntersectionObserver/);
+  assert.match(script, /requestAnimationFrame/);
+  assert.match(styles, /@keyframes signal-node-orbit/);
   assert.doesNotMatch(
     html,
     /Data foundations|Decision systems|Small team\.<br>Direct collaboration/i,

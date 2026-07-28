@@ -36,6 +36,9 @@ no application framework or runtime dependency.
 - `site/index.html` is the public one-page product-lab site. It presents the
   agent-native thesis, LeapView flagship product, selective field work, and
   founder.
+- `site/assets/home.js` progressively enhances the hero with the canonical
+  12-layer signal model. The approved static mark remains the no-script and
+  reduced-motion fallback.
 - `site/brand/` is the canonical brand guide and asset reference.
 - `site/showcase/` and `site/generator/` are supporting identity tools.
 - `site/assets/images/leapview-dashboard-dark.png` is the committed LeapView

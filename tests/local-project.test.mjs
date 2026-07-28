@@ -61,9 +61,12 @@ test("keeps the procedural identity independent and shared", async () => {
 
 test("keeps the public site at the root and the brand guide as a reference", async () => {
   await access(new URL("site/brand/index.html", root));
-  await assert.rejects(access(new URL("site/assets/home.js", root)));
+  await access(new URL("site/assets/home.js", root));
 
-  const rootPage = await readFile(new URL("site/index.html", root), "utf8");
+  const [rootPage, homeScript] = await Promise.all([
+    readFile(new URL("site/index.html", root), "utf8"),
+    readFile(new URL("site/assets/home.js", root), "utf8"),
+  ]);
   const brandPage = await readFile(
     new URL("site/brand/index.html", root),
     "utf8",
@@ -71,5 +74,7 @@ test("keeps the public site at the root and the brand guide as a reference", asy
 
   assert.match(rootPage, /We build products where agents do real work/i);
   assert.doesNotMatch(rootPage, /href="\/brand\/?"/);
+  assert.match(homeScript, /logo-generator\.mjs/);
+  assert.doesNotMatch(homeScript, /React|Next|jsx|tsx/);
   assert.match(brandPage, /The source of truth for the Flid identity/i);
 });
