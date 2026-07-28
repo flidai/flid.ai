@@ -38,7 +38,7 @@
       "type": "mark",
       "master": "essential",
       "theme": "on-dark",
-      "status": "approved",
+      "status": "reference",
       "path": "/brand-assets/mark-essential-on-dark.svg",
       "files": {
         "svg": "/brand-assets/mark-essential-on-dark.svg",
@@ -66,7 +66,7 @@
       },
       "layers": 8,
       "minimumSize": 16,
-      "role": "Small icons and navigation below 64px",
+      "role": "Archived 8-layer exploration; not for production use",
       "artworkBox": "tight"
     },
     {
@@ -74,7 +74,7 @@
       "type": "lockup",
       "master": "essential",
       "theme": "on-dark",
-      "status": "approved",
+      "status": "reference",
       "path": "/brand-assets/lockup-essential-on-dark.svg",
       "files": {
         "svg": "/brand-assets/lockup-essential-on-dark.svg",
@@ -102,7 +102,7 @@
       },
       "layers": 8,
       "minimumSize": 16,
-      "role": "Small icons and navigation below 64px",
+      "role": "Archived 8-layer exploration; not for production use",
       "gapRatio": 0.2,
       "wordmarkStatus": "Approved",
       "typeface": {
@@ -118,7 +118,7 @@
       "type": "mark",
       "master": "essential",
       "theme": "on-light",
-      "status": "approved",
+      "status": "reference",
       "path": "/brand-assets/mark-essential-on-light.svg",
       "files": {
         "svg": "/brand-assets/mark-essential-on-light.svg",
@@ -146,7 +146,7 @@
       },
       "layers": 8,
       "minimumSize": 16,
-      "role": "Small icons and navigation below 64px",
+      "role": "Archived 8-layer exploration; not for production use",
       "artworkBox": "tight"
     },
     {
@@ -154,7 +154,7 @@
       "type": "lockup",
       "master": "essential",
       "theme": "on-light",
-      "status": "approved",
+      "status": "reference",
       "path": "/brand-assets/lockup-essential-on-light.svg",
       "files": {
         "svg": "/brand-assets/lockup-essential-on-light.svg",
@@ -182,7 +182,7 @@
       },
       "layers": 8,
       "minimumSize": 16,
-      "role": "Small icons and navigation below 64px",
+      "role": "Archived 8-layer exploration; not for production use",
       "gapRatio": 0.2,
       "wordmarkStatus": "Approved",
       "typeface": {
@@ -226,7 +226,7 @@
       },
       "layers": 12,
       "minimumSize": 64,
-      "role": "Default identity mark",
+      "role": "The sole approved Flid identity mark",
       "artworkBox": "tight"
     },
     {
@@ -262,7 +262,7 @@
       },
       "layers": 12,
       "minimumSize": 64,
-      "role": "Default identity mark",
+      "role": "The sole approved Flid identity mark",
       "gapRatio": 0.2,
       "wordmarkStatus": "Approved",
       "typeface": {
@@ -306,7 +306,7 @@
       },
       "layers": 12,
       "minimumSize": 64,
-      "role": "Default identity mark",
+      "role": "The sole approved Flid identity mark",
       "artworkBox": "tight"
     },
     {
@@ -342,7 +342,7 @@
       },
       "layers": 12,
       "minimumSize": 64,
-      "role": "Default identity mark",
+      "role": "The sole approved Flid identity mark",
       "gapRatio": 0.2,
       "wordmarkStatus": "Approved",
       "typeface": {
@@ -358,7 +358,7 @@
       "type": "mark",
       "master": "full",
       "theme": "on-dark",
-      "status": "approved",
+      "status": "reference",
       "path": "/brand-assets/mark-full-on-dark.svg",
       "files": {
         "svg": "/brand-assets/mark-full-on-dark.svg",
@@ -386,7 +386,7 @@
       },
       "layers": 16,
       "minimumSize": 144,
-      "role": "Display and editorial use",
+      "role": "Archived 16-layer exploration; not for production use",
       "artworkBox": "tight"
     },
     {
@@ -394,7 +394,7 @@
       "type": "lockup",
       "master": "full",
       "theme": "on-dark",
-      "status": "approved",
+      "status": "reference",
       "path": "/brand-assets/lockup-full-on-dark.svg",
       "files": {
         "svg": "/brand-assets/lockup-full-on-dark.svg",
@@ -422,7 +422,7 @@
       },
       "layers": 16,
       "minimumSize": 144,
-      "role": "Display and editorial use",
+      "role": "Archived 16-layer exploration; not for production use",
       "gapRatio": 0.2,
       "wordmarkStatus": "Approved",
       "typeface": {
@@ -438,7 +438,7 @@
       "type": "mark",
       "master": "full",
       "theme": "on-light",
-      "status": "approved",
+      "status": "reference",
       "path": "/brand-assets/mark-full-on-light.svg",
       "files": {
         "svg": "/brand-assets/mark-full-on-light.svg",
@@ -466,7 +466,7 @@
       },
       "layers": 16,
       "minimumSize": 144,
-      "role": "Display and editorial use",
+      "role": "Archived 16-layer exploration; not for production use",
       "artworkBox": "tight"
     },
     {
@@ -474,7 +474,7 @@
       "type": "lockup",
       "master": "full",
       "theme": "on-light",
-      "status": "approved",
+      "status": "reference",
       "path": "/brand-assets/lockup-full-on-light.svg",
       "files": {
         "svg": "/brand-assets/lockup-full-on-light.svg",
@@ -502,7 +502,7 @@
       },
       "layers": 16,
       "minimumSize": 144,
-      "role": "Display and editorial use",
+      "role": "Archived 16-layer exploration; not for production use",
       "gapRatio": 0.2,
       "wordmarkStatus": "Approved",
       "typeface": {
@@ -516,7 +516,7 @@
     {
       "id": "favicon",
       "type": "icon",
-      "master": "essential",
+      "master": "primary",
       "theme": "adaptive",
       "status": "approved",
       "path": "/brand-assets/favicon.svg",
@@ -563,7 +563,7 @@
           }
         ]
       },
-      "layers": 8,
+      "layers": 12,
       "minimumSize": 16,
       "role": "Browser, app, and touch icon",
       "exportSafetyPadding": 8
@@ -585,6 +585,24 @@
         ]
       },
       "role": "Social profile image"
+    },
+    {
+      "id": "linkedin-company-logo-dark",
+      "type": "linkedin-logo",
+      "master": "primary",
+      "theme": "on-dark",
+      "status": "approved",
+      "path": "/brand-assets/social/linkedin-company-logo-dark-1024.png",
+      "files": {
+        "png": [
+          {
+            "width": 1024,
+            "height": 1024,
+            "path": "/brand-assets/social/linkedin-company-logo-dark-1024.png"
+          }
+        ]
+      },
+      "role": "Upload-ready LinkedIn company page logo with opaque background"
     },
     {
       "id": "social-share-dark",
@@ -623,6 +641,24 @@
       "role": "Social profile image"
     },
     {
+      "id": "linkedin-company-logo-light",
+      "type": "linkedin-logo",
+      "master": "primary",
+      "theme": "on-light",
+      "status": "approved",
+      "path": "/brand-assets/social/linkedin-company-logo-light-1024.png",
+      "files": {
+        "png": [
+          {
+            "width": 1024,
+            "height": 1024,
+            "path": "/brand-assets/social/linkedin-company-logo-light-1024.png"
+          }
+        ]
+      },
+      "role": "Upload-ready LinkedIn company page logo with opaque background"
+    },
+    {
       "id": "social-share-light",
       "type": "social",
       "master": "primary",
@@ -643,7 +679,7 @@
     {
       "id": "linkedin-company-dark",
       "type": "linkedin",
-      "master": "full",
+      "master": "primary",
       "theme": "on-dark",
       "status": "approved",
       "path": "/brand-assets/social/linkedin-company-dark-1128x191.png",
@@ -663,7 +699,7 @@
     {
       "id": "linkedin-company-light",
       "type": "linkedin",
-      "master": "full",
+      "master": "primary",
       "theme": "on-light",
       "status": "approved",
       "path": "/brand-assets/social/linkedin-company-light-1128x191.png",
@@ -683,7 +719,7 @@
     {
       "id": "linkedin-personal-dark",
       "type": "linkedin",
-      "master": "full",
+      "master": "primary",
       "theme": "on-dark",
       "status": "approved",
       "path": "/brand-assets/social/linkedin-personal-dark-1584x396.png",
@@ -703,7 +739,7 @@
     {
       "id": "linkedin-personal-light",
       "type": "linkedin",
-      "master": "full",
+      "master": "primary",
       "theme": "on-light",
       "status": "approved",
       "path": "/brand-assets/social/linkedin-personal-light-1584x396.png",

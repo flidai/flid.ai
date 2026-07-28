@@ -14,36 +14,36 @@ const primary = {
 const logoVariations = [
   {
     id: "full",
-    name: "Full",
+    name: "Full study",
     detail: "16 layers · 240 marks",
-    range: "144px and above",
-    use: "Display · editorial · environments",
+    range: "Archived exploration",
+    use: "Reference only · not for production",
     options: { layers: 16, strokeWidth: 0.42, accents: 3 },
   },
   {
     id: "reduced",
-    name: "Reduced",
+    name: "Primary",
     detail: "12 layers · 135 marks",
-    range: "64–143px",
-    use: "Primary lockup · product · documents",
+    range: "All production sizes",
+    use: "Approved · all brand applications",
     options: { layers: 12, strokeWidth: 0.58, accents: 0 },
   },
   {
     id: "essential",
-    name: "Essential",
+    name: "Essential study",
     detail: "8 layers · 60 marks",
-    range: "16–63px",
-    use: "Navigation · app icon · small surfaces",
+    range: "Archived exploration",
+    use: "Reference only · not for production",
     options: { layers: 8, strokeWidth: 0.7, accents: 0 },
   },
 ];
 
 const scaleSteps = [
-  { size: 24, wordmarkSize: 17, variation: logoVariations[2] },
-  { size: 40, wordmarkSize: 26, variation: logoVariations[2] },
+  { size: 24, wordmarkSize: 17, variation: logoVariations[1] },
+  { size: 40, wordmarkSize: 26, variation: logoVariations[1] },
   { size: 64, wordmarkSize: 38, variation: logoVariations[1] },
   { size: 96, wordmarkSize: 54, variation: logoVariations[1] },
-  { size: 144, wordmarkSize: 76, variation: logoVariations[0] },
+  { size: 144, wordmarkSize: 76, variation: logoVariations[1] },
 ];
 
 function mark(options = {}, className = "") {
@@ -220,7 +220,7 @@ document.querySelector("[data-scale-board]").innerHTML = scaleSteps
       <article class="scale-sample">
         <header><strong>${size}px</strong><span>${variation.name} · ${variation.options.layers}L</span></header>
         <div class="scale-lockup" style="--scale-mark-size:${size}px;--scale-wordmark-size:${wordmarkSize}px">
-          ${mark({ ...variation.options, padding: variation.id === "reduced" ? 10 : 8 })}
+          ${mark({ ...variation.options, padding: 10 })}
           ${wordmark({ inverse: true })}
         </div>
         <span>${variation.range}</span>

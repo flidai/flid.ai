@@ -25,7 +25,8 @@ const masters = Object.freeze({
     accents: 0,
     minimumSize: 16,
     pngBaseSize: 32,
-    role: "Small icons and navigation below 64px",
+    status: "reference",
+    role: "Archived 8-layer exploration; not for production use",
   }),
   primary: Object.freeze({
     layers: 12,
@@ -33,7 +34,8 @@ const masters = Object.freeze({
     accents: 0,
     minimumSize: 64,
     pngBaseSize: 128,
-    role: "Default identity mark",
+    status: "approved",
+    role: "The sole approved Flid identity mark",
   }),
   full: Object.freeze({
     layers: 16,
@@ -41,7 +43,8 @@ const masters = Object.freeze({
     accents: 3,
     minimumSize: 144,
     pngBaseSize: 256,
-    role: "Display and editorial use",
+    status: "reference",
+    role: "Archived 16-layer exploration; not for production use",
   }),
 });
 
@@ -80,7 +83,7 @@ function markOptions(master, foreground, padding = 0) {
   };
 }
 
-function createLockupSvg(markSvg, foreground, masterName) {
+function createLockupSvg(markSvg, foreground, masterName, status) {
   const nestedMark = markSvg.replace(
     'role="img"',
     'x="0" y="0" width="100" height="100" aria-hidden="true" focusable="false"',
@@ -88,9 +91,9 @@ function createLockupSvg(markSvg, foreground, masterName) {
   const wordmark = generateGeistWordmarkOutline({ fill: foreground });
 
   return [
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${wordmark.viewBoxWidth} 100" role="img" data-status="approved" data-gap-ratio="${geistWordmark.gapRatio}" data-wordmark-typeface="${geistWordmark.family}" data-wordmark-weight="${geistWordmark.weight}">`,
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${wordmark.viewBoxWidth} 100" role="img" data-status="${status}" data-gap-ratio="${geistWordmark.gapRatio}" data-wordmark-typeface="${geistWordmark.family}" data-wordmark-weight="${geistWordmark.weight}">`,
     `<title>Flid ${masterName} horizontal lockup</title>`,
-    `<desc>The approved procedural mark paired with the lowercase Flid wordmark set in ${geistWordmark.family} SemiBold and converted to vector outlines.</desc>`,
+    `<desc>The ${status === "approved" ? "approved" : "archived"} procedural mark paired with the lowercase Flid wordmark set in ${geistWordmark.family} SemiBold and converted to vector outlines.</desc>`,
     nestedMark,
     `<path data-wordmark-outline="flid" fill="${wordmark.fill}" d="${wordmark.pathData}"/>`,
     "</svg>",
@@ -142,7 +145,7 @@ function createLinkedInBannerSvg({ variant, themeName }) {
     fontSize: company ? 13 : 18,
   });
   const decorativeMark = generateLogoSvg({
-    ...markOptions(masters.full, theme.foregroundMuted, 0),
+    ...markOptions(masters.primary, theme.foregroundMuted, 0),
     accents: 0,
   });
   const dividerX = company ? 610 : 800;
@@ -152,7 +155,7 @@ function createLinkedInBannerSvg({ variant, themeName }) {
     `<title>Flid LinkedIn ${variant} banner - ${dark ? "dark" : "light"}</title>`,
     `<desc>A cropped procedural field on the left with the Flid wordmark and positioning statement in the safe area on the right.</desc>`,
     `<rect width="${width}" height="${height}" fill="${theme.background}"/>`,
-    `<g data-decorative-field="full-16-layer" opacity="${dark ? "0.78" : "0.82"}" transform="translate(${fieldX} ${fieldY}) scale(${fieldDiameter / 100})">${svgArtwork(decorativeMark)}</g>`,
+    `<g data-decorative-field="primary-12-layer" opacity="${dark ? "0.78" : "0.82"}" transform="translate(${fieldX} ${fieldY}) scale(${fieldDiameter / 100})">${svgArtwork(decorativeMark)}</g>`,
     `<rect x="${dividerX}" y="${company ? 32 : 70}" width="1" height="${company ? 127 : 256}" fill="${theme.border}" opacity="0.52"/>`,
     `<g data-linkedin-safe-content="right">`,
     outlinePath(wordmark, 'data-wordmark-outline="flid"'),
@@ -297,14 +300,16 @@ This directory is generated from the approved procedural identity in
 - **PDF** exports remain vector for print and production workflows.
 - **ICO and fixed-size PNG** files cover browser, app, and touch icons.
 - **Social PNG** files provide 1024px profile images and 1200x630 share cards.
+- **LinkedIn company-logo PNG** files are square, upload-ready, and include an
+  opaque dark or light background.
 - **LinkedIn SVG and PNG** files provide company and personal banners in dark
   and light modes.
 
-## Choosing a master
+## Production master
 
-- **Essential / 8 layers:** icons and navigation below 64px.
-- **Primary / 12 layers:** the default Flid identity.
-- **Full / 16 layers:** large display and editorial use from 144px.
+- **Primary / 12 layers:** the sole approved Flid identity at every size.
+- **Essential / 8 layers** and **Full / 16 layers** are retained only as an
+  archive of the design process. Do not use them in production.
 
 Use \`on-dark\` artwork on dark surfaces and \`on-light\` artwork on light
 surfaces. Preserve the 0.20D mark-to-word gap and 0.25D clear space encoded in
@@ -343,7 +348,7 @@ export async function generateBrandAssets(outputDirectory) {
         type: "mark",
         master: masterName,
         theme: themeName,
-        status: "approved",
+        status: master.status,
         path: markFiles.svg,
         files: markFiles,
         layers: master.layers,
@@ -357,6 +362,7 @@ export async function generateBrandAssets(outputDirectory) {
         markSvg,
         theme.foreground,
         masterName,
+        master.status,
       );
       const lockupFiles = await exportLogoFiles({
         outputDirectory,
@@ -371,7 +377,7 @@ export async function generateBrandAssets(outputDirectory) {
         type: "lockup",
         master: masterName,
         theme: themeName,
-        status: "approved",
+        status: master.status,
         path: lockupFiles.svg,
         files: lockupFiles,
         layers: master.layers,
@@ -385,7 +391,7 @@ export async function generateBrandAssets(outputDirectory) {
   }
 
   const faviconSvg = generateLogoSvg(
-    markOptions(masters.essential, primerColors.dark.accent, 8),
+    markOptions(masters.primary, primerColors.dark.accent, 8),
   );
   const faviconSvgFilename = "favicon.svg";
   await writeAsset(outputDirectory, faviconSvgFilename, faviconSvg);
@@ -445,7 +451,7 @@ export async function generateBrandAssets(outputDirectory) {
   assets.push({
     id: "favicon",
     type: "icon",
-    master: "essential",
+    master: "primary",
     theme: "adaptive",
     status: "approved",
     path: assetPath(faviconSvgFilename),
@@ -455,7 +461,7 @@ export async function generateBrandAssets(outputDirectory) {
       webmanifest: assetPath(webmanifestFilename),
       png: faviconPng,
     },
-    layers: masters.essential.layers,
+    layers: masters.primary.layers,
     minimumSize: 16,
     role: "Browser, app, and touch icon",
     exportSafetyPadding: 8,
@@ -488,6 +494,33 @@ export async function generateBrandAssets(outputDirectory) {
         }],
       },
       role: "Social profile image",
+    });
+
+    const linkedInLogoFilename =
+      `social/linkedin-company-logo-${suffix}-1024.png`;
+    const linkedInLogo = await createSurfacePng({
+      svg: generated.get(`mark-primary-${themeName}`),
+      width: 1024,
+      height: 1024,
+      artworkHeight: 650,
+      background: theme.background,
+    });
+    await writeAsset(outputDirectory, linkedInLogoFilename, linkedInLogo);
+    assets.push({
+      id: `linkedin-company-logo-${suffix}`,
+      type: "linkedin-logo",
+      master: "primary",
+      theme: themeName,
+      status: "approved",
+      path: assetPath(linkedInLogoFilename),
+      files: {
+        png: [{
+          width: 1024,
+          height: 1024,
+          path: assetPath(linkedInLogoFilename),
+        }],
+      },
+      role: "Upload-ready LinkedIn company page logo with opaque background",
     });
 
     const shareFilename = `social/share-${suffix}-1200x630.png`;
@@ -535,7 +568,7 @@ export async function generateBrandAssets(outputDirectory) {
       assets.push({
         id,
         type: "linkedin",
-        master: "full",
+        master: "primary",
         theme: themeName,
         status: "approved",
         path: assetPath(pngFilename),

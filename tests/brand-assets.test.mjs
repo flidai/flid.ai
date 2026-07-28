@@ -41,9 +41,10 @@ test("builds a versioned canonical brand asset library", async () => {
 });
 
 test("exports approved Geist lockups as portable vector outlines", async () => {
-  const [mark, lockup] = await Promise.all([
+  const [mark, lockup, archivedLockup] = await Promise.all([
     readBuilt("brand-assets/mark-primary-on-dark.svg"),
     readBuilt("brand-assets/lockup-primary-on-dark.svg"),
+    readBuilt("brand-assets/lockup-essential-on-dark.svg"),
   ]);
 
   assert.match(mark, /viewBox="0 0 100 100"/);
@@ -56,12 +57,16 @@ test("exports approved Geist lockups as portable vector outlines", async () => {
   assert.match(lockup, /data-wordmark-weight="600"/);
   assert.match(lockup, /<path[^>]+data-wordmark-outline/);
   assert.doesNotMatch(lockup, /<text|font-family|textLength/);
+  assert.match(archivedLockup, /data-status="reference"/);
+  assert.doesNotMatch(archivedLockup, /data-status="approved"/);
 });
 
 test("makes the guide consume generated assets instead of regenerating marks", async () => {
-  const [html, script] = await Promise.all([
+  const [html, script, home, brandSystemSource] = await Promise.all([
     readBuilt("brand/index.html"),
     readBuilt("assets/brand.js"),
+    readBuilt("index.html"),
+    readBuilt("lib/brand-system.mjs"),
   ]);
 
   assert.match(
@@ -72,11 +77,49 @@ test("makes the guide consume generated assets instead of regenerating marks", a
     html,
     /src="\/brand-assets\/lockup-primary-on-light\.svg"/,
   );
-  assert.match(
-    html,
-    /src="\/brand-assets\/lockup-essential-on-dark\.svg"/,
-  );
+  assert.doesNotMatch(html, /lockup-(?:essential|full)-on-/);
+  assert.doesNotMatch(home, /lockup-(?:essential|full)-on-/);
   assert.match(html, /CANONICAL ASSET LIBRARY/);
+  assert.match(html, /Never substitute another layer count/i);
+  assert.doesNotMatch(html, /Switch to Essential/i);
   assert.match(script, /fetch\(["']\/brand-assets\/manifest\.json["']\)/);
+  assert.match(script, /asset\.status === "approved"/);
   assert.doesNotMatch(script, /generateLogoSvg|data-brand-mark/);
+  assert.doesNotMatch(brandSystemSource, /layers:\s*(?:8|16)/);
+});
+
+test("uses the 12-layer primary mark for every production asset", async () => {
+  const manifest = JSON.parse(
+    await readBuilt("brand-assets/manifest.json"),
+  );
+  const logoAssets = manifest.assets.filter(
+    (asset) => asset.type === "mark" || asset.type === "lockup",
+  );
+  const approvedLogoAssets = logoAssets.filter(
+    (asset) => asset.status === "approved",
+  );
+  const referenceLogoAssets = logoAssets.filter(
+    (asset) => asset.status === "reference",
+  );
+
+  assert.ok(approvedLogoAssets.length > 0);
+  assert.ok(referenceLogoAssets.length > 0);
+  assert.deepEqual(
+    new Set(approvedLogoAssets.map((asset) => asset.master)),
+    new Set(["primary"]),
+  );
+  assert.ok(
+    referenceLogoAssets.every(
+      (asset) => asset.master === "essential" || asset.master === "full",
+    ),
+  );
+
+  for (const type of ["icon", "social", "linkedin", "linkedin-logo"]) {
+    const productionAssets = manifest.assets.filter((asset) => asset.type === type);
+    assert.ok(productionAssets.length > 0, `manifest is missing ${type} assets`);
+    assert.ok(
+      productionAssets.every((asset) => asset.master === "primary"),
+      `${type} assets must use the primary master`,
+    );
+  }
 });

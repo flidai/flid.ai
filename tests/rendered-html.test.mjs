@@ -85,7 +85,8 @@ test("builds the logo showcase without an application framework", async () => {
   ]);
 
   assert.match(html, /<title>Logo Showcase — Flid<\/title>/i);
-  assert.match(html, /One identity\. Nine useful lockups/i);
+  assert.match(html, /One identity\. Its design history/i);
+  assert.match(html, /sole approved signature/i);
   assert.match(html, /WORDMARK STUDIES/i);
   assert.match(html, /REVERSE STUDIES/i);
   assert.match(html, /LOCKUP SCALE LADDER/i);
@@ -107,7 +108,8 @@ test("builds a normative static brand guide with generator source", async () => 
   assert.match(html, /<title>Brand Guide — Flid<\/title>/i);
   assert.match(html, /The source of truth for the Flid identity/i);
   assert.match(html, /APPROVED PRIMARY LOCKUP/i);
-  assert.match(html, /PRIMARY MINIMUM/i);
+  assert.match(html, /RECOMMENDED MINIMUM/i);
+  assert.match(html, /Never substitute another layer count/i);
   assert.match(html, /Flid AI ApS/i);
   assert.match(html, /Geist/i);
   assert.match(html, /Typeface approved/i);

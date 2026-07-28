@@ -1,11 +1,5 @@
 import { brandSystem } from "/lib/brand-system.mjs";
 
-function masterForReference(reference) {
-  if (reference.layers === 8) return "essential";
-  if (reference.layers === 16) return "full";
-  return "primary";
-}
-
 function findAsset(manifest, { type, master, theme = "on-dark" }) {
   return manifest.assets.find(
     (asset) =>
@@ -19,7 +13,7 @@ function renderScaleReferences(manifest) {
   document.querySelector("[data-brand-scale]").innerHTML =
     brandSystem.scaleReferences
       .map((reference) => {
-        const master = masterForReference(reference);
+        const master = "primary";
         const iconOnly = reference.role === "Small icon only";
         const asset = findAsset(manifest, {
           type: iconOnly ? "mark" : "lockup",
@@ -43,6 +37,7 @@ function renderScaleReferences(manifest) {
 
 function renderAssetLibrary(manifest) {
   document.querySelector("[data-brand-assets]").innerHTML = manifest.assets
+    .filter((asset) => asset.status === "approved")
     .map((asset) => {
       const surface =
         asset.theme === "on-light"

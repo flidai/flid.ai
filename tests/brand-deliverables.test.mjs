@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import sharp from "sharp";
+
+import { primerColors } from "../lib/primer-colors.mjs";
 
 const root = new URL("../", import.meta.url);
 
@@ -140,6 +143,45 @@ test("includes company and personal LinkedIn banners in both color modes", async
   ).toString("utf8");
   assert.match(
     darkCompany,
-    /data-decorative-field="full-16-layer" opacity="0\.(?:7|8|9)/,
+    /data-decorative-field="primary-12-layer" opacity="0\.(?:7|8|9)/,
   );
+});
+
+test("includes an opaque dark LinkedIn company logo", async () => {
+  const manifest = JSON.parse(await read("dist/brand-assets/manifest.json"));
+  const asset = manifest.assets.find(
+    (candidate) => candidate.id === "linkedin-company-logo-dark",
+  );
+
+  assert.ok(asset, "manifest is missing linkedin-company-logo-dark");
+  assert.equal(asset.type, "linkedin-logo");
+  assert.equal(asset.master, "primary");
+  assert.equal(asset.files.png[0].width, 1024);
+  assert.equal(asset.files.png[0].height, 1024);
+  assert.equal(
+    asset.files.png[0].path,
+    "/brand-assets/social/linkedin-company-logo-dark-1024.png",
+  );
+
+  const png = await read(
+    "dist/brand-assets/social/linkedin-company-logo-dark-1024.png",
+  );
+  const { data, info } = await sharp(png)
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  const expectedCorner = [
+    ...Buffer.from(primerColors.dark.canvas.slice(1), "hex"),
+    255,
+  ];
+
+  assert.deepEqual({ width: info.width, height: info.height }, {
+    width: 1024,
+    height: 1024,
+  });
+  assert.deepEqual([...data.subarray(0, 4)], expectedCorner);
+
+  for (let alpha = 3; alpha < data.length; alpha += 4) {
+    assert.equal(data[alpha], 255, "LinkedIn logo must not contain transparency");
+  }
 });

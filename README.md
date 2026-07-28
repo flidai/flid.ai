@@ -74,16 +74,22 @@ Run `npm run assets` whenever the brand specification or generator changes.
 Every site build independently regenerates the same package in
 `dist/brand-assets/`; tests reject drift between the two manifests.
 
-- Mark-only SVGs are approved and use a tight `0 0 100 100` artwork box.
+- The 12-layer open-field mark is the sole approved production identity at
+  every size and on every platform.
+- The 8- and 16-layer variants remain in the package as archived explorations
+  only; they must not substitute for the production mark.
+- The approved mark-only SVG uses a tight `0 0 100 100` artwork box.
 - Clear space belongs to the placement context, not the mark file.
 - Horizontal lockups use Geist SemiBold at weight 600 with native kerning.
 - Wordmarks are converted to vector outlines, so downloaded SVGs do not depend
   on a locally installed font.
-- Every logo family includes SVG, vector PDF, and transparent PNG exports at
-  1x, 2x, and 4x.
+- The approved production family includes SVG, vector PDF, and transparent PNG
+  exports at 1x, 2x, and 4x.
 - Browser, app, touch, profile, and 1200x630 sharing assets are included.
 - LinkedIn company (1128x191) and personal (1584x396) banners are included in
   dark and light modes, with editable SVG sources and upload-ready PNG files.
+- Square LinkedIn company-logo PNGs are included with opaque dark and light
+  backgrounds so social platforms cannot replace the intended canvas.
 - The pinned Geist source and SIL Open Font License live in `vendor/geist/`.
 - `dist/brand-assets/manifest.json` records status, theme, master, minimum size,
   and intended role for every export.

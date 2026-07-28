@@ -36,7 +36,7 @@
   display: block;
 }
 
-.guide-lockup-essential {
+.guide-lockup-compact {
   width: auto;
   height: 32px;
 }
@@ -730,7 +730,7 @@
   align-items: center;
 }
 
-.guide-footer .guide-lockup-essential {
+.guide-footer .guide-lockup-compact {
   height: 38px;
 }
 

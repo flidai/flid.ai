@@ -10,14 +10,16 @@ This directory is generated from the approved procedural identity in
 - **PDF** exports remain vector for print and production workflows.
 - **ICO and fixed-size PNG** files cover browser, app, and touch icons.
 - **Social PNG** files provide 1024px profile images and 1200x630 share cards.
+- **LinkedIn company-logo PNG** files are square, upload-ready, and include an
+  opaque dark or light background.
 - **LinkedIn SVG and PNG** files provide company and personal banners in dark
   and light modes.
 
-## Choosing a master
+## Production master
 
-- **Essential / 8 layers:** icons and navigation below 64px.
-- **Primary / 12 layers:** the default Flid identity.
-- **Full / 16 layers:** large display and editorial use from 144px.
+- **Primary / 12 layers:** the sole approved Flid identity at every size.
+- **Essential / 8 layers** and **Full / 16 layers** are retained only as an
+  archive of the design process. Do not use them in production.
 
 Use `on-dark` artwork on dark surfaces and `on-light` artwork on light
 surfaces. Preserve the 0.20D mark-to-word gap and 0.25D clear space encoded in
