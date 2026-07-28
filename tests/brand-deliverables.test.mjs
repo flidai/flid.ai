@@ -135,10 +135,18 @@ test("includes company and personal LinkedIn banners in both color modes", async
     const statementRight = Number(
       svg.match(/data-statement-right="([\d.]+)"/)?.[1],
     );
+    const statementCenter = Number(
+      svg.match(/data-statement-center="([\d.]+)"/)?.[1],
+    );
     assert.ok(Number.isFinite(fieldStart), "banner must record the field start");
     assert.ok(
       Number.isFinite(statementRight),
       "banner must record the statement boundary",
+    );
+    assert.equal(
+      statementCenter,
+      width / 2,
+      "banner statement must be centered on the full canvas",
     );
     assert.ok(
       fieldStart - statementRight >= 64,

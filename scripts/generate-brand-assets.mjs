@@ -159,7 +159,7 @@ function createLinkedInBannerSvg({ variant, themeName }) {
   const statement = generateCenteredTextOutline({
     text: message,
     fill: theme.foreground,
-    centerX: company ? 530 : 740,
+    centerX: width / 2,
     centerY: height / 2,
     fontSize: company ? 34 : 56,
   });
@@ -175,7 +175,7 @@ function createLinkedInBannerSvg({ variant, themeName }) {
     `<desc>The statement ${message} with the approved 12-layer Flid field enlarged and cropped on the right.</desc>`,
     `<rect width="${width}" height="${height}" fill="${theme.background}"/>`,
     `<g data-decorative-field="primary-12-layer" data-placement="right-crop" data-clear-gap="${clearGap}" opacity="${dark ? "0.34" : "0.2"}" transform="translate(${fieldX} ${fieldY}) scale(${fieldDiameter / 100})">${svgArtwork(decorativeMark)}</g>`,
-    `<g data-linkedin-safe-content="center" data-statement-right="${statement.bounds.x2}">`,
+    `<g data-linkedin-safe-content="center" data-statement-center="${width / 2}" data-statement-right="${statement.bounds.x2}">`,
     outlinePath(statement, 'data-positioning-outline="true"'),
     "</g>",
     "</svg>",
