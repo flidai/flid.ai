@@ -109,13 +109,11 @@ function svgArtwork(svg) {
 }
 
 function prepareSmallRasterMark(svg, minimumOpacity) {
-  return svg
-    .replaceAll(' vector-effect="non-scaling-stroke"', "")
-    .replace(
-      / opacity="([\d.]+)"/g,
-      (match, opacity) =>
-        ` opacity="${Math.max(Number(opacity), minimumOpacity)}"`,
-    );
+  return svg.replace(
+    / opacity="([\d.]+)"/g,
+    (match, opacity) =>
+      ` opacity="${Math.max(Number(opacity), minimumOpacity)}"`,
+  );
 }
 
 function outlinePath(outline, attributes = "") {
@@ -312,7 +310,9 @@ This directory is generated from the approved procedural identity in
 
 ## Formats
 
-- **SVG** is the canonical digital source and uses vector wordmark outlines.
+- **SVG** is the canonical digital source. Signal curves and the wordmark are
+  expanded into filled vector outlines, so the complete identity scales
+  proportionally in every standards-compliant renderer.
 - **PNG** exports are transparent and supplied at 1x, 2x, and 4x.
 - **PDF** exports remain vector for print and production workflows.
 - **ICO and fixed-size PNG** files cover browser, app, and touch icons.
@@ -331,7 +331,9 @@ This directory is generated from the approved procedural identity in
 
 Use \`on-dark\` artwork on dark surfaces and \`on-light\` artwork on light
 surfaces. Preserve the 0.20D mark-to-word gap and 0.25D clear space encoded in
-\`manifest.json\`.
+\`manifest.json\`. Standard exports must be scaled as complete artwork; never
+resize paths independently or reapply a stroke. Optical compensation is
+reserved for assets explicitly identified for small platform surfaces.
 
 Regenerate everything with:
 
@@ -642,6 +644,8 @@ export async function generateBrandAssets(outputDirectory) {
     geometry: {
       curl: brandSystem.primaryMark.curl,
       twist: brandSystem.primaryMark.twist,
+      curveRendering: brandSystem.primaryMark.curveRendering,
+      scaleBehavior: brandSystem.primaryMark.scaleBehavior,
       artworkBox: "0 0 100 100",
       exportSafetyPadding: brandSystem.primaryMark.padding,
     },

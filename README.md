@@ -62,7 +62,9 @@ tokens.
 ## Logo system
 
 The vanilla generator exposes controls for layers, curl, twist, line weight,
-signal accents, and colors. Exported marks are standalone SVG files.
+signal accents, and colors. It expands each constructed curve into a closed,
+filled vector outline when exporting SVG, rather than relying on renderer-
+dependent strokes.
 
 `logo.txt` is retained only as the original visual reference. The website uses
 the independently generated procedural mark.
@@ -80,6 +82,9 @@ Every site build independently regenerates the same package in
   only; they must not substitute for the production mark.
 - The approved mark-only SVG uses a tight `0 0 100 100` artwork box.
 - Clear space belongs to the placement context, not the mark file.
+- Signal curves are expanded to filled outlines. Standard assets scale as
+  complete artwork, so the mark geometry and apparent weight stay in proportion.
+- Do not resize paths independently or add strokes to exported artwork.
 - Horizontal lockups use Geist SemiBold at weight 600 with native kerning.
 - Wordmarks are converted to vector outlines, so downloaded SVGs do not depend
   on a locally installed font.
@@ -91,6 +96,8 @@ Every site build independently regenerates the same package in
 - Square LinkedIn company-logo PNGs are included with opaque dark and light
   backgrounds and documented small-format optical compensation, so the
   12-layer geometry remains legible after platform scaling.
+- Optical compensation is reserved for explicitly named small-platform
+  exports; it never replaces or modifies the canonical vector master.
 - The pinned Geist source and SIL Open Font License live in `vendor/geist/`.
 - `dist/brand-assets/manifest.json` records status, theme, master, minimum size,
   and intended role for every export.

@@ -43,8 +43,10 @@ test("creates an independent, portable SVG with cubic signal marks", () => {
     svg,
     /<circle cx="50" cy="50" r="[^"]+" fill="#f0f1e9"\/>/,
   );
-  assert.match(svg, /<path d="M [^"]+ C [^"]+"/);
-  assert.match(svg, /stroke="#44e3ff"/);
+  assert.match(svg, /data-rendering="filled-outlines"/);
+  assert.match(svg, /data-stroke-width="0\.42"/);
+  assert.match(svg, /<path data-curve-outline="true" d="M [^"]+ Z" fill="#44e3ff"/);
+  assert.doesNotMatch(svg, /(?:\s|<)stroke=|(?:\s|<)stroke-width=|vector-effect=/);
   assert.equal(
     (svg.match(/<g transform=/g) ?? []).length,
     getMarkCount(9) - 1,
@@ -68,6 +70,8 @@ test("creates a monochrome signal pattern cut from a circular silhouette", () =>
     svg,
     /<circle cx="50" cy="50" r="45\.5" fill="#f0f1e9" mask="url\(#flid-silhouette-8-60\)"\/>/,
   );
+  assert.match(svg, /<path data-curve-outline="true"[^>]+fill="#000"/);
+  assert.doesNotMatch(svg, /(?:\s|<)stroke=|(?:\s|<)stroke-width=|vector-effect=/);
   assert.doesNotMatch(svg, /#44e3ff/);
 });
 
@@ -85,7 +89,7 @@ test("scales the complete silhouette pattern inward without clipping marks", () 
   );
 });
 
-test("reuses the Reduced field stroke weight inside the silhouette", () => {
+test("reuses the primary field weight when expanding silhouette cuts", () => {
   const reducedField = generateLogoSvg({
     mode: "line",
     layers: 12,
@@ -97,9 +101,10 @@ test("reuses the Reduced field stroke weight inside the silhouette", () => {
     strokeWidth: 0.58,
   });
 
-  assert.match(reducedField, /stroke-width="0\.58"/);
-  assert.match(silhouette, /stroke-width="0\.58"/);
-  assert.doesNotMatch(silhouette, /stroke-width="1\.624"/);
+  assert.match(reducedField, /data-stroke-width="0\.58"/);
+  assert.match(silhouette, /data-stroke-width="0\.58"/);
+  assert.doesNotMatch(reducedField, /(?:\s|<)stroke=|(?:\s|<)stroke-width=|vector-effect=/);
+  assert.doesNotMatch(silhouette, /(?:\s|<)stroke=|(?:\s|<)stroke-width=|vector-effect=/);
 });
 
 test("adds clear space through the viewBox without changing silhouette geometry", () => {
@@ -112,7 +117,8 @@ test("adds clear space through the viewBox without changing silhouette geometry"
 
   assert.match(svg, /viewBox="-8 -8 116 116"/);
   assert.match(svg, /<circle cx="50" cy="50" r="45\.5" fill="#fff"\/>/);
-  assert.match(svg, /stroke-width="0\.58"/);
+  assert.match(svg, /data-stroke-width="0\.58"/);
+  assert.doesNotMatch(svg, /(?:\s|<)stroke=|(?:\s|<)stroke-width=|vector-effect=/);
 });
 
 test("clamps unsafe or out-of-range inputs", () => {

@@ -23,6 +23,8 @@ test("builds a versioned canonical brand asset library", async () => {
   assert.equal(manifest.lockup.typeface.version, "1.7.2");
   assert.equal(manifest.lockup.typeface.format, "vector outlines");
   assert.equal(manifest.lockup.gapRatio, 0.2);
+  assert.equal(manifest.geometry.curveRendering, "expanded filled paths");
+  assert.equal(manifest.geometry.scaleBehavior, "proportional");
 
   const paths = new Set(manifest.assets.map((asset) => asset.path));
   for (const path of [
@@ -49,14 +51,22 @@ test("exports approved Geist lockups as portable vector outlines", async () => {
 
   assert.match(mark, /viewBox="0 0 100 100"/);
   assert.match(mark, /135|134 curved signal marks/);
-  assert.doesNotMatch(mark, /<text|font-family/);
+  assert.match(mark, /data-rendering="filled-outlines"/);
+  assert.match(mark, /data-curve-outline="true"/);
+  assert.doesNotMatch(
+    mark,
+    /<text|font-family|(?:\s|<)stroke=|(?:\s|<)stroke-width=|vector-effect=/,
+  );
 
   assert.match(lockup, /data-status="approved"/);
   assert.match(lockup, /data-gap-ratio="0\.2"/);
   assert.match(lockup, /data-wordmark-typeface="Geist"/);
   assert.match(lockup, /data-wordmark-weight="600"/);
   assert.match(lockup, /<path[^>]+data-wordmark-outline/);
-  assert.doesNotMatch(lockup, /<text|font-family|textLength/);
+  assert.doesNotMatch(
+    lockup,
+    /<text|font-family|textLength|(?:\s|<)stroke=|(?:\s|<)stroke-width=|vector-effect=/,
+  );
   assert.match(archivedLockup, /data-status="reference"/);
   assert.doesNotMatch(archivedLockup, /data-status="approved"/);
 });
