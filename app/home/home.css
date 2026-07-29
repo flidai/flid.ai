@@ -208,61 +208,197 @@ body {
 .hero-signal {
   position: absolute;
   z-index: 1;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-  contain: strict;
+  right: clamp(-210px, -10vw, -80px);
+  bottom: -120px;
+  width: min(52vw, 750px);
+  aspect-ratio: 1;
+  container-type: inline-size;
 }
 
-.hero-signal::after {
+.signal-static-mark,
+.signal-field {
   position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    circle at 79% 56%,
-    color-mix(in srgb, var(--fgColor-accent) 7%, transparent),
-    transparent 42%
-  );
-  content: "";
-  opacity: 0.75;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  width: 52%;
+  height: 52%;
+  transform: translate(-50%, -50%);
+  opacity: 0.9;
 }
 
 .signal-static-mark {
-  position: absolute;
-  z-index: 2;
-  top: 56%;
-  left: 79%;
-  width: min(46%, 620px);
-  height: min(74%, 620px);
-  object-fit: contain;
-  transform: translate(-50%, -50%);
-  opacity: 0.82;
   transition: opacity 260ms ease;
 }
 
-.signal-field-canvas {
-  position: absolute;
-  z-index: 2;
-  inset: 0;
+.signal-field {
+  --field-x: 0px;
+  --field-y: 0px;
+
+  pointer-events: none;
+  transform: translate3d(
+    calc(-50% + var(--field-x)),
+    calc(-50% + var(--field-y)),
+    0
+  );
+  opacity: 0;
+  transition: opacity 220ms ease;
+  will-change: transform;
+}
+
+.signal-field svg {
   display: block;
   width: 100%;
   height: 100%;
-  mask-image: linear-gradient(
-    to right,
-    transparent 2%,
-    rgb(0 0 0 / 0.12) 26%,
-    black 52%,
-    black 100%
-  );
-  opacity: 0;
-  transition: opacity 420ms ease;
+  overflow: visible;
+  transform-origin: center;
+  animation: signal-breathe 20s ease-in-out infinite;
 }
 
 .hero-signal.is-live .signal-static-mark {
   opacity: 0;
 }
 
-.hero-signal.is-live .signal-field-canvas {
-  opacity: 0.84;
+.hero-signal.is-live .signal-field {
+  opacity: 0.9;
+}
+
+.signal-orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border: 1px solid var(--borderColor-muted);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.signal-orbit-outer {
+  width: 100%;
+  height: 100%;
+}
+
+.signal-orbit-inner {
+  width: 76%;
+  height: 76%;
+}
+
+.signal-orbit::before,
+.signal-orbit::after {
+  position: absolute;
+  background: var(--borderColor-muted);
+  content: "";
+}
+
+.signal-orbit::before {
+  top: 50%;
+  left: -9%;
+  width: 118%;
+  height: 1px;
+}
+
+.signal-orbit::after {
+  top: -9%;
+  left: 50%;
+  width: 1px;
+  height: 118%;
+}
+
+.signal-node {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  right: -5px;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--bgColor-default);
+  border-radius: 50%;
+  background: var(--fgColor-accent);
+  box-shadow: 0 0 22px color-mix(in srgb, var(--fgColor-accent) 75%, transparent);
+  transform: translateY(-50%);
+}
+
+.signal-node::after {
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  width: 48cqw;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    color-mix(in srgb, var(--fgColor-accent) 55%, transparent)
+  );
+  content: "";
+  opacity: 0;
+  transform: translateY(-50%) scaleX(0);
+  transform-origin: right center;
+  animation: signal-transmit 12s ease-out infinite;
+}
+
+.signal-node-path {
+  position: absolute;
+  z-index: 3;
+  border-radius: 50%;
+  animation: signal-node-orbit 44s linear infinite;
+}
+
+.signal-node-path-outer {
+  --orbit-start: -34deg;
+
+  inset: 0;
+}
+
+.signal-node-path-inner {
+  --orbit-start: 112deg;
+
+  inset: 12%;
+  animation-duration: 31s;
+  animation-direction: reverse;
+}
+
+.signal-node-path-inner .signal-node::after {
+  width: 36cqw;
+  animation-delay: -5.5s;
+}
+
+@keyframes signal-breathe {
+  0%,
+  100% {
+    transform: scale(1) rotate(0);
+  }
+
+  50% {
+    transform: scale(1.012) rotate(0.8deg);
+  }
+}
+
+@keyframes signal-node-orbit {
+  from {
+    transform: rotate(var(--orbit-start));
+  }
+
+  to {
+    transform: rotate(calc(var(--orbit-start) + 360deg));
+  }
+}
+
+@keyframes signal-transmit {
+  0%,
+  76%,
+  100% {
+    opacity: 0;
+    transform: translateY(-50%) scaleX(0);
+  }
+
+  81% {
+    opacity: 0.72;
+    transform: translateY(-50%) scaleX(1);
+  }
+
+  89% {
+    opacity: 0;
+    transform: translateY(-50%) scaleX(1);
+  }
 }
 
 .hero-meta {
@@ -715,7 +851,10 @@ body {
   }
 
   .hero-signal {
-    opacity: 0.68;
+    right: -240px;
+    bottom: -130px;
+    width: 620px;
+    opacity: 0.58;
   }
 
   .principles-grid article {
@@ -792,16 +931,10 @@ body {
   }
 
   .hero-signal {
-    display: none;
-  }
-
-  .signal-field-canvas {
-    mask-image: linear-gradient(
-      to right,
-      transparent 8%,
-      rgb(0 0 0 / 0.08) 34%,
-      black 68%
-    );
+    right: -190px;
+    bottom: -80px;
+    width: 430px;
+    opacity: 0.3;
   }
 
   .hero-meta {
@@ -916,8 +1049,9 @@ body {
     transition: none;
   }
 
-  .signal-static-mark,
-  .signal-field-canvas {
-    transition: none;
+  .signal-field svg,
+  .signal-node-path,
+  .signal-node::after {
+    animation: none;
   }
 }

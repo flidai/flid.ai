@@ -29,7 +29,6 @@ const copiedFiles = [
   ["app/showcase/showcase.css", "assets/showcase.css"],
   ["app/generator/generator.css", "assets/generator.css"],
   ["app/brand/brand.css", "assets/brand.css"],
-  ["lib/hero-signal-field.mjs", "lib/hero-signal-field.mjs"],
   ["lib/logo-generator.mjs", "lib/logo-generator.mjs"],
   ["lib/brand-system.mjs", "lib/brand-system.mjs"],
   ["lib/primer-colors.mjs", "lib/primer-colors.mjs"],
