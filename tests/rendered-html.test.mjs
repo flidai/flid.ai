@@ -9,10 +9,11 @@ async function readBuiltPage(pathname) {
 }
 
 test("builds the Flid public site at the root as plain HTML", async () => {
-  const [html, script, styles] = await Promise.all([
+  const [html, script, styles, signalField] = await Promise.all([
     readBuiltPage("index.html"),
     readBuiltPage("assets/home.js"),
     readBuiltPage("assets/home.css"),
+    readBuiltPage("lib/hero-signal-field.mjs"),
   ]);
 
   assert.match(html, /<title>Flid — Agent-native product lab<\/title>/i);
@@ -26,6 +27,8 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.match(html, /jacob-oestergaard\.webp/i);
   assert.match(html, /leapview-dashboard-dark\.png/i);
   assert.match(html, /data-signal-field/i);
+  assert.match(html, /<canvas[^>]+data-signal-canvas/i);
+  assert.doesNotMatch(html, /signal-orbit|signal-node/);
   assert.match(html, /assets\/home\.js/i);
   assert.match(html, /mailto:hello@flid\.ai/i);
   assert.match(html, /Flid AI ApS/i);
@@ -36,13 +39,18 @@ test("builds the Flid public site at the root as plain HTML", async () => {
     /Flid is Danish for diligence—the care, persistence, and attention behind work made to last\./i,
   );
   assert.doesNotMatch(html, /Copenhagen/i);
-  assert.match(script, /layers:\s*12/);
-  assert.match(script, /curl:\s*0\.88/);
-  assert.match(script, /strokeWidth:\s*0\.58/);
+  assert.match(script, /hero-signal-field\.mjs/);
+  assert.match(script, /getContext\(["']2d["']\)/);
+  assert.match(script, /devicePixelRatio/);
+  assert.match(script, /document\.hidden/);
   assert.match(script, /matchMedia\(["']\(prefers-reduced-motion: reduce\)["']\)/);
   assert.match(script, /IntersectionObserver/);
   assert.match(script, /requestAnimationFrame/);
-  assert.match(styles, /@keyframes signal-node-orbit/);
+  assert.match(script, /hasRenderableSurface/);
+  assert.match(styles, /\.signal-field-canvas/);
+  assert.match(styles, /mask-image:/);
+  assert.match(signalField, /layers:\s*12/);
+  assert.match(signalField, /pulseDuration:\s*14/);
   assert.doesNotMatch(
     html,
     /Data foundations|Decision systems|Small team\.<br>Direct collaboration/i,
