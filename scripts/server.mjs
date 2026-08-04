@@ -4,8 +4,14 @@ import { createServer } from "node:http";
 import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildSite } from "./build.mjs";
+import { parseByteRange } from "../lib/http-range.mjs";
 
-const root = join(fileURLToPath(new URL("..", import.meta.url)), "dist");
+const projectRoot = fileURLToPath(new URL("..", import.meta.url));
+const root = join(projectRoot, "dist");
+const depthMediaDirectory = join(
+  projectRoot,
+  "research/datacurve/upstream/media",
+);
 const port = Number(process.env.PORT ?? 3000);
 
 const contentTypes = {
@@ -16,6 +22,7 @@ const contentTypes = {
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
   ".mjs": "text/javascript; charset=utf-8",
+  ".mp4": "video/mp4",
   ".png": "image/png",
   ".svg": "image/svg+xml",
   ".txt": "text/plain; charset=utf-8",
@@ -29,7 +36,15 @@ function resolveRequestPath(url) {
   return join(root, relative || "index.html");
 }
 
-await buildSite();
+let localDepthMedia;
+try {
+  const mediaDirectory = await stat(depthMediaDirectory);
+  if (mediaDirectory.isDirectory()) localDepthMedia = depthMediaDirectory;
+} catch {
+  localDepthMedia = undefined;
+}
+
+await buildSite({ depthMediaDirectory: localDepthMedia });
 
 const server = createServer(async (request, response) => {
   let target = resolveRequestPath(request.url ?? "/");
@@ -57,8 +72,37 @@ const server = createServer(async (request, response) => {
       throw new Error("Not a file");
     }
 
+    const extension = extname(target);
+    const range = extension === ".mp4"
+      ? parseByteRange(request.headers.range, fileStat.size)
+      : undefined;
+
+    if (range === null) {
+      response.writeHead(416, {
+        "Content-Range": `bytes */${fileStat.size}`,
+        "Accept-Ranges": "bytes",
+        "Cache-Control": "no-store",
+      });
+      response.end();
+      return;
+    }
+
+    if (range) {
+      response.writeHead(206, {
+        "Content-Type": contentTypes[extension] ?? "application/octet-stream",
+        "Content-Length": range.length,
+        "Content-Range": `bytes ${range.start}-${range.end}/${fileStat.size}`,
+        "Accept-Ranges": "bytes",
+        "Cache-Control": "no-store",
+      });
+      createReadStream(target, { start: range.start, end: range.end }).pipe(response);
+      return;
+    }
+
     response.writeHead(200, {
-      "Content-Type": contentTypes[extname(target)] ?? "application/octet-stream",
+      "Content-Type": contentTypes[extension] ?? "application/octet-stream",
+      "Content-Length": fileStat.size,
+      ...(extension === ".mp4" ? { "Accept-Ranges": "bytes" } : {}),
       "Cache-Control": "no-store",
     });
     createReadStream(target).pipe(response);

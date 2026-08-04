@@ -75,6 +75,7 @@ test("keeps the public site at the root and the brand guide as a reference", asy
   assert.match(rootPage, /We build products where agents do real work/i);
   assert.doesNotMatch(rootPage, /href="\/brand\/?"/);
   assert.match(homeScript, /hero-signal-field\.mjs/);
+  assert.match(homeScript, /signal-scroll-story\.mjs/);
   assert.doesNotMatch(homeScript, /React|Next|jsx|tsx/);
   assert.match(brandPage, /The source of truth for the Flid identity/i);
 });

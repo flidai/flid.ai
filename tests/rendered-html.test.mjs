@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile, stat } from "node:fs/promises";
+import { access, readFile, stat } from "node:fs/promises";
 import test from "node:test";
 
 const root = new URL("../", import.meta.url);
@@ -9,16 +9,17 @@ async function readBuiltPage(pathname) {
 }
 
 test("builds the Flid public site at the root as plain HTML", async () => {
-  const [html, script, styles, signalField] = await Promise.all([
+  const [html, script, styles, signalField, signalStory] = await Promise.all([
     readBuiltPage("index.html"),
     readBuiltPage("assets/home.js"),
     readBuiltPage("assets/home.css"),
     readBuiltPage("lib/hero-signal-field.mjs"),
+    readBuiltPage("lib/signal-scroll-story.mjs"),
   ]);
 
   assert.match(html, /<title>Flid — Agent-native product lab<\/title>/i);
   assert.match(html, /We build products where agents do real work/i);
-  assert.match(html, /Agents should not be bolted on/i);
+  assert.match(html, /Software was built for people/i);
   assert.match(html, /The agent-native BI platform/i);
   assert.match(html, /LeapView/i);
   assert.match(html, /Selected field work keeps them honest/i);
@@ -28,6 +29,13 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.match(html, /leapview-dashboard-dark\.png/i);
   assert.match(html, /data-signal-field/i);
   assert.match(html, /<canvas[^>]+data-signal-canvas/i);
+  assert.match(html, /data-signal-story/i);
+  assert.match(html, /<canvas[^>]+data-story-canvas/i);
+  assert.doesNotMatch(html, /signal-story-static-mark/i);
+  assert.match(html, /governed context, shared definitions/i);
+  assert.match(html, /Every capability has a contract/i);
+  assert.match(html, /That is what agent-native means/i);
+  assert.equal((html.match(/data-story-reveal/g) || []).length, 4);
   assert.doesNotMatch(html, /signal-orbit|signal-node/);
   assert.match(html, /assets\/home\.js/i);
   assert.match(html, /mailto:hello@flid\.ai/i);
@@ -40,6 +48,15 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   );
   assert.doesNotMatch(html, /Copenhagen/i);
   assert.match(script, /hero-signal-field\.mjs/);
+  assert.match(script, /signal-scroll-story\.mjs/);
+  assert.match(script, /depth-video-story\.mjs/);
+  assert.match(script, /min-width:\s*901px/);
+  assert.match(html, /data-depth-demo="disabled"/);
+  await assert.rejects(
+    access(new URL("dist/assets/depth-reference", root)),
+    /ENOENT/,
+  );
+  assert.match(script, /visitSignalStoryFrame/);
   assert.match(script, /getContext\(["']2d["']\)/);
   assert.match(script, /devicePixelRatio/);
   assert.match(script, /document\.hidden/);
@@ -47,10 +64,29 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.match(script, /IntersectionObserver/);
   assert.match(script, /requestAnimationFrame/);
   assert.match(script, /hasRenderableSurface/);
+  assert.match(script, /heroActivityDeadline/);
+  assert.match(script, /heroIdleDuration/);
+  assert.match(script, /storySubtitleRevealProgress/);
+  assert.match(script, /prepareStorySubtitle/);
+  assert.match(script, /aria-label/);
+  assert.match(script, /performance\.now\(\) < heroActivityDeadline/);
+  assert.doesNotMatch(
+    script,
+    /draw\(elapsedSeconds\);\s*animationFrame = requestAnimationFrame\(animate\);/,
+  );
+  assert.match(script, /addEventListener\(["']scroll["']/);
   assert.match(styles, /\.signal-field-canvas/);
+  assert.match(styles, /\.signal-story-sticky/);
+  assert.match(styles, /\.signal-story-subtitle/);
+  assert.match(styles, /--copy-reveal/);
+  assert.match(styles, /position:\s*sticky/);
   assert.match(styles, /mask-image:/);
   assert.match(signalField, /layers:\s*12/);
   assert.match(signalField, /pulseDuration:\s*14/);
+  assert.match(signalStory, /"unstructured"/);
+  assert.match(signalStory, /"foundation"/);
+  assert.match(signalStory, /particleCount:\s*8_000/);
+  assert.doesNotMatch(signalStory, /logo-generator|brand-system/);
   assert.doesNotMatch(
     html,
     /Data foundations|Decision systems|Small team\.<br>Direct collaboration/i,
@@ -164,6 +200,19 @@ test("retains responsive and reduced-motion styling", async () => {
     assert.match(css, /prefers-reduced-motion:\s*reduce/);
   }
   assert.match(homeCss, /@media\s*\(max-width:\s*720px\)/);
+  assert.match(homeCss, /@media\s*\(max-width:\s*900px\)/);
+  assert.match(
+    homeCss,
+    /@media\s*\(max-width:\s*900px\)[\s\S]*?\.signal-story\[data-depth-demo="local"\]\s*\{\s*height:\s*auto;/,
+  );
+  assert.match(
+    homeCss,
+    /\.signal-story\[data-depth-demo="local"\]\s*\{\s*height:\s*2000svh;/,
+  );
+  assert.match(
+    homeCss,
+    /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*?\.signal-story\[data-depth-demo="local"\]\s*\{\s*height:\s*auto;/,
+  );
   assert.match(showcaseCss, /--lockup-mark-size:/);
   assert.match(generatorCss, /@media\s*\(max-width:\s*680px\)/);
 });

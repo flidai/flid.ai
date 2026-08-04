@@ -30,6 +30,8 @@ const copiedFiles = [
   ["app/generator/generator.css", "assets/generator.css"],
   ["app/brand/brand.css", "assets/brand.css"],
   ["lib/hero-signal-field.mjs", "lib/hero-signal-field.mjs"],
+  ["lib/signal-scroll-story.mjs", "lib/signal-scroll-story.mjs"],
+  ["lib/depth-video-story.mjs", "lib/depth-video-story.mjs"],
   ["lib/logo-generator.mjs", "lib/logo-generator.mjs"],
   ["lib/brand-system.mjs", "lib/brand-system.mjs"],
   ["lib/primer-colors.mjs", "lib/primer-colors.mjs"],
@@ -72,10 +74,30 @@ async function applyBasePath(directory, basePath) {
 export async function buildSite({
   outputDirectory = output,
   basePath = "",
+  depthMediaDirectory,
 } = {}) {
   await rm(outputDirectory, { recursive: true, force: true });
   await mkdir(outputDirectory, { recursive: true });
   await cp(join(root, "site"), outputDirectory, { recursive: true });
+
+  const homePage = join(outputDirectory, "index.html");
+  if (depthMediaDirectory) {
+    const depthOutput = join(outputDirectory, "assets/depth-reference");
+    await mkdir(depthOutput, { recursive: true });
+    for (let index = 1; index <= 8; index += 1) {
+      const filename = `depth-clip-${String(index).padStart(2, "0")}.mp4`;
+      await copyFile(
+        join(depthMediaDirectory, filename),
+        join(depthOutput, filename),
+      );
+    }
+    const html = await readFile(homePage, "utf8");
+    await writeFile(
+      homePage,
+      html.replace('data-depth-demo="disabled"', 'data-depth-demo="local"'),
+      "utf8",
+    );
+  }
 
   for (const [source, destination] of copiedFiles) {
     const target = join(outputDirectory, destination);

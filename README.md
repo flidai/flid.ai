@@ -36,9 +36,10 @@ no application framework or runtime dependency.
 - `site/index.html` is the public one-page product-lab site. It presents the
   agent-native thesis, LeapView flagship product, selective field work, and
   founder.
-- `site/assets/home.js` progressively enhances the hero with the canonical
-  12-layer signal model. The approved static mark remains the no-script and
-  reduced-motion fallback.
+- `site/assets/home.js` progressively enhances the hero and desktop thesis
+  story with the canonical 12-layer signal model. The thesis morph is driven
+  by scroll position; tablets, phones, and reduced-motion users receive the
+  complete static narrative instead.
 - `site/brand/` is the canonical brand guide and asset reference.
 - `site/showcase/` and `site/generator/` are supporting identity tools.
 - `site/assets/images/leapview-dashboard-dark.png` is the committed LeapView
@@ -48,6 +49,8 @@ no application framework or runtime dependency.
   WebP during the static build.
 - `lib/brand-system.mjs` is the approved brand specification.
 - `lib/logo-generator.mjs` is the deterministic SVG implementation.
+- `lib/signal-scroll-story.mjs` maps thesis scroll progress to a deterministic
+  particle field. It remains deliberately separate from the production logo.
 - `scripts/generate-brand-assets.mjs` creates approved marks, Geist wordmark
   lockups, raster exports, print PDFs, favicons, social images, and
   `brand-assets/manifest.json`.
