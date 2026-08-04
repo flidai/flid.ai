@@ -20,12 +20,7 @@ test("opts the local server into research media without changing production buil
 
   try {
     await mkdir(media, { recursive: true });
-    for (let index = 1; index <= 8; index += 1) {
-      await writeFile(
-        join(media, `depth-clip-${String(index).padStart(2, "0")}.mp4`),
-        `fixture-${index}`,
-      );
-    }
+    await writeFile(join(media, "depth-story.mp4"), "continuous-fixture");
 
     await buildSite({
       outputDirectory: output,
@@ -34,17 +29,8 @@ test("opts the local server into research media without changing production buil
 
     const html = await readFile(join(output, "index.html"), "utf8");
     assert.match(html, /data-depth-demo="local"/);
-    for (let index = 1; index <= 8; index += 1) {
-      await access(
-        join(
-          output,
-          "assets/depth-reference",
-          `depth-clip-${String(index).padStart(2, "0")}.mp4`,
-        ),
-      );
-    }
+    await access(join(output, "assets/depth-reference", "depth-story.mp4"));
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true });
   }
 });
-

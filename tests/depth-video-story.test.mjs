@@ -13,13 +13,10 @@ import {
   depthVertexShader,
 } from "../lib/depth-video-story.mjs";
 
-test("defines a local eight-clip depth story without external runtime URLs", () => {
-  assert.equal(depthVideoStorySettings.sources.length, 8);
-  assert.ok(
-    depthVideoStorySettings.sources.every((source, index) =>
-      source.endsWith(`depth-clip-${String(index + 1).padStart(2, "0")}.mp4`),
-    ),
-  );
+test("defines one continuous local depth story without external runtime URLs", () => {
+  assert.deepEqual(depthVideoStorySettings.sources, [
+    "/assets/depth-reference/depth-story.mp4",
+  ]);
   assert.doesNotMatch(
     JSON.stringify(depthVideoStorySettings.sources),
     /https?:|datacurve/i,
@@ -38,10 +35,14 @@ test("matches the measured adaptive point-density ratios", () => {
   assert.equal(depthParticleTarget(1440, 2, 1), 40_300);
 });
 
-test("maps scroll into deterministic hold and transition phases", () => {
-  const opening = createDepthStoryState(0);
-  const middle = createDepthStoryState(0.5);
-  const closing = createDepthStoryState(1);
+test("maps the entire scroll range monotonically across one source", () => {
+  const progressSamples = Array.from({ length: 101 }, (_, index) => index / 100);
+  const states = progressSamples.map((progress) =>
+    createDepthStoryState(progress),
+  );
+  const opening = states[0];
+  const middle = states[50];
+  const closing = states[100];
 
   assert.deepEqual(
     {
@@ -52,12 +53,20 @@ test("maps scroll into deterministic hold and transition phases", () => {
     },
     { sourceA: 0, sourceB: 0, morph: 0, copyIndex: 0 },
   );
-  assert.ok(middle.sourceA >= 2 && middle.sourceA <= 4);
-  assert.ok(middle.morph >= 0 && middle.morph <= 1);
-  assert.equal(closing.sourceA, 7);
-  assert.equal(closing.sourceB, 7);
-  assert.equal(closing.copyIndex, 3);
+  assert.equal(middle.sourceA, 0);
+  assert.equal(middle.sourceB, 0);
+  assert.equal(middle.sampleA, 0.5);
+  assert.equal(middle.sampleB, 0.5);
+  assert.equal(middle.morph, 0);
+  assert.equal(closing.sourceA, 0);
+  assert.equal(closing.sourceB, 0);
+  assert.equal(closing.copyIndex, 0);
   assert.equal(closing.sampleA, 1);
+  assert.ok(
+    states.every(
+      (state, index) => index === 0 || state.sampleA >= states[index - 1].sampleA,
+    ),
+  );
   assert.deepEqual(middle, createDepthStoryState(0.5));
 });
 
@@ -95,11 +104,15 @@ test("breaks the visible lattice with deterministic sub-cell scatter", () => {
   assert.match(depthVertexShader, /particleOccupancy/);
 });
 
-test("uses video depth, edge recovery, point perspective, and copy avoidance", () => {
+test("uses video depth, edge recovery, and point perspective without transition noise", () => {
   assert.match(depthVertexShader, /uniform sampler2D uDepthA/);
   assert.match(depthVertexShader, /uniform sampler2D uDepthB/);
   assert.match(depthVertexShader, /sobelEdge/);
-  assert.match(depthVertexShader, /uAvoidRect/);
+  assert.doesNotMatch(depthVertexShader, /uAvoidRect|rectangleInfluence/);
+  assert.doesNotMatch(
+    depthVertexShader,
+    /transitionDust|strand|turbulence|float transition\s*=/,
+  );
   assert.match(depthVertexShader, /gl_PointSize/);
   assert.match(depthVertexShader, /uPointer/);
   assert.match(depthVertexShader, /mix\(0\.34, 1\.0, presence\)/);

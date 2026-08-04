@@ -12,6 +12,7 @@ const depthMediaDirectory = join(
   projectRoot,
   "research/datacurve/upstream/media",
 );
+const depthStoryMedia = join(depthMediaDirectory, "depth-story.mp4");
 const port = Number(process.env.PORT ?? 3000);
 
 const contentTypes = {
@@ -38,8 +39,8 @@ function resolveRequestPath(url) {
 
 let localDepthMedia;
 try {
-  const mediaDirectory = await stat(depthMediaDirectory);
-  if (mediaDirectory.isDirectory()) localDepthMedia = depthMediaDirectory;
+  const media = await stat(depthStoryMedia);
+  if (media.isFile()) localDepthMedia = depthMediaDirectory;
 } catch {
   localDepthMedia = undefined;
 }

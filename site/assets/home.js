@@ -3,14 +3,12 @@ import {
   signalFieldSettings,
 } from "/lib/hero-signal-field.mjs";
 import {
-  createSignalStoryState,
   signalStorySettings,
   storySubtitleRevealProgress,
   visitSignalStoryFrame,
 } from "/lib/signal-scroll-story.mjs";
 import {
   advanceDepthPlayhead,
-  createDepthStoryState,
   DepthVideoStory,
 } from "/lib/depth-video-story.mjs";
 
@@ -335,19 +333,25 @@ if (story) {
     }
   }
 
-  function renderStoryCopy(
-    weights,
-    position,
-    activeScene,
-    revealPosition = position,
-  ) {
+  function renderStoryCopy(progress) {
+    const normalizedProgress = Math.max(0, Math.min(1, progress));
+    const position = normalizedProgress * Math.max(0, steps.length - 1);
+    const from = Math.min(steps.length - 1, Math.floor(position));
+    const to = Math.min(steps.length - 1, from + 1);
+    const rawTransition = position - from;
+    const transition = rawTransition * rawTransition * (3 - 2 * rawTransition);
+    const weights = Array.from({ length: steps.length }, () => 0);
+    weights[from] = 1 - transition;
+    weights[to] += transition;
+    const activeScene = Math.min(steps.length - 1, Math.round(position));
+
     steps.forEach((step, index) => {
       const weight = weights[index] ?? 0;
       const opacityProgress = Math.max(0, Math.min(1, (weight - 0.48) / 0.14));
       const copyOpacity = opacityProgress * opacityProgress * (3 - 2 * opacityProgress);
       const shift = (index - position) * 42;
       const reveal = storySubtitleRevealProgress(
-        revealPosition,
+        position,
         index,
         steps.length,
       );
@@ -417,10 +421,9 @@ if (story) {
       }
 
       const progress = storyProgress();
-      const state = createSignalStoryState(progress);
       story.classList.add("is-live");
       story.style.setProperty("--story-progress", progress.toFixed(6));
-      renderStoryCopy(state.weights, state.scenePosition, state.activeScene);
+      renderStoryCopy(progress);
       drawStoryCanvas(progress);
     }
 
@@ -473,20 +476,6 @@ if (story) {
       animationFrame = requestAnimationFrame(renderDepthStory);
     }
 
-    function copyAvoidRect(activeScene) {
-      const copy = steps[activeScene]?.querySelector(".signal-story-copy");
-      if (!copy) return { x0: 0, y0: 0, x1: 0, y1: 0 };
-      const copyBounds = copy.getBoundingClientRect();
-      const canvasBounds = canvas.getBoundingClientRect();
-      const padding = 26;
-      return {
-        x0: (copyBounds.left - canvasBounds.left - padding) / canvasBounds.width,
-        y0: (copyBounds.top - canvasBounds.top - padding) / canvasBounds.height,
-        x1: (copyBounds.right - canvasBounds.left + padding) / canvasBounds.width,
-        y1: (copyBounds.bottom - canvasBounds.top + padding) / canvasBounds.height,
-      };
-    }
-
     function renderDepthStory(timestamp) {
       animationFrame = undefined;
       if (!ready || failed || !inViewport || reducedMotion.matches) return;
@@ -500,19 +489,12 @@ if (story) {
         targetProgress,
         deltaMs,
       );
-      const state = createDepthStoryState(renderedProgress);
       story.classList.add("is-live", "is-depth-live");
       story.style.setProperty("--story-progress", renderedProgress.toFixed(6));
-      renderStoryCopy(
-        state.copyWeights,
-        state.copyPosition,
-        state.copyIndex,
-        state.progress * (steps.length - 1),
-      );
+      renderStoryCopy(renderedProgress);
 
       renderer.setProgress(renderedProgress);
       renderer.setPointer(pointer.x, pointer.y);
-      renderer.setAvoidRect(copyAvoidRect(state.copyIndex));
       renderer.setColor(readColor("--fgColor-default", "#f0f6fc"));
       renderer.render(timestamp);
 

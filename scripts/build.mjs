@@ -84,13 +84,11 @@ export async function buildSite({
   if (depthMediaDirectory) {
     const depthOutput = join(outputDirectory, "assets/depth-reference");
     await mkdir(depthOutput, { recursive: true });
-    for (let index = 1; index <= 8; index += 1) {
-      const filename = `depth-clip-${String(index).padStart(2, "0")}.mp4`;
-      await copyFile(
-        join(depthMediaDirectory, filename),
-        join(depthOutput, filename),
-      );
-    }
+    const filename = "depth-story.mp4";
+    await copyFile(
+      join(depthMediaDirectory, filename),
+      join(depthOutput, filename),
+    );
     const html = await readFile(homePage, "utf8");
     await writeFile(
       homePage,

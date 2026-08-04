@@ -301,7 +301,7 @@ body {
 }
 
 .signal-story[data-depth-demo="local"] {
-  height: 2000svh;
+  height: 1000svh;
 }
 
 .signal-story[data-depth-demo="local"] .signal-story-grid {
@@ -387,20 +387,13 @@ body {
 }
 
 .signal-story-copy {
+  position: relative;
+  z-index: 3;
   width: min(40vw, 560px);
+  background: none;
   text-wrap: balance;
   transform: translateY(var(--story-step-shift, 0));
   will-change: transform;
-}
-
-.signal-story-step-intro .signal-story-copy {
-  width: min(76vw, 950px);
-  padding: 72px 40px;
-  background: radial-gradient(
-    closest-side,
-    color-mix(in srgb, var(--bgColor-default) 92%, transparent),
-    transparent
-  );
 }
 
 .signal-story-copy > span,

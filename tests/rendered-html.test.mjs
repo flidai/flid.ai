@@ -32,10 +32,11 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.match(html, /data-signal-story/i);
   assert.match(html, /<canvas[^>]+data-story-canvas/i);
   assert.doesNotMatch(html, /signal-story-static-mark/i);
-  assert.match(html, /governed context, shared definitions/i);
-  assert.match(html, /Every capability has a contract/i);
-  assert.match(html, /That is what agent-native means/i);
-  assert.equal((html.match(/data-story-reveal/g) || []).length, 4);
+  assert.match(html, /governed context, explicit capabilities/i);
+  assert.match(html, /designed into the foundation/i);
+  assert.doesNotMatch(html, /Every capability has a contract/i);
+  assert.equal((html.match(/data-story-reveal/g) || []).length, 2);
+  assert.match(html, /data-story-counter>01 \/ 02</i);
   assert.doesNotMatch(html, /signal-orbit|signal-node/);
   assert.match(html, /assets\/home\.js/i);
   assert.match(html, /mailto:hello@flid\.ai/i);
@@ -68,6 +69,7 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.match(script, /heroIdleDuration/);
   assert.match(script, /storySubtitleRevealProgress/);
   assert.match(script, /prepareStorySubtitle/);
+  assert.match(script, /function renderStoryCopy\(progress\)/);
   assert.match(script, /aria-label/);
   assert.match(script, /performance\.now\(\) < heroActivityDeadline/);
   assert.doesNotMatch(
@@ -79,6 +81,18 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.match(styles, /\.signal-story-sticky/);
   assert.match(styles, /\.signal-story-subtitle/);
   assert.match(styles, /--copy-reveal/);
+  assert.match(
+    styles,
+    /\.signal-story\[data-depth-demo="local"\]\s*\{\s*height:\s*1000svh;/,
+  );
+  assert.match(
+    styles,
+    /\.signal-story-copy\s*\{[^}]*z-index:\s*3;[^}]*background:\s*none;/s,
+  );
+  assert.doesNotMatch(
+    styles,
+    /\.signal-story-step-intro \.signal-story-copy\s*\{[^}]*radial-gradient/s,
+  );
   assert.match(styles, /position:\s*sticky/);
   assert.match(styles, /mask-image:/);
   assert.match(signalField, /layers:\s*12/);
@@ -207,7 +221,7 @@ test("retains responsive and reduced-motion styling", async () => {
   );
   assert.match(
     homeCss,
-    /\.signal-story\[data-depth-demo="local"\]\s*\{\s*height:\s*2000svh;/,
+    /\.signal-story\[data-depth-demo="local"\]\s*\{\s*height:\s*1000svh;/,
   );
   assert.match(
     homeCss,
