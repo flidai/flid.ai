@@ -1,8 +1,4 @@
 import {
-  createSignalFieldFrame,
-  signalFieldSettings,
-} from "/lib/hero-signal-field.mjs";
-import {
   signalStorySettings,
   storySubtitleRevealProgress,
   visitSignalStoryFrame,
@@ -11,8 +7,11 @@ import {
   advanceDepthPlayhead,
   DepthVideoStory,
 } from "/lib/depth-video-story.mjs";
+import {
+  createHeroParticle,
+  createHeroTransitionState,
+} from "/lib/hero-scroll-transition.mjs";
 
-const signal = document.querySelector("[data-signal-field]");
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 
 function readColor(token, fallback) {
@@ -40,245 +39,197 @@ function prepareCanvas(canvas, context) {
   return { width, height };
 }
 
-function traceCurve(context, mark, scale) {
-  const width = mark.width * scale;
-  const height = mark.height * scale;
-  const baseline = height * 0.42;
-  const controlX = width * 0.52;
+const hero = document.querySelector("[data-hero-transition]");
 
-  context.beginPath();
-  context.moveTo(-width, baseline);
-  context.bezierCurveTo(
-    -controlX,
-    -height,
-    controlX,
-    -height,
-    width,
-    baseline,
-  );
-  context.stroke();
-}
+if (hero) {
+  const canvas = hero.querySelector("[data-hero-transition-canvas]");
+  const sticky = hero.querySelector(".hero-sticky");
+  const depthStory = document.querySelector("[data-signal-story]");
 
-function drawSignalMark(
-  context,
-  mark,
-  { x, y, scale, strokeWidth, foreground, accent, alpha = 0.9 },
-) {
-  const markScale = scale * (mark.scale ?? 1);
-
-  context.save();
-  context.translate(x, y);
-  context.rotate(mark.rotation * Math.PI / 180);
-  context.globalAlpha = mark.opacity * alpha;
-  context.lineCap = "round";
-  context.lineJoin = "round";
-
-  if (mark.kind === "dot") {
-    context.fillStyle = mark.accent ? accent : foreground;
-    context.shadowColor = mark.accent ? accent : "transparent";
-    context.shadowBlur = mark.accent ? 14 : 0;
-    context.beginPath();
-    context.arc(
-      0,
-      0,
-      Math.max(1.1, strokeWidth * 0.9 * markScale),
-      0,
-      Math.PI * 2,
-    );
-    context.fill();
-  } else {
-    context.strokeStyle = mark.accent ? accent : foreground;
-    context.lineWidth = strokeWidth * markScale * (mark.accent ? 1.18 : 1);
-    context.shadowColor = mark.accent ? accent : "transparent";
-    context.shadowBlur = mark.accent ? 12 : 0;
-    traceCurve(context, mark, markScale);
+  function heroProgress() {
+    const bounds = hero.getBoundingClientRect();
+    const scrollRange = Math.max(1, hero.offsetHeight - innerHeight);
+    return Math.min(1, Math.max(0, -bounds.top / scrollRange));
   }
 
-  context.restore();
-}
-
-if (signal) {
-  const canvas = signal.querySelector("[data-signal-canvas]");
-  const hero = signal.closest(".hero");
-  const context = canvas?.getContext("2d");
-
-  if (canvas && context && hero) {
-    const pointer = { x: 0, y: 0 };
-    const target = { x: 0, y: 0 };
-    let animationFrame;
-    let previousTimestamp;
-    let elapsedSeconds = 0;
-    let inViewport = true;
-    let heroActivityDeadline = 0;
-    const heroIdleDuration = 280;
-    const heroEntranceDuration = Math.ceil(
-      (signalFieldSettings.entranceDuration +
-        signalFieldSettings.entranceDelay +
-        0.15) *
-        1000,
+  function applyHeroState(state) {
+    hero.classList.add("is-transition-live");
+    hero.style.setProperty("--hero-copy-opacity", state.copyOpacity);
+    hero.style.setProperty("--hero-copy-scale", state.copyScale);
+    hero.style.setProperty(
+      "--hero-copy-translate-y",
+      `${state.copyTranslateY}px`,
     );
+    hero.style.setProperty("--hero-wave-opacity", state.waveOpacity);
+    hero.style.setProperty("--hero-wave-warp", state.waveWarp);
+    hero.style.setProperty("--hero-stage-opacity", state.stageOpacity);
+  }
 
-    function canvasLayout() {
-      const width = canvas.clientWidth;
-      const height = canvas.clientHeight;
-      const diameter = Math.min(width * 0.46, height * 0.74, 620);
-      const scale = diameter / 100;
-      const centerX = width * 0.79;
-      const centerY = height * 0.56;
+  function resetHeroState() {
+    hero.classList.remove("is-transition-live");
+    hero.style.removeProperty("--hero-copy-opacity");
+    hero.style.removeProperty("--hero-copy-scale");
+    hero.style.removeProperty("--hero-copy-translate-y");
+    hero.style.removeProperty("--hero-wave-opacity");
+    hero.style.removeProperty("--hero-wave-warp");
+    hero.style.removeProperty("--hero-stage-opacity");
+  }
 
-      return {
-        scale,
-        originX: centerX - 50 * scale,
-        originY: centerY - 50 * scale,
-      };
-    }
+  function installHeroTransition({ draw, clear, resize }) {
+    let animationFrame;
+    let inViewport = false;
 
-    function drawMark(mark, layout, foreground, accent) {
-      const x = layout.originX + mark.x * layout.scale;
-      const y = layout.originY + mark.y * layout.scale;
-
-      drawSignalMark(context, mark, {
-        x,
-        y,
-        scale: layout.scale,
-        strokeWidth: signalFieldSettings.strokeWidth,
-        foreground,
-        accent,
-      });
-    }
-
-    function draw(timeSeconds) {
-      if (!prepareCanvas(canvas, context)) return;
-
-      const foreground = readColor("--fgColor-default", "#f0f6fc");
-      const accent = readColor("--fgColor-accent", "#4493f8");
-      const frame = createSignalFieldFrame({
-        timeSeconds,
-        pointer,
-      });
-      const layout = canvasLayout();
-
-      for (const mark of frame) {
-        drawMark(mark, layout, foreground, accent);
-      }
-    }
-
-    function hasRenderableSurface() {
-      return canvas.clientWidth > 0 && canvas.clientHeight > 0;
-    }
-
-    function resize() {
-      if (reducedMotion.matches) return;
-      if (!hasRenderableSurface()) {
-        stopAnimation();
-        return;
-      }
-
-      draw(elapsedSeconds);
-      wakeHero(heroEntranceDuration);
-    }
-
-    function stopAnimation() {
-      if (animationFrame) cancelAnimationFrame(animationFrame);
+    function renderHeroTransition(timestamp) {
       animationFrame = undefined;
-      previousTimestamp = undefined;
+      if (!inViewport || reducedMotion.matches) return;
+      const state = createHeroTransitionState(heroProgress());
+      applyHeroState(state);
+      draw(state, timestamp);
     }
 
-    function syncAnimation() {
-      if (
-        reducedMotion.matches ||
-        document.hidden ||
-        !inViewport ||
-        !hasRenderableSurface()
-      ) {
-        stopAnimation();
-        return;
-      }
-
-      signal.classList.add("is-live");
-      const pointerIsSettling =
-        Math.abs(target.x - pointer.x) > 0.002 ||
-        Math.abs(target.y - pointer.y) > 0.002;
-      if (
-        !animationFrame &&
-        (performance.now() < heroActivityDeadline || pointerIsSettling)
-      ) {
-        animationFrame = requestAnimationFrame(animate);
+    function scheduleHeroTransition() {
+      if (!animationFrame && inViewport && !reducedMotion.matches) {
+        animationFrame = requestAnimationFrame(renderHeroTransition);
       }
     }
 
-    function wakeHero(duration = heroIdleDuration) {
-      heroActivityDeadline = Math.max(
-        heroActivityDeadline,
-        performance.now() + duration,
-      );
-      syncAnimation();
-    }
-
-    function animate(timestamp) {
-      if (previousTimestamp !== undefined) {
-        elapsedSeconds += Math.min(timestamp - previousTimestamp, 50) / 1000;
-      }
-      previousTimestamp = timestamp;
-
-      pointer.x += (target.x - pointer.x) * 0.055;
-      pointer.y += (target.y - pointer.y) * 0.055;
-      draw(elapsedSeconds);
-      animationFrame = undefined;
-      syncAnimation();
-    }
-
-    function updatePointer(event) {
-      const bounds = hero.getBoundingClientRect();
-      target.x = Math.max(
-        -1,
-        Math.min(1, (event.clientX - bounds.left) / bounds.width * 2 - 1),
-      );
-      target.y = Math.max(
-        -1,
-        Math.min(1, (event.clientY - bounds.top) / bounds.height * 2 - 1),
-      );
-      wakeHero();
-    }
-
-    function settlePointer() {
-      target.x = 0;
-      target.y = 0;
-      wakeHero(heroIdleDuration * 2);
-    }
-
-    const resizeObserver = new ResizeObserver(resize);
-    resizeObserver.observe(signal);
     const visibilityObserver = new IntersectionObserver(
       ([entry]) => {
-        inViewport = entry?.isIntersecting ?? true;
-        if (!inViewport) settlePointer();
-        else wakeHero(heroIdleDuration);
+        inViewport = entry?.isIntersecting ?? false;
+        if (inViewport) scheduleHeroTransition();
       },
-      { rootMargin: "10% 0px", threshold: 0.02 },
+      { rootMargin: "10% 0px", threshold: 0 },
     );
     visibilityObserver.observe(hero);
-
-    hero.addEventListener("pointermove", updatePointer, { passive: true });
-    hero.addEventListener("pointerleave", settlePointer);
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden) syncAnimation();
-      else wakeHero(heroIdleDuration);
-    });
+    new ResizeObserver(() => {
+      resize?.();
+      scheduleHeroTransition();
+    }).observe(sticky);
+    addEventListener("scroll", scheduleHeroTransition, { passive: true });
+    addEventListener("resize", scheduleHeroTransition, { passive: true });
     reducedMotion.addEventListener("change", ({ matches }) => {
       if (matches) {
-        stopAnimation();
-        signal.classList.remove("is-live");
-        context.clearRect(0, 0, canvas.width, canvas.height);
+        resetHeroState();
+        clear?.();
       } else {
-        resize();
-        syncAnimation();
+        scheduleHeroTransition();
       }
     });
-
-    resize();
-    syncAnimation();
+    return scheduleHeroTransition;
   }
+
+  function initProceduralHeroTransition() {
+    const context = canvas?.getContext("2d");
+    if (!canvas || !sticky || !context) return;
+    const particles = [];
+    visitSignalStoryFrame(0, (x, y, opacity, size, _accent, index) => {
+      particles.push({ x, y, opacity, size, index });
+    });
+
+    installHeroTransition({
+      draw(state) {
+        const surface = prepareCanvas(canvas, context);
+        if (!surface || state.particleProgress <= 0) return;
+        const scale = Math.max(
+          surface.width / signalStorySettings.designWidth,
+          surface.height / signalStorySettings.designHeight,
+        );
+        const originX = (surface.width - signalStorySettings.designWidth * scale) / 2;
+        const originY = (surface.height - signalStorySettings.designHeight * scale) / 2;
+        const stride = surface.width < 720 ? 2 : 1;
+        context.fillStyle = readColor("--fgColor-default", "#f0f6fc");
+
+        for (let offset = 0; offset < particles.length; offset += stride) {
+          const target = particles[offset];
+          const particle = createHeroParticle(
+            target.index,
+            target,
+            state.particleProgress,
+          );
+          const size = Math.max(0.45, particle.size * scale * 0.3);
+          context.globalAlpha = particle.opacity * 0.68;
+          context.fillRect(
+            originX + particle.x * scale - size / 2,
+            originY + particle.y * scale - size / 2,
+            size,
+            size,
+          );
+        }
+        context.globalAlpha = 1;
+      },
+      clear() {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+      },
+    });
+  }
+
+  function initDepthHeroTransition() {
+    if (!canvas || !sticky) return;
+    let ready = false;
+    let failed = false;
+    let schedule = () => {};
+    let renderer;
+
+    try {
+      renderer = new DepthVideoStory(canvas, {
+        particleScale: 0.72,
+        requestFrame: () => schedule(),
+      });
+      renderer.setProgress(0);
+      renderer.setEntrance(0);
+      window.__flidHeroDepthTransition = renderer;
+    } catch (error) {
+      console.warn("Hero depth transition unavailable.", error);
+      return;
+    }
+
+    schedule = installHeroTransition({
+      draw(state, timestamp) {
+        if (!ready || failed) return;
+        renderer.setProgress(0);
+        renderer.setEntrance(state.particleProgress);
+        renderer.setColor(readColor("--fgColor-default", "#f0f6fc"));
+        renderer.render(timestamp);
+      },
+      clear() {
+        renderer.setEntrance(0);
+      },
+      resize() {
+        if (ready) renderer.resize();
+      },
+    });
+
+    renderer.load().then(
+      () => {
+        ready = true;
+        schedule();
+      },
+      (error) => {
+        failed = true;
+        renderer.destroy();
+        console.warn("Hero depth transition unavailable.", error);
+      },
+    );
+  }
+
+  const depthViewport = matchMedia("(min-width: 901px)");
+  if (
+    depthStory?.dataset.depthDemo === "local" &&
+    depthViewport.matches &&
+    !reducedMotion.matches
+  ) {
+    initDepthHeroTransition();
+  } else {
+    initProceduralHeroTransition();
+  }
+}
+
+function heroOccludesStory() {
+  if (!hero || reducedMotion.matches) return false;
+  const bounds = hero.getBoundingClientRect();
+  const scrollRange = Math.max(1, hero.offsetHeight - innerHeight);
+  const progress = Math.min(1, Math.max(0, -bounds.top / scrollRange));
+  return progress < 0.84;
 }
 
 const story = document.querySelector("[data-signal-story]");
@@ -419,6 +370,7 @@ if (story) {
         revealStaticStory();
         return;
       }
+      if (heroOccludesStory()) return;
 
       const progress = storyProgress();
       story.classList.add("is-live");
@@ -479,6 +431,7 @@ if (story) {
     function renderDepthStory(timestamp) {
       animationFrame = undefined;
       if (!ready || failed || !inViewport || reducedMotion.matches) return;
+      if (heroOccludesStory()) return;
       targetProgress = storyProgress();
       const deltaMs = lastRenderTimestamp === undefined
         ? 1000 / 60

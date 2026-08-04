@@ -115,6 +115,8 @@ test("uses video depth, edge recovery, and point perspective without transition 
   );
   assert.match(depthVertexShader, /gl_PointSize/);
   assert.match(depthVertexShader, /uPointer/);
+  assert.match(depthVertexShader, /uniform float uEntrance/);
+  assert.match(depthVertexShader, /mix\(contourWorld, imageWorld, entrance\)/);
   assert.match(depthVertexShader, /mix\(0\.34, 1\.0, presence\)/);
   assert.match(depthVertexShader, /smoothstep\(0\.035, 0\.92, value\)/);
   assert.match(depthVertexShader, /mix\(0\.46, 1\.35/);
@@ -122,6 +124,11 @@ test("uses video depth, edge recovery, and point perspective without transition 
   assert.doesNotMatch(depthVertexShader, /cameraZ \/ viewDepth/);
   assert.match(depthFragmentShader, /gl_PointCoord/);
   assert.match(depthFragmentShader, /alpha < 0\.007/);
+});
+
+test("can morph the opening video frame out of the hero contour field", () => {
+  assert.match(DepthVideoStory.prototype.setEntrance.toString(), /this\.entrance/);
+  assert.match(DepthVideoStory.toString(), /this\.entrance\s*=\s*1/);
 });
 
 test("skips duplicate texture work and the second depth sample during holds", () => {

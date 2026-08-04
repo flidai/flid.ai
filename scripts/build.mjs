@@ -30,6 +30,7 @@ const copiedFiles = [
   ["app/generator/generator.css", "assets/generator.css"],
   ["app/brand/brand.css", "assets/brand.css"],
   ["lib/hero-signal-field.mjs", "lib/hero-signal-field.mjs"],
+  ["lib/hero-scroll-transition.mjs", "lib/hero-scroll-transition.mjs"],
   ["lib/signal-scroll-story.mjs", "lib/signal-scroll-story.mjs"],
   ["lib/depth-video-story.mjs", "lib/depth-video-story.mjs"],
   ["lib/logo-generator.mjs", "lib/logo-generator.mjs"],
@@ -37,6 +38,10 @@ const copiedFiles = [
   ["lib/primer-colors.mjs", "lib/primer-colors.mjs"],
   ["lib/wordmark-generator.mjs", "lib/wordmark-generator.mjs"],
   ["vendor/geist/LICENSE.txt", "licenses/geist-OFL-1.1.txt"],
+];
+
+const omittedSiteFiles = [
+  "assets/images/leapview-dashboard-dark.png",
 ];
 
 function normalizeBasePath(basePath) {
@@ -79,6 +84,11 @@ export async function buildSite({
   await rm(outputDirectory, { recursive: true, force: true });
   await mkdir(outputDirectory, { recursive: true });
   await cp(join(root, "site"), outputDirectory, { recursive: true });
+  await Promise.all(
+    omittedSiteFiles.map((pathname) =>
+      rm(join(outputDirectory, pathname), { force: true })
+    ),
+  );
 
   const homePage = join(outputDirectory, "index.html");
   if (depthMediaDirectory) {

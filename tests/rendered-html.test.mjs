@@ -9,26 +9,35 @@ async function readBuiltPage(pathname) {
 }
 
 test("builds the Flid public site at the root as plain HTML", async () => {
-  const [html, script, styles, signalField, signalStory] = await Promise.all([
+  const [html, script, styles, signalField, signalStory, heroTransition] = await Promise.all([
     readBuiltPage("index.html"),
     readBuiltPage("assets/home.js"),
     readBuiltPage("assets/home.css"),
     readBuiltPage("lib/hero-signal-field.mjs"),
     readBuiltPage("lib/signal-scroll-story.mjs"),
+    readBuiltPage("lib/hero-scroll-transition.mjs"),
   ]);
 
   assert.match(html, /<title>Flid — Agent-native product lab<\/title>/i);
   assert.match(html, /We build products where agents do real work/i);
   assert.match(html, /Software was built for people/i);
-  assert.match(html, /The agent-native BI platform/i);
   assert.match(html, /LeapView/i);
-  assert.match(html, /Selected field work keeps them honest/i);
-  assert.match(html, /data platform agent-native/i);
+  assert.doesNotMatch(html, /02 \/ Flagship product|The agent-native BI platform/i);
+  assert.doesNotMatch(html, /03 \/ Field work|Selected field work keeps them honest/i);
+  assert.doesNotMatch(html, /id="leapview"|id="field-work"/i);
+  assert.doesNotMatch(html, /href="#leapview"|href="#field-work"/i);
   assert.match(html, /Jacob Østergaard/i);
   assert.match(html, /jacob-oestergaard\.webp/i);
-  assert.match(html, /leapview-dashboard-dark\.png/i);
-  assert.match(html, /data-signal-field/i);
-  assert.match(html, /<canvas[^>]+data-signal-canvas/i);
+  assert.doesNotMatch(html, /leapview-dashboard-dark\.png/i);
+  assert.match(html, /hero-signal-waves\.webp/i);
+  assert.match(html, /class="hero-wave-field"/i);
+  assert.match(html, /data-hero-transition/i);
+  assert.match(html, /<canvas[^>]+data-hero-transition-canvas/i);
+  assert.match(
+    html,
+    /href="https:\/\/leapview\.dev\/"[^>]*>See our products\s*</i,
+  );
+  assert.doesNotMatch(html, /data-signal-field|data-signal-canvas|hero-meta/i);
   assert.match(html, /data-signal-story/i);
   assert.match(html, /<canvas[^>]+data-story-canvas/i);
   assert.doesNotMatch(html, /signal-story-static-mark/i);
@@ -42,14 +51,15 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.match(html, /mailto:hello@flid\.ai/i);
   assert.match(html, /Flid AI ApS/i);
   assert.match(html, /Flid AI ApS · CVR 43463217 · Odense, Denmark/i);
-  assert.match(html, /Odense · Denmark/i);
+  assert.match(html, /Odense(?: ·|,) Denmark/i);
   assert.match(
     html,
     /Flid is Danish for diligence—the care, persistence, and attention behind work made to last\./i,
   );
   assert.doesNotMatch(html, /Copenhagen/i);
-  assert.match(script, /hero-signal-field\.mjs/);
+  assert.doesNotMatch(script, /hero-signal-field\.mjs/);
   assert.match(script, /signal-scroll-story\.mjs/);
+  assert.match(script, /hero-scroll-transition\.mjs/);
   assert.match(script, /depth-video-story\.mjs/);
   assert.match(script, /min-width:\s*901px/);
   assert.match(html, /data-depth-demo="disabled"/);
@@ -60,24 +70,23 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.match(script, /visitSignalStoryFrame/);
   assert.match(script, /getContext\(["']2d["']\)/);
   assert.match(script, /devicePixelRatio/);
-  assert.match(script, /document\.hidden/);
   assert.match(script, /matchMedia\(["']\(prefers-reduced-motion: reduce\)["']\)/);
   assert.match(script, /IntersectionObserver/);
   assert.match(script, /requestAnimationFrame/);
-  assert.match(script, /hasRenderableSurface/);
-  assert.match(script, /heroActivityDeadline/);
-  assert.match(script, /heroIdleDuration/);
   assert.match(script, /storySubtitleRevealProgress/);
   assert.match(script, /prepareStorySubtitle/);
   assert.match(script, /function renderStoryCopy\(progress\)/);
+  assert.match(script, /function heroOccludesStory\(\)/);
   assert.match(script, /aria-label/);
-  assert.match(script, /performance\.now\(\) < heroActivityDeadline/);
-  assert.doesNotMatch(
-    script,
-    /draw\(elapsedSeconds\);\s*animationFrame = requestAnimationFrame\(animate\);/,
-  );
   assert.match(script, /addEventListener\(["']scroll["']/);
-  assert.match(styles, /\.signal-field-canvas/);
+  assert.match(styles, /\.hero-wave-field/);
+  assert.match(styles, /\.hero-sticky/);
+  assert.match(styles, /--hero-copy-opacity/);
+  assert.match(styles, /\.hero-sticky::after/);
+  assert.match(styles, /linear-gradient\(to bottom, transparent/);
+  assert.match(styles, /\.hero-copy\s*\{[^}]*text-align:\s*center;/s);
+  assert.doesNotMatch(styles, /\.signal-field-canvas|\.signal-static-mark/);
+  assert.doesNotMatch(styles, /\.product(?:\b|-)|\.field-work|\.agent-proof/);
   assert.match(styles, /\.signal-story-sticky/);
   assert.match(styles, /\.signal-story-subtitle/);
   assert.match(styles, /--copy-reveal/);
@@ -100,6 +109,7 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.match(signalStory, /"unstructured"/);
   assert.match(signalStory, /"foundation"/);
   assert.match(signalStory, /particleCount:\s*8_000/);
+  assert.match(heroTransition, /scrollViewports:\s*1/);
   assert.doesNotMatch(signalStory, /logo-generator|brand-system/);
   assert.doesNotMatch(
     html,
@@ -116,12 +126,19 @@ test("optimizes the founder portrait for the public site", async () => {
   assert.ok(portrait.size < 250_000, "founder portrait should stay below 250 KB");
 });
 
-test("ships the LeapView product proof with the public site", async () => {
-  const screenshot = await stat(
-    new URL("dist/assets/images/leapview-dashboard-dark.png", root),
+test("ships an optimized standalone hero wave field", async () => {
+  const background = await stat(
+    new URL("dist/assets/images/hero-signal-waves.webp", root),
   );
 
-  assert.ok(screenshot.size < 250_000, "LeapView screenshot should stay below 250 KB");
+  assert.ok(background.size < 300_000, "hero wave field should stay below 300 KB");
+});
+
+test("does not ship the removed LeapView product proof", async () => {
+  await assert.rejects(
+    access(new URL("dist/assets/images/leapview-dashboard-dark.png", root)),
+    /ENOENT/,
+  );
 });
 
 test("builds the interactive generator as plain HTML and JavaScript", async () => {
