@@ -41,4 +41,21 @@
 - Verified the 390 × 844 fallback uses the same copy and wave timing with a lighter procedural particle pass, without requiring WebGL depth media.
 - Verified reduced motion keeps a static one-viewport hero and disables transition canvases.
 
+### Pass 5 — mobile thesis composition
+
+- Captured the live Datacurve story at 390 × 844 and measured its mobile composition: the canvas occupies 30% of the viewport and the active subtitle begins approximately 24px below it.
+- Replaced the former mobile card fallback with the same scroll-driven depth-video renderer used on desktop. The visual now remains sticky in the top portion of the viewport while each highlighted subtitle sits immediately beneath it.
+- Matched the reference text measure at 342px on a 390px viewport, leaving 24px clear space on each side.
+- Verified the local depth media is selected at every viewport width; the procedural renderer remains only as the unavailable-media fallback, and reduced-motion users continue to receive the static two-card presentation.
+- Compared `/tmp/datacurve-mobile-reference.png` and `/tmp/flid-mobile-final.png` side by side at the same viewport. Visual height, text gap, text measure, and reading order are aligned while retaining Flid's dark palette and particle scenes.
+- Verified both subtitle states become active in sequence and the animation remains bounded inside the sticky viewport without horizontal overflow.
+
+### Pass 6 — single mobile renderer handoff
+
+- Reproduced the reported duplicate at 604 × 1280: the departing hero canvas occupied the top of the viewport while the thesis video canvas entered at the bottom.
+- Mobile now keeps the hero copy and wave-field fade but does not render a second particle canvas.
+- Moved the thesis story forward by one viewport so the single depth-video renderer takes over directly at the hero boundary.
+- Verified the hero canvas is `display: none` below 901px while the thesis canvas remains active, sticky, and paired with the subtitle beneath it.
+- Rechecked the full handoff and later cathedral frame at 604 × 1280; only one animated particle scene is visible at every point.
+
 final result: passed

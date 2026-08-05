@@ -212,10 +212,18 @@ if (hero) {
     );
   }
 
+  function initMobileHeroTransition() {
+    installHeroTransition({
+      draw() {},
+      clear() {},
+    });
+  }
+
   const depthViewport = matchMedia("(min-width: 901px)");
-  if (
+  if (!depthViewport.matches) {
+    initMobileHeroTransition();
+  } else if (
     depthStory?.dataset.depthDemo === "local" &&
-    depthViewport.matches &&
     !reducedMotion.matches
   ) {
     initDepthHeroTransition();
@@ -238,7 +246,6 @@ if (story) {
   const sticky = story.querySelector(".signal-story-sticky");
   const initialCanvas = story.querySelector("[data-story-canvas]");
   const steps = [...story.querySelectorAll("[data-story-step]")];
-  const counter = story.querySelector("[data-story-counter]");
 
   function prepareStorySubtitle(element) {
     const text = element.textContent.replace(/\s+/g, " ").trim();
@@ -314,9 +321,6 @@ if (story) {
         ?.style.setProperty("--story-step-shift", `${shift.toFixed(2)}px`);
     });
 
-    if (counter) {
-      counter.textContent = `${String(activeScene + 1).padStart(2, "0")} / ${String(steps.length).padStart(2, "0")}`;
-    }
   }
 
   function initProceduralStory(canvas) {
@@ -374,7 +378,6 @@ if (story) {
 
       const progress = storyProgress();
       story.classList.add("is-live");
-      story.style.setProperty("--story-progress", progress.toFixed(6));
       renderStoryCopy(progress);
       drawStoryCanvas(progress);
     }
@@ -443,7 +446,6 @@ if (story) {
         deltaMs,
       );
       story.classList.add("is-live", "is-depth-live");
-      story.style.setProperty("--story-progress", renderedProgress.toFixed(6));
       renderStoryCopy(renderedProgress);
 
       renderer.setProgress(renderedProgress);
@@ -526,11 +528,9 @@ if (story) {
   }
 
   if (sticky && initialCanvas && steps.length) {
-    const depthViewport = matchMedia("(min-width: 901px)");
     if (
       story.dataset.depthDemo === "local" &&
-      !reducedMotion.matches &&
-      depthViewport.matches
+      !reducedMotion.matches
     ) {
       initDepthStory(initialCanvas);
     } else {

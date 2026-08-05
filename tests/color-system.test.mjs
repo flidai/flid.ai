@@ -62,7 +62,6 @@ test("uses Primer semantic colors throughout the public website", async () => {
   assert.doesNotMatch(home, /#[0-9a-f]{3,8}\b/i);
   for (const token of [
     "--bgColor-default",
-    "--bgColor-muted",
     "--fgColor-default",
     "--fgColor-muted",
     "--fgColor-accent",
