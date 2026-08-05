@@ -79,7 +79,6 @@ async function applyBasePath(directory, basePath) {
 export async function buildSite({
   outputDirectory = output,
   basePath = "",
-  depthMediaDirectory,
 } = {}) {
   await rm(outputDirectory, { recursive: true, force: true });
   await mkdir(outputDirectory, { recursive: true });
@@ -89,23 +88,6 @@ export async function buildSite({
       rm(join(outputDirectory, pathname), { force: true })
     ),
   );
-
-  const homePage = join(outputDirectory, "index.html");
-  if (depthMediaDirectory) {
-    const depthOutput = join(outputDirectory, "assets/depth-reference");
-    await mkdir(depthOutput, { recursive: true });
-    const filename = "depth-story.mp4";
-    await copyFile(
-      join(depthMediaDirectory, filename),
-      join(depthOutput, filename),
-    );
-    const html = await readFile(homePage, "utf8");
-    await writeFile(
-      homePage,
-      html.replace('data-depth-demo="disabled"', 'data-depth-demo="local"'),
-      "utf8",
-    );
-  }
 
   for (const [source, destination] of copiedFiles) {
     const target = join(outputDirectory, destination);
