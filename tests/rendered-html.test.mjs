@@ -48,6 +48,8 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.match(html, /href="mailto:jacob@flid\.ai"[^>]*>Get in touch\s*</i);
   assert.match(html, /href="\/products\/"[^>]*>Products\s*</i);
   assert.match(html, /href="mailto:jacob@flid\.ai"[^>]*>Contact\s*</i);
+  assert.match(html, /class="site-logo-wordmark"[^>]+lockup-primary-on-dark\.svg/);
+  assert.match(html, /class="site-logo-mark"[^>]+mark-primary-on-dark\.svg/);
   assert.doesNotMatch(html, /data-signal-field|data-signal-canvas|hero-meta/i);
   assert.match(html, /data-signal-story/i);
   assert.doesNotMatch(html, /signal-story-static-mark/i);
@@ -196,6 +198,8 @@ test("builds the products page as a standalone static route", async () => {
   assert.match(html, /LeapView/i);
   assert.match(html, /href="https:\/\/leapview\.dev\/"[^>]*>Visit LeapView\s*</i);
   assert.match(html, /href="mailto:jacob@flid\.ai"[^>]*>Contact\s*</i);
+  assert.match(html, /class="products-logo-wordmark"[^>]+lockup-primary-on-dark\.svg/);
+  assert.match(html, /class="products-logo-mark"[^>]+mark-primary-on-dark\.svg/);
   const productsFooter = html.match(/<footer class="products-footer">[\s\S]*?<\/footer>/i)?.[0] ?? "";
   assert.match(productsFooter, /Flid AI ApS · CVR 43463217 · Odense, Denmark/i);
   assert.doesNotMatch(productsFooter, /flid\.ai|© 2026/i);
@@ -318,6 +322,8 @@ test("retains responsive and reduced-motion styling", async () => {
   assert.match(homeCss, /@media\s*\(max-width:\s*720px\)/);
   assert.match(homeCss, /@media\s*\(max-width:\s*900px\)/);
   assert.match(homeCss, /\.motion-sequence-stage/);
+  assert.match(homeCss, /\.site-logo-mark\s*\{[\s\S]*?transition:\s*transform/);
+  assert.match(homeCss, /\.site-logo:hover \.site-logo-mark[\s\S]*?transform:\s*rotate\(360deg\)/);
   assert.match(homeCss, /\.motion-sequence-canvas/);
   assert.match(
     homeCss,
