@@ -122,9 +122,37 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.doesNotMatch(styles, /\.product(?:\b|-)|\.field-work|\.agent-proof/);
   assert.doesNotMatch(styles, /\.contact(?:\b|\s|:)/);
   assert.match(styles, /\.about\s*\{[^}]*background:\s*var\(--bgColor-default\);/s);
+  assert.match(
+    styles,
+    /\.about\s*\{(?=[^}]*position:\s*relative;)(?=[^}]*z-index:\s*3;)(?=[^}]*isolation:\s*isolate;)[^}]*\}/s,
+  );
+  assert.doesNotMatch(
+    styles,
+    /\.about\s*\{[^}]*border-top:/s,
+    "the Independent by design section should not have a top divider",
+  );
+  assert.doesNotMatch(
+    styles,
+    /\.signal-story\s*\{[^}]*border-bottom:/s,
+    "the preceding story should not recreate the same divider",
+  );
   assert.match(styles, /\.signal-story-sticky/);
   assert.match(styles, /\.signal-story-subtitle/);
   assert.match(styles, /--copy-reveal/);
+  assert.match(
+    styles,
+    /\.motion-sequence\s*\{[^}]*--motion-stage-height:\s*calc\(100svh \+ 80px\);/s,
+  );
+  assert.match(
+    styles,
+    /\.motion-sequence-stage\s*\{(?=[^}]*height:\s*var\(--motion-stage-height\);)(?![^}]*margin-bottom:)[^}]*\}/s,
+    "the sticky stage needs a real layout height so it releases with its container",
+  );
+  assert.match(
+    styles,
+    /\.hero\s*\{[^}]*margin-top:\s*calc\(-1 \* var\(--motion-stage-height\) - 82px\);/s,
+    "the hero should overlap the real sticky stage without collapsing its margin box",
+  );
   assert.match(
     styles,
     /\.signal-story\[data-depth-demo="local"\]\s*\{\s*height:\s*1000svh;/,
@@ -283,7 +311,11 @@ test("retains responsive and reduced-motion styling", async () => {
   );
   assert.match(
     homeCss,
-    /@media\s*\(max-width:\s*900px\)[\s\S]*?\.motion-sequence-stage\s*\{(?=[^}]*top:\s*var\(--mobile-story-canvas-top\);)(?=[^}]*height:\s*var\(--mobile-story-canvas-height\);)[^}]*\}/,
+    /@media\s*\(max-width:\s*900px\)[\s\S]*?\.motion-sequence\s*\{(?=[^}]*--motion-stage-height:\s*var\(--mobile-story-canvas-height\);)(?=[^}]*--mobile-story-canvas-top:)[^}]*\}/,
+  );
+  assert.match(
+    homeCss,
+    /@media\s*\(max-width:\s*900px\)[\s\S]*?\.motion-sequence-stage\s*\{(?=[^}]*top:\s*var\(--mobile-story-canvas-top\);)(?![^}]*margin-bottom:)[^}]*\}/,
   );
   assert.match(
     homeCss,
@@ -308,6 +340,10 @@ test("retains responsive and reduced-motion styling", async () => {
   assert.match(
     homeCss,
     /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*?\.motion-sequence-stage\s*\{[^}]*display:\s*none;/,
+  );
+  assert.match(
+    homeCss,
+    /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*?\.hero\s*\{(?=[^}]*height:\s*100svh;)(?=[^}]*margin-top:\s*-82px;)[^}]*\}/,
   );
   assert.match(showcaseCss, /--lockup-mark-size:/);
   assert.match(generatorCss, /@media\s*\(max-width:\s*680px\)/);

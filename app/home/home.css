@@ -77,6 +77,7 @@ body {
 }
 
 .motion-sequence {
+  --motion-stage-height: calc(100svh + 80px);
   --hero-copy-opacity: 1;
   --hero-copy-scale: 1;
   --hero-copy-translate-y: 0px;
@@ -92,8 +93,7 @@ body {
   position: sticky;
   z-index: 1;
   top: 0;
-  height: 100svh;
-  margin-bottom: -100svh;
+  height: var(--motion-stage-height);
   overflow: hidden;
   pointer-events: none;
 }
@@ -117,7 +117,7 @@ body {
 .hero {
   position: relative;
   height: 200svh;
-  margin-top: -82px;
+  margin-top: calc(-1 * var(--motion-stage-height) - 82px);
 }
 
 .hero-sticky {
@@ -268,7 +268,6 @@ body {
   position: relative;
   height: 430svh;
   margin-top: -100svh;
-  border-bottom: 1px solid var(--borderColor-default);
 }
 
 .signal-story[data-depth-demo="local"] {
@@ -396,9 +395,11 @@ body {
 }
 
 .about {
+  position: relative;
+  z-index: 3;
   padding-block: clamp(72px, 9vw, 140px);
-  border-top: 1px solid var(--borderColor-default);
   border-bottom: 1px solid var(--borderColor-default);
+  isolation: isolate;
   background: var(--bgColor-default);
   color: var(--fgColor-default);
 }
@@ -516,12 +517,11 @@ body {
   .motion-sequence {
     --mobile-story-canvas-top: clamp(96px, 13svh, 124px);
     --mobile-story-canvas-height: 30svh;
+    --motion-stage-height: var(--mobile-story-canvas-height);
   }
 
   .motion-sequence-stage {
     top: var(--mobile-story-canvas-top);
-    height: var(--mobile-story-canvas-height);
-    margin-bottom: calc(-1 * var(--mobile-story-canvas-height));
   }
 
   .signal-story {
@@ -630,7 +630,7 @@ body {
   }
 
   .hero {
-    margin-top: -70px;
+    margin-top: calc(-1 * var(--motion-stage-height) - 70px);
   }
 
   .hero-grid {
@@ -698,6 +698,7 @@ body {
 
   .hero {
     height: 100svh;
+    margin-top: -82px;
   }
 
   .hero-copy,
