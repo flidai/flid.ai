@@ -233,11 +233,6 @@
   margin: 0;
 }
 
-.products-footer-inner div {
-  display: flex;
-  gap: 28px;
-}
-
 @media (max-width: 720px) {
   .products-header-inner {
     min-height: 70px;
@@ -283,6 +278,6 @@
   }
 
   .products-footer-inner p {
-    display: none;
+    display: block;
   }
 }

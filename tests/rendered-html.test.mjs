@@ -65,6 +65,9 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.doesNotMatch(html, /Discuss a design partnership/i);
   assert.match(html, /Flid AI ApS/i);
   assert.match(html, /Flid AI ApS · CVR 43463217 · Odense, Denmark/i);
+  const footer = html.match(/<footer class="site-footer">[\s\S]*?<\/footer>/i)?.[0] ?? "";
+  assert.match(footer, /Flid AI ApS · CVR 43463217 · Odense, Denmark/i);
+  assert.doesNotMatch(footer, /flid\.ai|© 2026/i);
   assert.match(html, /Odense(?: ·|,) Denmark/i);
   assert.match(
     html,
@@ -193,6 +196,9 @@ test("builds the products page as a standalone static route", async () => {
   assert.match(html, /LeapView/i);
   assert.match(html, /href="https:\/\/leapview\.dev\/"[^>]*>Visit LeapView\s*</i);
   assert.match(html, /href="mailto:jacob@flid\.ai"[^>]*>Contact\s*</i);
+  const productsFooter = html.match(/<footer class="products-footer">[\s\S]*?<\/footer>/i)?.[0] ?? "";
+  assert.match(productsFooter, /Flid AI ApS · CVR 43463217 · Odense, Denmark/i);
+  assert.doesNotMatch(productsFooter, /flid\.ai|© 2026/i);
   assert.match(styles, /\.products-page/);
   assert.doesNotMatch(html, /_next|react|__next|data-reactroot/i);
 });
