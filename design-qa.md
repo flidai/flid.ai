@@ -58,4 +58,27 @@
 - Verified the hero canvas is `display: none` below 901px while the thesis canvas remains active, sticky, and paired with the subtitle beneath it.
 - Rechecked the full handoff and later cathedral frame at 604 × 1280; only one animated particle scene is visible at every point.
 
+### Pass 7 — aligned desktop renderer handoff
+
+- Measured the desktop handoff at 1280 × 720 and found the story renderer was activating while its sticky canvas was still 115px below the viewport top.
+- Replaced the approximate hero-progress threshold with the story canvas's actual viewport position.
+- Verified the hero remains the sole renderer with the story canvas 6px below the top, then the story activates only once its sticky canvas is pinned at 0px.
+- Both renderers now hand off on the same first video frame and the same viewport geometry, eliminating the downward snap.
+
+### Pass 8 — one continuous renderer
+
+- Replaced the separate hero and story WebGL surfaces with one sticky canvas and one `DepthVideoStory` instance spanning the complete motion sequence.
+- The hero now drives only the shared renderer's entrance value; the story continues the same renderer from video progress zero. Scroll reversal no longer exposes a second canvas or stale story frame.
+- Traced the detached lower-right particle cluster to the demo watermark embedded in the MP4 source. Added a narrow source-content mask before depth and edge sampling so watermark pixels cannot become particles.
+- Verified the handoff in both directions at 1177 × 1164 with exactly one canvas and one visible structure.
+- Rechecked mobile at 390 × 844: the same shared canvas remains at the top of the viewport and the active subtitle remains directly beneath it.
+
+### Pass 9 — Datacurve transition parity
+
+- Measured the live Datacurve implementation at 1280 × 720. Its 2450vh sequence owns one 111.12vh sticky stage, one canvas, and one render loop.
+- Confirmed its global mapping: the first 6% of section progress drives the intro morph; the remaining 94% advances the media timeline. There is no renderer or canvas handoff at the copy boundary.
+- Replaced Flid's separate hero and story depth controllers with one `initDepthMotionSequence` loop driven by one continuous scroll state.
+- The exact boundary now maps intro progress `1 → 1` and story progress `0 → 0+`; neither the renderer nor the video playhead is recreated or reset.
+- Verified forward scroll at 780, 800, 803, 806, and 830px: the same canvas remains at viewport top `0`, with a single object on both sides of the 803px story boundary.
+
 final result: passed

@@ -76,30 +76,56 @@ body {
   color: var(--fgColor-accent);
 }
 
-.hero {
+.motion-sequence {
   --hero-copy-opacity: 1;
   --hero-copy-scale: 1;
   --hero-copy-translate-y: 0px;
   --hero-wave-opacity: 1;
   --hero-wave-warp: 0;
-  --hero-stage-opacity: 1;
 
   position: relative;
-  z-index: 2;
+  isolation: isolate;
+  background: var(--bgColor-default);
+}
+
+.motion-sequence-stage {
+  position: sticky;
+  z-index: 1;
+  top: 0;
+  height: 100svh;
+  margin-bottom: -100svh;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.motion-sequence-canvas {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 360ms ease;
+}
+
+.motion-sequence.is-canvas-live .motion-sequence-canvas {
+  opacity: 0.94;
+}
+
+.hero {
+  position: relative;
   height: 200svh;
   margin-top: -82px;
-  background: var(--bgColor-default);
-  opacity: var(--hero-stage-opacity);
-  will-change: opacity;
 }
 
 .hero-sticky {
   position: sticky;
+  z-index: 2;
   top: 0;
   height: 100svh;
   overflow: hidden;
-  isolation: isolate;
-  background: var(--bgColor-default);
 }
 
 .hero-sticky::after {
@@ -138,21 +164,6 @@ body {
   transform: scale(calc(1 + var(--hero-wave-warp) * 0.045));
   transform-origin: center;
   will-change: opacity, transform;
-}
-
-.hero-transition-canvas {
-  position: absolute;
-  z-index: 1;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.hero.is-transition-live .hero-transition-canvas {
-  opacity: 1;
 }
 
 .hero-copy {
@@ -255,11 +266,9 @@ body {
 
 .signal-story {
   position: relative;
-  z-index: 1;
   height: 430svh;
   margin-top: -100svh;
   border-bottom: 1px solid var(--borderColor-default);
-  background: var(--bgColor-default);
 }
 
 .signal-story[data-depth-demo="local"] {
@@ -272,6 +281,7 @@ body {
 
 .signal-story-sticky {
   position: sticky;
+  z-index: 2;
   top: 0;
   height: 100svh;
   min-height: 640px;
@@ -289,25 +299,6 @@ body {
   background-size: 88px 88px;
   mask-image: radial-gradient(circle at center, black, transparent 84%);
   opacity: 0.34;
-}
-
-.signal-story-canvas {
-  position: absolute;
-  z-index: 1;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.signal-story-canvas {
-  opacity: 0;
-  transition: opacity 360ms ease;
-}
-
-.signal-story.is-live .signal-story-canvas {
-  opacity: 0.94;
 }
 
 .signal-story-shell {
@@ -522,12 +513,15 @@ body {
 }
 
 @media (max-width: 900px) {
-  .hero {
-    opacity: 1;
+  .motion-sequence {
+    --mobile-story-canvas-top: clamp(96px, 13svh, 124px);
+    --mobile-story-canvas-height: 30svh;
   }
 
-  .hero-transition-canvas {
-    display: none;
+  .motion-sequence-stage {
+    top: var(--mobile-story-canvas-top);
+    height: var(--mobile-story-canvas-height);
+    margin-bottom: calc(-1 * var(--mobile-story-canvas-height));
   }
 
   .signal-story {
@@ -540,9 +534,6 @@ body {
   }
 
   .signal-story-sticky {
-    --mobile-story-canvas-top: clamp(96px, 13svh, 124px);
-    --mobile-story-canvas-height: 30svh;
-
     position: sticky;
     top: 0;
     height: 100svh;
@@ -556,14 +547,6 @@ body {
     background-size: 56px 56px;
     mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
     opacity: 0.22;
-  }
-
-  .signal-story-canvas {
-    inset: auto;
-    top: var(--mobile-story-canvas-top);
-    display: block;
-    width: 100%;
-    height: var(--mobile-story-canvas-height);
   }
 
   .signal-story-shell {
@@ -708,19 +691,19 @@ body {
     transition: none;
   }
 
+  .motion-sequence-stage {
+    display: none;
+    margin-bottom: 0;
+  }
+
   .hero {
     height: 100svh;
-    opacity: 1;
   }
 
   .hero-copy,
   .hero-wave-field {
     opacity: 1;
     transform: none;
-  }
-
-  .hero-transition-canvas {
-    display: none;
   }
 
   .signal-story {
@@ -737,10 +720,6 @@ body {
     height: auto;
     min-height: 0;
     overflow: visible;
-  }
-
-  .signal-story-canvas {
-    display: none;
   }
 
   .signal-story-shell {

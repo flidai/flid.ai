@@ -10,9 +10,69 @@ import {
 import {
   createHeroParticle,
   createHeroTransitionState,
+  createMotionSequenceState,
+  shouldHeroOccludeStory,
 } from "/lib/hero-scroll-transition.mjs";
 
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+const depthViewport = matchMedia("(min-width: 901px)");
+const motionSequence = document.querySelector("[data-motion-sequence]");
+const sequenceCanvas = motionSequence?.querySelector(
+  "[data-motion-sequence-canvas]",
+);
+const hero = document.querySelector("[data-hero-transition]");
+const story = document.querySelector("[data-signal-story]");
+const storySticky = story?.querySelector(".signal-story-sticky");
+
+function setSequenceLive(live) {
+  motionSequence?.classList.toggle("is-canvas-live", Boolean(live));
+}
+
+function createSharedDepthSequence(canvas) {
+  if (!canvas) return undefined;
+  const schedulers = new Set();
+  let renderer;
+
+  try {
+    renderer = new DepthVideoStory(canvas, {
+      requestFrame() {
+        for (const schedule of schedulers) schedule();
+      },
+    });
+  } catch (error) {
+    console.warn("Depth video sequence unavailable.", error);
+    return undefined;
+  }
+
+  const sequence = {
+    failed: false,
+    ready: false,
+    renderer,
+    schedulers,
+    readyPromise: undefined,
+  };
+  sequence.readyPromise = renderer.load().then(
+    () => {
+      sequence.ready = true;
+      for (const schedule of schedulers) schedule();
+      return true;
+    },
+    (error) => {
+      sequence.failed = true;
+      renderer.destroy();
+      setSequenceLive(false);
+      console.warn("Depth video sequence unavailable.", error);
+      return false;
+    },
+  );
+  window.__flidDepthSequence = renderer;
+  return sequence;
+}
+
+const depthSequence =
+  story?.dataset.depthDemo === "local" && !reducedMotion.matches
+    ? createSharedDepthSequence(sequenceCanvas)
+    : undefined;
 
 function readColor(token, fallback) {
   return getComputedStyle(document.documentElement)
@@ -39,40 +99,35 @@ function prepareCanvas(canvas, context) {
   return { width, height };
 }
 
-const hero = document.querySelector("[data-hero-transition]");
+function applyHeroState(state) {
+  hero?.classList.add("is-transition-live");
+  motionSequence?.style.setProperty("--hero-copy-opacity", state.copyOpacity);
+  motionSequence?.style.setProperty("--hero-copy-scale", state.copyScale);
+  motionSequence?.style.setProperty(
+    "--hero-copy-translate-y",
+    `${state.copyTranslateY}px`,
+  );
+  motionSequence?.style.setProperty("--hero-wave-opacity", state.waveOpacity);
+  motionSequence?.style.setProperty("--hero-wave-warp", state.waveWarp);
+}
+
+function resetHeroState() {
+  hero?.classList.remove("is-transition-live");
+  motionSequence?.style.removeProperty("--hero-copy-opacity");
+  motionSequence?.style.removeProperty("--hero-copy-scale");
+  motionSequence?.style.removeProperty("--hero-copy-translate-y");
+  motionSequence?.style.removeProperty("--hero-wave-opacity");
+  motionSequence?.style.removeProperty("--hero-wave-warp");
+}
 
 if (hero) {
-  const canvas = hero.querySelector("[data-hero-transition-canvas]");
+  const canvas = sequenceCanvas;
   const sticky = hero.querySelector(".hero-sticky");
-  const depthStory = document.querySelector("[data-signal-story]");
 
   function heroProgress() {
     const bounds = hero.getBoundingClientRect();
     const scrollRange = Math.max(1, hero.offsetHeight - innerHeight);
     return Math.min(1, Math.max(0, -bounds.top / scrollRange));
-  }
-
-  function applyHeroState(state) {
-    hero.classList.add("is-transition-live");
-    hero.style.setProperty("--hero-copy-opacity", state.copyOpacity);
-    hero.style.setProperty("--hero-copy-scale", state.copyScale);
-    hero.style.setProperty(
-      "--hero-copy-translate-y",
-      `${state.copyTranslateY}px`,
-    );
-    hero.style.setProperty("--hero-wave-opacity", state.waveOpacity);
-    hero.style.setProperty("--hero-wave-warp", state.waveWarp);
-    hero.style.setProperty("--hero-stage-opacity", state.stageOpacity);
-  }
-
-  function resetHeroState() {
-    hero.classList.remove("is-transition-live");
-    hero.style.removeProperty("--hero-copy-opacity");
-    hero.style.removeProperty("--hero-copy-scale");
-    hero.style.removeProperty("--hero-copy-translate-y");
-    hero.style.removeProperty("--hero-wave-opacity");
-    hero.style.removeProperty("--hero-wave-warp");
-    hero.style.removeProperty("--hero-stage-opacity");
   }
 
   function installHeroTransition({ draw, clear, resize }) {
@@ -128,6 +183,8 @@ if (hero) {
 
     installHeroTransition({
       draw(state) {
+        if (!heroOccludesStory()) return;
+        setSequenceLive(state.particleProgress > 0);
         const surface = prepareCanvas(canvas, context);
         if (!surface || state.particleProgress <= 0) return;
         const scale = Math.max(
@@ -158,58 +215,10 @@ if (hero) {
         context.globalAlpha = 1;
       },
       clear() {
+        setSequenceLive(false);
         context.clearRect(0, 0, canvas.width, canvas.height);
       },
     });
-  }
-
-  function initDepthHeroTransition() {
-    if (!canvas || !sticky) return;
-    let ready = false;
-    let failed = false;
-    let schedule = () => {};
-    let renderer;
-
-    try {
-      renderer = new DepthVideoStory(canvas, {
-        particleScale: 0.72,
-        requestFrame: () => schedule(),
-      });
-      renderer.setProgress(0);
-      renderer.setEntrance(0);
-      window.__flidHeroDepthTransition = renderer;
-    } catch (error) {
-      console.warn("Hero depth transition unavailable.", error);
-      return;
-    }
-
-    schedule = installHeroTransition({
-      draw(state, timestamp) {
-        if (!ready || failed) return;
-        renderer.setProgress(0);
-        renderer.setEntrance(state.particleProgress);
-        renderer.setColor(readColor("--fgColor-default", "#f0f6fc"));
-        renderer.render(timestamp);
-      },
-      clear() {
-        renderer.setEntrance(0);
-      },
-      resize() {
-        if (ready) renderer.resize();
-      },
-    });
-
-    renderer.load().then(
-      () => {
-        ready = true;
-        schedule();
-      },
-      (error) => {
-        failed = true;
-        renderer.destroy();
-        console.warn("Hero depth transition unavailable.", error);
-      },
-    );
   }
 
   function initMobileHeroTransition() {
@@ -219,32 +228,23 @@ if (hero) {
     });
   }
 
-  const depthViewport = matchMedia("(min-width: 901px)");
-  if (!depthViewport.matches) {
-    initMobileHeroTransition();
-  } else if (
-    depthStory?.dataset.depthDemo === "local" &&
-    !reducedMotion.matches
-  ) {
-    initDepthHeroTransition();
-  } else {
-    initProceduralHeroTransition();
+  if (!depthSequence) {
+    if (!depthViewport.matches) initMobileHeroTransition();
+    else initProceduralHeroTransition();
   }
 }
 
 function heroOccludesStory() {
-  if (!hero || reducedMotion.matches) return false;
-  const bounds = hero.getBoundingClientRect();
-  const scrollRange = Math.max(1, hero.offsetHeight - innerHeight);
-  const progress = Math.min(1, Math.max(0, -bounds.top / scrollRange));
-  return progress < 0.84;
+  if (!hero || !storySticky) return false;
+  return shouldHeroOccludeStory(
+    storySticky.getBoundingClientRect().top,
+    reducedMotion.matches,
+  );
 }
 
-const story = document.querySelector("[data-signal-story]");
-
 if (story) {
-  const sticky = story.querySelector(".signal-story-sticky");
-  const initialCanvas = story.querySelector("[data-story-canvas]");
+  const sticky = storySticky;
+  const initialCanvas = sequenceCanvas;
   const steps = [...story.querySelectorAll("[data-story-step]")];
 
   function prepareStorySubtitle(element) {
@@ -281,6 +281,7 @@ if (story) {
 
   function revealStaticStory() {
     story.classList.remove("is-live", "is-depth-live");
+    setSequenceLive(false);
     for (const step of steps) {
       step.removeAttribute("aria-hidden");
       step.style.removeProperty("opacity");
@@ -378,6 +379,7 @@ if (story) {
 
       const progress = storyProgress();
       story.classList.add("is-live");
+      setSequenceLive(true);
       renderStoryCopy(progress);
       drawStoryCanvas(progress);
     }
@@ -406,36 +408,59 @@ if (story) {
     reducedMotion.addEventListener("change", scheduleStory);
   }
 
-  function initDepthStory(canvas) {
-    if (!sticky || !canvas || !steps.length) return;
-    let renderer;
+  function initDepthMotionSequence(canvas, sequence) {
+    if (
+      !motionSequence ||
+      !hero ||
+      !sticky ||
+      !canvas ||
+      !steps.length ||
+      !sequence
+    ) return;
+    const { renderer } = sequence;
     let animationFrame;
     let inViewport = false;
-    let ready = false;
-    let failed = false;
     let targetProgress = 0;
     let renderedProgress = 0;
     let lastRenderTimestamp;
     const pointer = { x: 0, y: 0 };
 
-    function scheduleDepthStory() {
+    function readMotionState() {
+      const scrollOffset = -hero.getBoundingClientRect().top;
+      const introScrollRange = Math.max(1, hero.offsetHeight - innerHeight);
+      const storyScrollRange = Math.max(1, story.offsetHeight - innerHeight);
+      return createMotionSequenceState(
+        scrollOffset,
+        introScrollRange,
+        storyScrollRange,
+      );
+    }
+
+    function scheduleDepthSequence() {
       if (
         animationFrame ||
-        !ready ||
-        failed ||
+        !sequence.ready ||
+        sequence.failed ||
         !inViewport ||
         reducedMotion.matches
       ) {
         return;
       }
-      animationFrame = requestAnimationFrame(renderDepthStory);
+      animationFrame = requestAnimationFrame(renderDepthSequence);
     }
 
-    function renderDepthStory(timestamp) {
+    function renderDepthSequence(timestamp) {
       animationFrame = undefined;
-      if (!ready || failed || !inViewport || reducedMotion.matches) return;
-      if (heroOccludesStory()) return;
-      targetProgress = storyProgress();
+      if (
+        !sequence.ready ||
+        sequence.failed ||
+        !inViewport ||
+        reducedMotion.matches
+      ) return;
+      const motionState = readMotionState();
+      const heroState = createHeroTransitionState(motionState.introProgress);
+      applyHeroState(heroState);
+      targetProgress = motionState.storyProgress;
       const deltaMs = lastRenderTimestamp === undefined
         ? 1000 / 60
         : timestamp - lastRenderTimestamp;
@@ -445,15 +470,19 @@ if (story) {
         targetProgress,
         deltaMs,
       );
-      story.classList.add("is-live", "is-depth-live");
-      renderStoryCopy(renderedProgress);
+      if (motionState.storyActive) {
+        story.classList.add("is-live", "is-depth-live");
+        renderStoryCopy(renderedProgress);
+      }
+      setSequenceLive(heroState.particleProgress > 0);
 
       renderer.setProgress(renderedProgress);
+      renderer.setEntrance(heroState.particleProgress);
       renderer.setPointer(pointer.x, pointer.y);
       renderer.setColor(readColor("--fgColor-default", "#f0f6fc"));
       renderer.render(timestamp);
 
-      if (renderedProgress !== targetProgress) scheduleDepthStory();
+      if (renderedProgress !== targetProgress) scheduleDepthSequence();
     }
 
     function updatePointer(event) {
@@ -466,73 +495,57 @@ if (story) {
         -1,
         Math.min(1, (event.clientY - bounds.top) / bounds.height * 2 - 1),
       );
-      scheduleDepthStory();
+      scheduleDepthSequence();
     }
 
-    function failToProcedural(error) {
-      failed = true;
-      renderer?.destroy();
-      console.warn("Depth video story unavailable; using procedural fallback.", error);
-      const replacement = canvas.cloneNode(false);
-      canvas.replaceWith(replacement);
-      initProceduralStory(replacement);
-    }
-
-    try {
-      renderer = new DepthVideoStory(canvas, {
-        requestFrame: scheduleDepthStory,
-      });
-      window.__flidDepthStory = renderer;
-    } catch (error) {
-      failToProcedural(error);
-      return;
-    }
-
-    renderer.load().then(
-      () => {
-        ready = true;
-        targetProgress = storyProgress();
+    sequence.schedulers.add(scheduleDepthSequence);
+    window.__flidHeroDepthTransition = renderer;
+    window.__flidDepthStory = renderer;
+    sequence.readyPromise.then((ready) => {
+      if (ready) {
+        const motionState = readMotionState();
+        targetProgress = motionState.storyProgress;
         renderedProgress = targetProgress;
         lastRenderTimestamp = undefined;
         renderer.setReducedMotion(reducedMotion.matches);
-        scheduleDepthStory();
-      },
-      failToProcedural,
-    );
+        scheduleDepthSequence();
+      }
+    });
 
     const visibilityObserver = new IntersectionObserver(
       ([entry]) => {
         inViewport = entry?.isIntersecting ?? false;
-        if (inViewport) scheduleDepthStory();
+        if (inViewport) scheduleDepthSequence();
       },
       { rootMargin: "20% 0px", threshold: 0 },
     );
-    visibilityObserver.observe(story);
+    visibilityObserver.observe(motionSequence);
     new ResizeObserver(() => {
-      if (ready) renderer.resize();
-      scheduleDepthStory();
-    }).observe(sticky);
-    addEventListener("scroll", scheduleDepthStory, { passive: true });
-    addEventListener("resize", scheduleDepthStory, { passive: true });
+      if (sequence.ready) renderer.resize();
+      scheduleDepthSequence();
+    }).observe(canvas);
+    addEventListener("scroll", scheduleDepthSequence, { passive: true });
+    addEventListener("resize", scheduleDepthSequence, { passive: true });
     sticky.addEventListener("pointermove", updatePointer, { passive: true });
     sticky.addEventListener("pointerleave", () => {
       pointer.x = 0;
       pointer.y = 0;
-      scheduleDepthStory();
+      scheduleDepthSequence();
     });
     reducedMotion.addEventListener("change", ({ matches }) => {
       renderer.setReducedMotion(matches);
-      if (matches) revealStaticStory();
-      else scheduleDepthStory();
+      if (matches) {
+        resetHeroState();
+        revealStaticStory();
+      } else {
+        scheduleDepthSequence();
+      }
     });
   }
 
   if (sticky && initialCanvas && steps.length) {
-    if (
-      story.dataset.depthDemo === "local" &&
-      !reducedMotion.matches
-    ) {
-      initDepthStory(initialCanvas);
+    if (depthSequence) {
+      initDepthMotionSequence(initialCanvas, depthSequence);
     } else {
       initProceduralStory(initialCanvas);
     }

@@ -4,7 +4,9 @@ import test from "node:test";
 import {
   createHeroParticle,
   createHeroTransitionState,
+  createMotionSequenceState,
   heroTransitionSettings,
+  shouldHeroOccludeStory,
 } from "../lib/hero-scroll-transition.mjs";
 
 test("matches the measured one-viewport hero transition", () => {
@@ -67,4 +69,47 @@ test("maps each story particle from a deterministic contour field", () => {
   assert.notEqual(opening.y, target.y);
   assert.equal(opening.opacity, 0);
   assert.deepEqual(closing, target);
+});
+
+test("keeps the hero renderer until the story canvas reaches the viewport top", () => {
+  assert.equal(shouldHeroOccludeStory(115, false), true);
+  assert.equal(shouldHeroOccludeStory(0, false), false);
+  assert.equal(shouldHeroOccludeStory(-1, false), false);
+  assert.equal(shouldHeroOccludeStory(115, true), false);
+});
+
+test("maps the hero morph and story video onto one continuous scroll state", () => {
+  assert.deepEqual(createMotionSequenceState(0, 720, 6_480), {
+    introProgress: 0,
+    storyProgress: 0,
+    storyActive: false,
+  });
+  assert.deepEqual(createMotionSequenceState(720, 720, 6_480), {
+    introProgress: 1,
+    storyProgress: 0,
+    storyActive: true,
+  });
+  assert.deepEqual(createMotionSequenceState(3_960, 720, 6_480), {
+    introProgress: 1,
+    storyProgress: 0.5,
+    storyActive: true,
+  });
+  assert.deepEqual(createMotionSequenceState(7_200, 720, 6_480), {
+    introProgress: 1,
+    storyProgress: 1,
+    storyActive: true,
+  });
+});
+
+test("keeps the video playhead continuous at the intro boundary", () => {
+  const before = createMotionSequenceState(719.999, 720, 6_480);
+  const boundary = createMotionSequenceState(720, 720, 6_480);
+  const after = createMotionSequenceState(720.01, 720, 6_480);
+
+  assert.equal(before.storyProgress, 0);
+  assert.equal(boundary.storyProgress, 0);
+  assert.ok(after.storyProgress > 0);
+  assert.ok(after.storyProgress < 0.00001);
+  assert.ok(before.introProgress < boundary.introProgress);
+  assert.equal(boundary.introProgress, after.introProgress);
 });

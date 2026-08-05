@@ -55,6 +55,8 @@ test("maps the entire scroll range monotonically across one source", () => {
   );
   assert.equal(middle.sourceA, 0);
   assert.equal(middle.sourceB, 0);
+  assert.equal(opening.sampleA, 0);
+  assert.equal(opening.sampleB, 0);
   assert.equal(middle.sampleA, 0.5);
   assert.equal(middle.sampleB, 0.5);
   assert.equal(middle.morph, 0);
@@ -108,6 +110,12 @@ test("uses video depth, edge recovery, and point perspective without transition 
   assert.match(depthVertexShader, /uniform sampler2D uDepthA/);
   assert.match(depthVertexShader, /uniform sampler2D uDepthB/);
   assert.match(depthVertexShader, /sobelEdge/);
+  assert.match(depthVertexShader, /sourceContentMask/);
+  assert.match(
+    depthVertexShader,
+    /1\.0\s*-\s*smoothstep\(0\.11,\s*0\.14,\s*uv\.y\)/,
+    "the source mask must cover the full embedded demo watermark",
+  );
   assert.doesNotMatch(depthVertexShader, /uAvoidRect|rectangleInfluence/);
   assert.doesNotMatch(
     depthVertexShader,

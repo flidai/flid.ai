@@ -35,43 +35,47 @@
         </div>
       </header>
 
-      <section class="hero" data-hero-transition>
-        <div class="hero-sticky">
+      <div class="motion-sequence" data-motion-sequence>
+        <div class="motion-sequence-stage" aria-hidden="true">
           <img class="hero-wave-field" src="/assets/images/hero-signal-waves.webp" width="1672" height="941" alt="" fetchpriority="high">
-          <canvas class="hero-transition-canvas" data-hero-transition-canvas aria-hidden="true"></canvas>
-          <div class="site-shell hero-grid">
-            <div class="hero-copy">
-              <p class="eyebrow">Independent agent-native product lab</p>
-              <h1>We build products<br>where agents<br><span>do real work.</span></h1>
-              <p class="hero-summary">Flid creates software for a world where people and AI agents operate through the same trusted systems, data, and permissions.</p>
-              <div class="hero-actions">
-                <a class="button button-hero" href="https://leapview.dev/">See our products</a>
+          <canvas class="motion-sequence-canvas" data-motion-sequence-canvas></canvas>
+        </div>
+
+        <section class="hero" data-hero-transition>
+          <div class="hero-sticky">
+            <div class="site-shell hero-grid">
+              <div class="hero-copy">
+                <p class="eyebrow">Independent agent-native product lab</p>
+                <h1>We build products<br>where agents<br><span>do real work.</span></h1>
+                <p class="hero-summary">Flid creates software for a world where people and AI agents operate through the same trusted systems, data, and permissions.</p>
+                <div class="hero-actions">
+                  <a class="button button-hero" href="https://leapview.dev/">See our products</a>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section class="signal-story" id="thesis" data-signal-story data-depth-demo="disabled" aria-label="Flid agent-native thesis">
-        <div class="signal-story-sticky">
-          <div class="signal-story-grid" aria-hidden="true"></div>
-          <canvas class="signal-story-canvas" data-story-canvas aria-hidden="true"></canvas>
-          <div class="site-shell signal-story-shell">
-            <div class="signal-story-steps">
-              <article class="signal-story-step" data-story-step>
-                <div class="signal-story-copy">
-                  <p class="signal-story-subtitle" data-story-reveal>Software was built for people. Agents were added on top.</p>
-                </div>
-              </article>
-              <article class="signal-story-step" data-story-step>
-                <div class="signal-story-copy">
-                  <p class="signal-story-subtitle" data-story-reveal>Agent-native starts deeper: governed context, explicit capabilities, and evidence designed into the foundation.</p>
-                </div>
-              </article>
+        <section class="signal-story" id="thesis" data-signal-story data-depth-demo="disabled" aria-label="Flid agent-native thesis">
+          <div class="signal-story-sticky">
+            <div class="signal-story-grid" aria-hidden="true"></div>
+            <div class="site-shell signal-story-shell">
+              <div class="signal-story-steps">
+                <article class="signal-story-step" data-story-step>
+                  <div class="signal-story-copy">
+                    <p class="signal-story-subtitle" data-story-reveal>Software was built for people. Agents were added on top.</p>
+                  </div>
+                </article>
+                <article class="signal-story-step" data-story-step>
+                  <div class="signal-story-copy">
+                    <p class="signal-story-subtitle" data-story-reveal>Agent-native starts deeper: governed context, explicit capabilities, and evidence designed into the foundation.</p>
+                  </div>
+                </article>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
       <section class="about" id="about">
         <div class="site-shell about-grid">

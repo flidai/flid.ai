@@ -35,14 +35,19 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.match(html, /hero-signal-waves\.webp/i);
   assert.match(html, /class="hero-wave-field"/i);
   assert.match(html, /data-hero-transition/i);
-  assert.match(html, /<canvas[^>]+data-hero-transition-canvas/i);
+  assert.match(html, /<canvas[^>]+data-motion-sequence-canvas/i);
+  assert.equal(
+    (html.match(/<canvas\b/gi) || []).length,
+    1,
+    "the hero and story must share one continuous canvas",
+  );
+  assert.doesNotMatch(html, /data-hero-transition-canvas|data-story-canvas/i);
   assert.match(
     html,
     /href="https:\/\/leapview\.dev\/"[^>]*>See our products\s*</i,
   );
   assert.doesNotMatch(html, /data-signal-field|data-signal-canvas|hero-meta/i);
   assert.match(html, /data-signal-story/i);
-  assert.match(html, /<canvas[^>]+data-story-canvas/i);
   assert.doesNotMatch(html, /signal-story-static-mark/i);
   assert.match(html, /governed context, explicit capabilities/i);
   assert.match(html, /designed into the foundation/i);
@@ -74,7 +79,7 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   );
   assert.match(
     script,
-    /story\.dataset\.depthDemo\s*===\s*["']local["']\s*&&\s*!reducedMotion\.matches[\s\S]*?initDepthStory\(initialCanvas\)/,
+    /story\?\.dataset\.depthDemo\s*===\s*["']local["']\s*&&\s*!reducedMotion\.matches[\s\S]*?createSharedDepthSequence\(sequenceCanvas\)[\s\S]*?initDepthMotionSequence\(initialCanvas, depthSequence\)/,
   );
   assert.match(html, /data-depth-demo="disabled"/);
   await assert.rejects(
@@ -92,9 +97,18 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.match(script, /function renderStoryCopy\(progress\)/);
   assert.match(script, /function heroOccludesStory\(\)/);
   assert.match(script, /function initMobileHeroTransition\(\)/);
+  assert.equal(
+    (script.match(/new DepthVideoStory\(/g) || []).length,
+    1,
+    "the hero and story must share one video renderer",
+  );
+  assert.match(script, /function initDepthMotionSequence\(/);
+  assert.doesNotMatch(script, /function initDepthHeroTransition\(/);
+  assert.doesNotMatch(script, /function initDepthStory\(/);
+  assert.match(script, /createMotionSequenceState\(/);
   assert.match(
     script,
-    /if\s*\(!depthViewport\.matches\)\s*\{\s*initMobileHeroTransition\(\);/,
+    /if\s*\(!depthSequence\)\s*\{\s*if\s*\(!depthViewport\.matches\)\s*initMobileHeroTransition\(\);/,
   );
   assert.match(script, /aria-label/);
   assert.match(script, /addEventListener\(["']scroll["']/);
@@ -253,10 +267,8 @@ test("retains responsive and reduced-motion styling", async () => {
   }
   assert.match(homeCss, /@media\s*\(max-width:\s*720px\)/);
   assert.match(homeCss, /@media\s*\(max-width:\s*900px\)/);
-  assert.match(
-    homeCss,
-    /@media\s*\(max-width:\s*900px\)[\s\S]*?\.hero-transition-canvas\s*\{[^}]*display:\s*none;/,
-  );
+  assert.match(homeCss, /\.motion-sequence-stage/);
+  assert.match(homeCss, /\.motion-sequence-canvas/);
   assert.match(
     homeCss,
     /@media\s*\(max-width:\s*900px\)[\s\S]*?\.signal-story\s*\{[^}]*height:\s*340svh;[^}]*margin-top:\s*-100svh;/,
@@ -271,7 +283,7 @@ test("retains responsive and reduced-motion styling", async () => {
   );
   assert.match(
     homeCss,
-    /@media\s*\(max-width:\s*900px\)[\s\S]*?\.signal-story-canvas\s*\{(?=[^}]*display:\s*block;)(?=[^}]*top:\s*var\(--mobile-story-canvas-top\);)(?=[^}]*height:\s*var\(--mobile-story-canvas-height\);)[^}]*\}/,
+    /@media\s*\(max-width:\s*900px\)[\s\S]*?\.motion-sequence-stage\s*\{(?=[^}]*top:\s*var\(--mobile-story-canvas-top\);)(?=[^}]*height:\s*var\(--mobile-story-canvas-height\);)[^}]*\}/,
   );
   assert.match(
     homeCss,
@@ -292,6 +304,10 @@ test("retains responsive and reduced-motion styling", async () => {
   assert.match(
     homeCss,
     /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*?\.signal-story\[data-depth-demo="local"\]\s*\{\s*height:\s*auto;/,
+  );
+  assert.match(
+    homeCss,
+    /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*?\.motion-sequence-stage\s*\{[^}]*display:\s*none;/,
   );
   assert.match(showcaseCss, /--lockup-mark-size:/);
   assert.match(generatorCss, /@media\s*\(max-width:\s*680px\)/);
