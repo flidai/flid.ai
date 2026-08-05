@@ -22,7 +22,6 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.match(html, /We build products where agents do real work/i);
   assert.match(html, /Software was built for people/i);
   assert.doesNotMatch(html, /01 \/ Thesis|01 \/ Premise|02 \/ Foundation|04 \/ The lab/i);
-  assert.match(html, /LeapView/i);
   assert.doesNotMatch(html, /02 \/ Flagship product|The agent-native BI platform/i);
   assert.doesNotMatch(html, /03 \/ Field work|Selected field work keeps them honest/i);
   assert.doesNotMatch(html, /id="leapview"|id="field-work"/i);
@@ -44,8 +43,13 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.doesNotMatch(html, /data-hero-transition-canvas|data-story-canvas/i);
   assert.match(
     html,
-    /href="https:\/\/leapview\.dev\/"[^>]*>See our products\s*</i,
+    /href="mailto:jacob@flid\.ai"[^>]*>Get in touch\s*</i,
   );
+  assert.match(html, /href="\/products\/"[^>]*>See our products\s*<span[^>]*>→<\/span>/i);
+  assert.match(html, /href="\/products\/"[^>]*>Products\s*</i);
+  assert.match(html, /href="mailto:jacob@flid\.ai"[^>]*>Contact\s*</i);
+  assert.match(html, /class="site-logo-wordmark"[^>]+lockup-primary-on-dark\.svg/);
+  assert.match(html, /class="site-logo-mark"[^>]+mark-primary-on-dark\.svg/);
   assert.doesNotMatch(html, /data-signal-field|data-signal-canvas|hero-meta/i);
   assert.match(html, /data-signal-story/i);
   assert.doesNotMatch(html, /signal-story-static-mark/i);
@@ -58,9 +62,14 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.doesNotMatch(script, /data-story-counter|counter\.textContent/);
   assert.doesNotMatch(html, /signal-orbit|signal-node/);
   assert.match(html, /assets\/home\.js/i);
-  assert.match(html, /mailto:hello@flid\.ai/i);
+  assert.match(html, /mailto:jacob@flid\.ai/i);
+  assert.match(html, /Start a conversation/i);
+  assert.doesNotMatch(html, /Discuss a design partnership/i);
   assert.match(html, /Flid AI ApS/i);
   assert.match(html, /Flid AI ApS · CVR 43463217 · Odense, Denmark/i);
+  const footer = html.match(/<footer class="site-footer">[\s\S]*?<\/footer>/i)?.[0] ?? "";
+  assert.match(footer, /Flid AI ApS · CVR 43463217 · Odense, Denmark/i);
+  assert.doesNotMatch(footer, /flid\.ai|© 2026/i);
   assert.match(html, /Odense(?: ·|,) Denmark/i);
   assert.match(
     html,
@@ -175,6 +184,26 @@ test("builds the Flid public site at the root as plain HTML", async () => {
     html,
     /Data foundations|Decision systems|Small team\.<br>Direct collaboration/i,
   );
+  assert.doesNotMatch(html, /_next|react|__next|data-reactroot/i);
+});
+
+test("builds the products page as a standalone static route", async () => {
+  const [html, styles] = await Promise.all([
+    readBuiltPage("products/index.html"),
+    readBuiltPage("assets/products.css"),
+  ]);
+
+  assert.match(html, /<title>Products — Flid<\/title>/i);
+  assert.match(html, /Products where agents do real work/i);
+  assert.match(html, /LeapView/i);
+  assert.match(html, /href="https:\/\/leapview\.dev\/"[^>]*>Visit LeapView\s*</i);
+  assert.match(html, /href="mailto:jacob@flid\.ai"[^>]*>Contact\s*</i);
+  assert.match(html, /class="products-logo-wordmark"[^>]+lockup-primary-on-dark\.svg/);
+  assert.match(html, /class="products-logo-mark"[^>]+mark-primary-on-dark\.svg/);
+  const productsFooter = html.match(/<footer class="products-footer">[\s\S]*?<\/footer>/i)?.[0] ?? "";
+  assert.match(productsFooter, /Flid AI ApS · CVR 43463217 · Odense, Denmark/i);
+  assert.doesNotMatch(productsFooter, /flid\.ai|© 2026/i);
+  assert.match(styles, /\.products-page/);
   assert.doesNotMatch(html, /_next|react|__next|data-reactroot/i);
 });
 
@@ -293,6 +322,9 @@ test("retains responsive and reduced-motion styling", async () => {
   assert.match(homeCss, /@media\s*\(max-width:\s*720px\)/);
   assert.match(homeCss, /@media\s*\(max-width:\s*900px\)/);
   assert.match(homeCss, /\.motion-sequence-stage/);
+  assert.match(homeCss, /\.site-logo-mark\s*\{[\s\S]*?transition:\s*transform/);
+  assert.match(homeCss, /\.site-logo:hover \.site-logo-mark[\s\S]*?transform:\s*rotate\(360deg\)/);
+  assert.match(homeCss, /\.button:hover[\s\S]*?background:\s*var\(--bgColor-accent-emphasis\)/);
   assert.match(homeCss, /\.motion-sequence-canvas/);
   assert.match(
     homeCss,
