@@ -81,11 +81,8 @@ test("builds the Flid public site at the root as plain HTML", async () => {
     script,
     /story\?\.dataset\.depthDemo\s*===\s*["']local["']\s*&&\s*!reducedMotion\.matches[\s\S]*?createSharedDepthSequence\(sequenceCanvas\)[\s\S]*?initDepthMotionSequence\(initialCanvas, depthSequence\)/,
   );
-  assert.match(html, /data-depth-demo="disabled"/);
-  await assert.rejects(
-    access(new URL("dist/assets/depth-reference", root)),
-    /ENOENT/,
-  );
+  assert.match(html, /data-depth-demo="local"/);
+  await access(new URL("dist/assets/depth-reference/depth-story.mp4", root));
   assert.match(script, /visitSignalStoryFrame/);
   assert.match(script, /getContext\(["']2d["']\)/);
   assert.match(script, /devicePixelRatio/);

@@ -8,11 +8,6 @@ import { parseByteRange } from "../lib/http-range.mjs";
 
 const projectRoot = fileURLToPath(new URL("..", import.meta.url));
 const root = join(projectRoot, "dist");
-const depthMediaDirectory = join(
-  projectRoot,
-  "research/datacurve/upstream/media",
-);
-const depthStoryMedia = join(depthMediaDirectory, "depth-story.mp4");
 const port = Number(process.env.PORT ?? 3000);
 
 const contentTypes = {
@@ -37,15 +32,7 @@ function resolveRequestPath(url) {
   return join(root, relative || "index.html");
 }
 
-let localDepthMedia;
-try {
-  const media = await stat(depthStoryMedia);
-  if (media.isFile()) localDepthMedia = depthMediaDirectory;
-} catch {
-  localDepthMedia = undefined;
-}
-
-await buildSite({ depthMediaDirectory: localDepthMedia });
+await buildSite();
 
 const server = createServer(async (request, response) => {
   let target = resolveRequestPath(request.url ?? "/");
