@@ -29,142 +29,67 @@
           </a>
           <nav aria-label="Main navigation">
             <a href="#thesis">Thesis</a>
-            <a href="#leapview">LeapView</a>
-            <a href="#field-work">Field work</a>
             <a href="#about">About</a>
           </nav>
           <a class="header-contact" href="https://leapview.dev/">LeapView <span aria-hidden="true">↗</span></a>
         </div>
       </header>
 
-      <section class="hero">
-        <div class="site-shell hero-grid">
-          <div class="hero-copy">
-            <p class="eyebrow">Independent agent-native product lab</p>
-            <h1>We build products where <span>agents do real work.</span></h1>
-            <p class="hero-summary">Flid creates software for a world where people and AI agents operate through the same trusted systems, data, and permissions.</p>
-            <div class="hero-actions">
-              <a class="button button-primary" href="#leapview">Explore LeapView <span aria-hidden="true">↓</span></a>
-              <a class="button button-secondary" href="#thesis">What agent-native means <span aria-hidden="true">↓</span></a>
-            </div>
-          </div>
-          <div class="hero-signal" data-signal-field aria-hidden="true">
-            <span class="signal-orbit signal-orbit-outer"></span>
-            <span class="signal-orbit signal-orbit-inner"></span>
-            <img class="signal-static-mark" src="/brand-assets/mark-primary-on-dark.svg" alt="">
-            <span class="signal-field" data-signal-canvas></span>
-            <span class="signal-node-path signal-node-path-outer"><span class="signal-node"></span></span>
-            <span class="signal-node-path signal-node-path-inner"><span class="signal-node"></span></span>
-          </div>
+      <div class="motion-sequence" data-motion-sequence>
+        <div class="motion-sequence-stage" aria-hidden="true">
+          <img class="hero-wave-field" src="/assets/images/hero-signal-waves.webp" width="1672" height="941" alt="" fetchpriority="high">
+          <canvas class="motion-sequence-canvas" data-motion-sequence-canvas></canvas>
         </div>
-        <div class="site-shell hero-meta">
-          <span>Odense · Denmark</span>
-          <span>Products · Systems · Agents</span>
-        </div>
-      </section>
 
-      <section class="section thesis" id="thesis">
-        <div class="site-shell">
-          <div class="section-heading">
-            <p class="section-index">01 / Thesis</p>
-            <div>
-              <h2>Agents should not be bolted on.</h2>
-              <p>Most software was designed exclusively for humans, with an AI interface added afterward. We build from a different premise: agents need structured context, explicit capabilities, permissions, limits, and verifiable results.</p>
-            </div>
-          </div>
-          <div class="principles-grid">
-            <article>
-              <span>01</span>
-              <h3>Governed context</h3>
-              <p>Agents work from trusted data, shared business definitions, and the same permission model as the product.</p>
-            </article>
-            <article>
-              <span>02</span>
-              <h3>Native tools</h3>
-              <p>Actions are deliberate product capabilities with clear contracts—not unrestricted access to the underlying system.</p>
-            </article>
-            <article>
-              <span>03</span>
-              <h3>Bounded agency</h3>
-              <p>Limits, evidence, and auditability are part of the architecture, so useful autonomy does not mean uncontrolled autonomy.</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="section product" id="leapview">
-        <div class="site-shell">
-          <div class="product-heading">
-            <div>
-              <p class="section-index">02 / Flagship product</p>
-              <p class="product-name">LeapView</p>
-              <h2>The agent-native BI platform.</h2>
-            </div>
-            <div class="product-summary">
-              <p>Build dashboards as code, keep analytics in version control, and let people and agents work from the same governed semantic system.</p>
-              <div class="product-links">
-                <a href="https://leapview.dev/">Explore LeapView <span aria-hidden="true">↗</span></a>
-                <a href="https://github.com/Yacobolo/leapview">View on GitHub <span aria-hidden="true">↗</span></a>
+        <section class="hero" data-hero-transition>
+          <div class="hero-sticky">
+            <div class="site-shell hero-grid">
+              <div class="hero-copy">
+                <p class="eyebrow">Independent agent-native product lab</p>
+                <h1>We build products<br>where agents<br><span>do real work.</span></h1>
+                <p class="hero-summary">Flid creates software for a world where people and AI agents operate through the same trusted systems, data, and permissions.</p>
+                <div class="hero-actions">
+                  <a class="button button-hero" href="https://leapview.dev/">See our products</a>
+                </div>
               </div>
             </div>
           </div>
-          <div class="product-stage">
-            <figure class="product-window">
-              <figcaption><span>LeapView / Visual showcase</span><span>Live product</span></figcaption>
-              <img src="/assets/images/leapview-dashboard-dark.png" alt="LeapView dashboard showing governed metrics, charts, and order data">
-            </figure>
-            <aside class="agent-proof" aria-label="Example verified LeapView agent answer">
-              <header><span>Agent / Verified answer</span><span>Ready</span></header>
-              <p class="agent-question">Why did revenue fall in October?</p>
-              <div class="agent-metric"><strong>21.4%</strong><span>lower month over month</span></div>
-              <p>Delivered order volume drove most of the decline. The governed revenue metric and active access policy were applied automatically.</p>
-              <ul><li>Metric · revenue</li><li>Filter · October</li><li>Policy · sales.read</li></ul>
-              <footer>Verified against the sales semantic model</footer>
-            </aside>
-          </div>
-        </div>
-      </section>
+        </section>
 
-      <section class="section field-work" id="field-work">
-        <div class="site-shell field-layout">
-          <div class="field-intro">
-            <p class="section-index">03 / Field work</p>
-            <h2>We build products. Selected field work keeps them honest.</h2>
+        <section class="signal-story" id="thesis" data-signal-story data-depth-demo="disabled" aria-label="Flid agent-native thesis">
+          <div class="signal-story-sticky">
+            <div class="signal-story-grid" aria-hidden="true"></div>
+            <div class="site-shell signal-story-shell">
+              <div class="signal-story-steps">
+                <article class="signal-story-step" data-story-step>
+                  <div class="signal-story-copy">
+                    <p class="signal-story-subtitle" data-story-reveal>Software was built for people. Agents were added on top.</p>
+                  </div>
+                </article>
+                <article class="signal-story-step" data-story-step>
+                  <div class="signal-story-copy">
+                    <p class="signal-story-subtitle" data-story-reveal>Agent-native starts deeper: governed context, explicit capabilities, and evidence designed into the foundation.</p>
+                  </div>
+                </article>
+              </div>
+            </div>
           </div>
-          <div class="field-content">
-            <p class="field-lead">Alongside our products, we work closely with a small number of companies redesigning core systems for agent-native operation.</p>
-            <article class="current-work">
-              <span>Current work</span>
-              <h3>Making an entire data platform agent-native.</h3>
-              <p>Helping a company redesign how context, interfaces, permissions, and operational workflows fit together when agents become first-class users of the platform.</p>
-            </article>
-            <p class="field-boundary">We do not sell capacity or generic AI implementation. We collaborate where the work advances a reusable product thesis.</p>
-          </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
-      <section class="about" id="about" data-color-mode="light">
+      <section class="about" id="about">
         <div class="site-shell about-grid">
           <figure class="founder-portrait">
             <img src="/assets/images/jacob-oestergaard.webp" alt="Jacob Østergaard, founder of Flid">
             <figcaption><span>Jacob Østergaard</span><span>Founder · Flid</span></figcaption>
           </figure>
           <div class="about-copy">
-            <p class="section-index">04 / The lab</p>
             <h2>Independent by design.</h2>
             <p class="about-lead">Flid is an agent-native product lab founded by Jacob Østergaard in Odense, Denmark.</p>
             <p>We build ambitious, durable products at the intersection of data systems, software, and AI agents—then test those ideas against real operational work.</p>
             <p>Flid is Danish for diligence—the care, persistence, and attention behind work made to last.</p>
             <a href="mailto:hello@flid.ai">Discuss a design partnership <span aria-hidden="true">↗</span></a>
           </div>
-        </div>
-      </section>
-
-      <section class="contact" id="contact">
-        <div class="site-shell contact-inner">
-          <p class="section-index">05 / Contact</p>
-          <h2>Building something<br>agents should operate?</h2>
-          <a href="mailto:hello@flid.ai"><span>hello@flid.ai</span><span aria-hidden="true">↗</span></a>
         </div>
       </section>
 

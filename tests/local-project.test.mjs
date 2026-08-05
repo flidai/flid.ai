@@ -73,8 +73,15 @@ test("keeps the public site at the root and the brand guide as a reference", asy
   );
 
   assert.match(rootPage, /We build products where agents do real work/i);
+  assert.doesNotMatch(rootPage, /01 \/ Thesis|01 \/ Premise|02 \/ Foundation|04 \/ The lab/i);
+  assert.doesNotMatch(rootPage, /data-story-counter|signal-story-progress/i);
+  assert.doesNotMatch(rootPage, /data-color-mode="light"|id="contact"|05 \/ Contact/i);
   assert.doesNotMatch(rootPage, /href="\/brand\/?"/);
-  assert.match(homeScript, /logo-generator\.mjs/);
+  assert.doesNotMatch(rootPage, /id="leapview"|id="field-work"/i);
+  assert.doesNotMatch(rootPage, /href="#leapview"|href="#field-work"/i);
+  assert.doesNotMatch(homeScript, /hero-signal-field\.mjs/);
+  assert.match(homeScript, /hero-scroll-transition\.mjs/);
+  assert.match(homeScript, /signal-scroll-story\.mjs/);
   assert.doesNotMatch(homeScript, /React|Next|jsx|tsx/);
   assert.match(brandPage, /The source of truth for the Flid identity/i);
 });
