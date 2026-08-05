@@ -220,16 +220,6 @@ body {
   font-weight: inherit;
 }
 
-.hero-summary {
-  max-width: 650px;
-  margin: 36px auto 0;
-  color: var(--fgColor-muted);
-  font-size: clamp(17px, 1.5vw, 21px);
-  letter-spacing: -0.02em;
-  line-height: 1.55;
-  text-wrap: pretty;
-}
-
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
@@ -643,11 +633,6 @@ body {
     margin-top: 24px;
     font-size: clamp(3.05rem, 13.8vw, 4.7rem);
     line-height: 0.95;
-  }
-
-  .hero-summary {
-    margin-top: 28px;
-    font-size: 17px;
   }
 
   .hero-actions {
