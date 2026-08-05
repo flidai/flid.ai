@@ -243,17 +243,28 @@ body {
   transition: background 180ms ease, border-color 180ms ease, color 180ms ease;
 }
 
+.button span {
+  display: inline-block;
+  margin-left: 8px;
+  transition: transform 180ms ease;
+}
+
+.button:hover,
+.button:focus-visible {
+  border-color: var(--fgColor-accent);
+  background: var(--bgColor-accent-emphasis);
+  color: var(--fgColor-onEmphasis);
+}
+
+.button:hover span,
+.button:focus-visible span {
+  transform: translateX(3px);
+}
+
 .button-hero {
   border-color: var(--borderColor-accent-emphasis);
   background: color-mix(in srgb, var(--bgColor-default) 88%, transparent);
   color: var(--fgColor-accent);
-}
-
-.button-hero:hover,
-.button-hero:focus-visible {
-  border-color: var(--fgColor-accent);
-  background: var(--bgColor-accent-emphasis);
-  color: var(--fgColor-onEmphasis);
 }
 
 .about h2 {
@@ -678,7 +689,8 @@ body {
 
   .site-header nav a,
   .site-footer a,
-  .button {
+  .button,
+  .button span {
     transition: none;
   }
 

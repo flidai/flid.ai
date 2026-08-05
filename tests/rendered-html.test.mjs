@@ -43,9 +43,9 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.doesNotMatch(html, /data-hero-transition-canvas|data-story-canvas/i);
   assert.match(
     html,
-    /href="\/products\/"[^>]*>See our products\s*</i,
+    /href="mailto:jacob@flid\.ai"[^>]*>Get in touch\s*</i,
   );
-  assert.match(html, /href="mailto:jacob@flid\.ai"[^>]*>Get in touch\s*</i);
+  assert.match(html, /href="\/products\/"[^>]*>See our products\s*<span[^>]*>→<\/span>/i);
   assert.match(html, /href="\/products\/"[^>]*>Products\s*</i);
   assert.match(html, /href="mailto:jacob@flid\.ai"[^>]*>Contact\s*</i);
   assert.match(html, /class="site-logo-wordmark"[^>]+lockup-primary-on-dark\.svg/);
@@ -324,6 +324,7 @@ test("retains responsive and reduced-motion styling", async () => {
   assert.match(homeCss, /\.motion-sequence-stage/);
   assert.match(homeCss, /\.site-logo-mark\s*\{[\s\S]*?transition:\s*transform/);
   assert.match(homeCss, /\.site-logo:hover \.site-logo-mark[\s\S]*?transform:\s*rotate\(360deg\)/);
+  assert.match(homeCss, /\.button:hover[\s\S]*?background:\s*var\(--bgColor-accent-emphasis\)/);
   assert.match(homeCss, /\.motion-sequence-canvas/);
   assert.match(
     homeCss,
