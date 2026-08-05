@@ -28,4 +28,3 @@ test("rejects malformed, multiple, and unsatisfiable ranges", () => {
   assert.equal(parseByteRange("bytes=1200-1400", 1_000), null);
   assert.equal(parseByteRange("bytes=30-20", 1_000), null);
 });
-

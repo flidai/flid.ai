@@ -27,4 +27,3 @@ copy. The script only requests URLs already loaded by the public page.
 
 Further shader, media, scroll mapping, and performance findings belong in
 `findings.md`.
-
