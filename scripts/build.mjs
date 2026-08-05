@@ -26,6 +26,7 @@ const prefixableExtensions = new Set([
 const copiedFiles = [
   ["app/globals.css", "assets/globals.css"],
   ["app/home/home.css", "assets/home.css"],
+  ["app/products/products.css", "assets/products.css"],
   ["app/showcase/showcase.css", "assets/showcase.css"],
   ["app/generator/generator.css", "assets/generator.css"],
   ["app/brand/brand.css", "assets/brand.css"],

@@ -61,11 +61,13 @@ test("keeps the procedural identity independent and shared", async () => {
 
 test("keeps the public site at the root and the brand guide as a reference", async () => {
   await access(new URL("site/brand/index.html", root));
+  await access(new URL("site/products/index.html", root));
   await access(new URL("site/assets/home.js", root));
 
-  const [rootPage, homeScript] = await Promise.all([
+  const [rootPage, homeScript, productsPage] = await Promise.all([
     readFile(new URL("site/index.html", root), "utf8"),
     readFile(new URL("site/assets/home.js", root), "utf8"),
+    readFile(new URL("site/products/index.html", root), "utf8"),
   ]);
   const brandPage = await readFile(
     new URL("site/brand/index.html", root),
@@ -77,6 +79,10 @@ test("keeps the public site at the root and the brand guide as a reference", asy
   assert.doesNotMatch(rootPage, /data-story-counter|signal-story-progress/i);
   assert.doesNotMatch(rootPage, /data-color-mode="light"|id="contact"|05 \/ Contact/i);
   assert.doesNotMatch(rootPage, /href="\/brand\/?"/);
+  assert.match(rootPage, /href="\/products\/"[^>]*>Products\s*</i);
+  assert.match(rootPage, /mailto:jacob@flid\.ai/);
+  assert.match(productsPage, /LeapView/);
+  assert.match(productsPage, /href="\/products\/"[^>]*>Products\s*</i);
   assert.doesNotMatch(rootPage, /id="leapview"|id="field-work"/i);
   assert.doesNotMatch(rootPage, /href="#leapview"|href="#field-work"/i);
   assert.doesNotMatch(homeScript, /hero-signal-field\.mjs/);

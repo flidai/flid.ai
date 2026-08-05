@@ -25,7 +25,7 @@ body {
 
 .header-inner {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: 1fr auto;
   align-items: center;
   min-height: 82px;
 }
@@ -45,13 +45,13 @@ body {
   display: flex;
   align-items: center;
   gap: clamp(22px, 2.8vw, 42px);
+  justify-self: end;
   color: var(--fgColor-muted);
   font-size: 14px;
   font-weight: 520;
 }
 
 .site-header nav a,
-.header-contact,
 .site-footer a {
   transition: color 180ms ease;
 }
@@ -61,19 +61,6 @@ body {
 .site-footer a:hover,
 .site-footer a:focus-visible {
   color: var(--fgColor-default);
-}
-
-.header-contact {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  justify-self: end;
-  font-size: 14px;
-  font-weight: 590;
-}
-
-.header-contact span {
-  color: var(--fgColor-accent);
 }
 
 .motion-sequence {
@@ -224,6 +211,8 @@ body {
 
 .hero-actions {
   display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
   justify-content: center;
   margin-top: 36px;
 }
@@ -617,16 +606,13 @@ body {
     min-height: 70px;
   }
 
-  .site-header nav {
-    display: none;
-  }
-
   .site-logo img {
     width: 96px;
   }
 
-  .header-contact {
-    font-size: 13px;
+  .site-header nav {
+    gap: 16px;
+    font-size: 12px;
   }
 
   .hero {
@@ -685,7 +671,6 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .site-header nav a,
-  .header-contact,
   .site-footer a,
   .button {
     transition: none;
