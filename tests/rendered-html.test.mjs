@@ -54,7 +54,7 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.match(html, /data-signal-story/i);
   assert.doesNotMatch(html, /signal-story-static-mark/i);
   assert.match(html, /governed context, explicit capabilities/i);
-  assert.match(html, /designed into the foundation/i);
+  assert.match(html, /evidence in the foundation/i);
   assert.doesNotMatch(html, /Every capability has a contract/i);
   assert.equal((html.match(/data-story-reveal/g) || []).length, 2);
   assert.doesNotMatch(html, /data-story-counter|signal-story-progress/i);
