@@ -20,7 +20,7 @@ test("builds the Flid public site at the root as plain HTML", async () => {
 
   assert.match(html, /<title>Flid — Agent-native product lab<\/title>/i);
   assert.match(html, /We build products where agents do real work/i);
-  assert.match(html, /Software was built for people/i);
+  assert.match(html, /An agent is only as reliable as the system beneath it/i);
   assert.doesNotMatch(html, /01 \/ Thesis|01 \/ Premise|02 \/ Foundation|04 \/ The lab/i);
   assert.doesNotMatch(html, /02 \/ Flagship product|The agent-native BI platform/i);
   assert.doesNotMatch(html, /03 \/ Field work|Selected field work keeps them honest/i);
@@ -53,8 +53,8 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.doesNotMatch(html, /data-signal-field|data-signal-canvas|hero-meta/i);
   assert.match(html, /data-signal-story/i);
   assert.doesNotMatch(html, /signal-story-static-mark/i);
-  assert.match(html, /governed context, explicit capabilities/i);
-  assert.match(html, /evidence in the foundation/i);
+  assert.match(html, /Build for agents from the ground up/i);
+  assert.match(html, /governed data, explicit actions, and evidence/i);
   assert.doesNotMatch(html, /Every capability has a contract/i);
   assert.equal((html.match(/data-story-reveal/g) || []).length, 2);
   assert.doesNotMatch(html, /data-story-counter|signal-story-progress/i);
