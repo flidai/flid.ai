@@ -110,7 +110,7 @@
 .about-hero h1 {
   max-width: 1040px;
   margin: 34px 0 34px;
-  font-size: clamp(4rem, 8.5vw, 8.7rem);
+  font-size: var(--font-size-page-title);
   font-weight: 460;
   letter-spacing: -0.078em;
   line-height: 0.9;
@@ -179,7 +179,7 @@
 .about-story h2 {
   max-width: 560px;
   margin: 30px 0 0;
-  font-size: clamp(3rem, 5.4vw, 5.8rem);
+  font-size: var(--font-size-section-title);
 }
 
 .about-story-copy {
@@ -195,7 +195,7 @@
 .about-story-copy .about-story-lead {
   margin-top: 0;
   color: var(--fgColor-default);
-  font-size: clamp(24px, 2.35vw, 34px);
+  font-size: var(--font-size-lead);
   letter-spacing: -0.035em;
   line-height: 1.32;
 }
@@ -212,7 +212,7 @@
 
 .about-team-heading h2 {
   margin: 28px 0 24px;
-  font-size: clamp(3rem, 6vw, 6.5rem);
+  font-size: var(--font-size-section-title);
 }
 
 .about-team-heading > p:last-child {
@@ -251,7 +251,7 @@
   padding-top: 16px;
   color: var(--fgColor-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 10px;
+  font-size: var(--font-size-caption);
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -282,7 +282,7 @@
 .about-invitation h2 {
   max-width: 880px;
   margin: 30px 0 0;
-  font-size: clamp(3rem, 6vw, 6.5rem);
+  font-size: var(--font-size-section-title);
 }
 
 .about-link {
@@ -299,7 +299,7 @@
   padding-block: 36px;
   color: var(--fgColor-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 10px;
+  font-size: var(--font-size-caption);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -315,6 +315,13 @@
 
 .about-footer-inner p {
   margin: 0;
+}
+
+@media (max-width: 900px) {
+  .about-story-grid {
+    grid-template-columns: 1fr;
+    gap: 56px;
+  }
 }
 
 @media (max-width: 720px) {
@@ -336,7 +343,7 @@
   }
 
   .about-hero h1 {
-    font-size: clamp(3.25rem, 14vw, 5rem);
+    font-size: clamp(2.8rem, 12vw, 4rem);
   }
 
   .about-hero-signal {
@@ -345,13 +352,8 @@
     width: 145vw;
   }
 
-  .about-story-grid,
   .about-team-grid {
     grid-template-columns: 1fr;
-  }
-
-  .about-story-grid {
-    gap: 56px;
   }
 
   .about-team-grid {

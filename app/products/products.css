@@ -111,7 +111,7 @@
 .products-hero h1 {
   max-width: 900px;
   margin: 34px 0 30px;
-  font-size: clamp(4rem, 8vw, 8.5rem);
+  font-size: var(--font-size-page-title);
   font-weight: 460;
   letter-spacing: -0.075em;
   line-height: 0.9;
@@ -178,7 +178,7 @@
 
 .product-card-body h2 {
   margin: 28px 0 28px;
-  font-size: clamp(3.5rem, 7vw, 7rem);
+  font-size: var(--font-size-feature-title);
   font-weight: 480;
   letter-spacing: -0.075em;
   line-height: 0.92;
@@ -188,7 +188,7 @@
   max-width: 680px;
   margin: 0;
   color: var(--fgColor-muted);
-  font-size: clamp(20px, 2vw, 28px);
+  font-size: var(--font-size-lead);
   letter-spacing: -0.025em;
   line-height: 1.45;
 }
@@ -239,7 +239,7 @@
   padding-inline: 16px;
   border-bottom: 1px solid var(--borderColor-default);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 10px;
+  font-size: var(--font-size-caption);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -268,7 +268,7 @@
 .products-invitation h2 {
   max-width: 850px;
   margin: 32px 0 0;
-  font-size: clamp(3rem, 6vw, 6.5rem);
+  font-size: var(--font-size-section-title);
   font-weight: 460;
   letter-spacing: -0.075em;
   line-height: 0.94;
@@ -278,7 +278,7 @@
   padding-block: 36px;
   color: var(--fgColor-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 10px;
+  font-size: var(--font-size-caption);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -316,7 +316,7 @@
 
   .products-hero h1 {
     max-width: 600px;
-    font-size: clamp(3.4rem, 14vw, 5.4rem);
+    font-size: clamp(2.8rem, 12vw, 4rem);
   }
 
   .products-signal {
