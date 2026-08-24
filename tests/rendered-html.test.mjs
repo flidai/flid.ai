@@ -250,6 +250,10 @@ test("builds the About page as a dedicated team route", async () => {
   assert.match(html, /Founder/i);
   assert.match(
     html,
+    /href="https:\/\/www\.linkedin\.com\/in\/jacob-%C3%B8stergaard-nielsen-b39415183\/"[^>]*>Jacob Østergaard\s*<span[^>]*>↗<\/span>/i,
+  );
+  assert.match(
+    html,
     /Jacob is the founder of Flid and product lead for LeapView\. After years architecting data platforms and leading engineering teams, he now focuses on the systems, interfaces, and governance required for agents to become dependable participants in real work\./i,
   );
   assert.match(html, /Ganesh Kambli/i);
@@ -276,6 +280,31 @@ test("builds the About page as a dedicated team route", async () => {
   assert.match(styles, /\.about-page/);
   assert.match(styles, /\.about-team-grid/);
   assert.doesNotMatch(html, /_next|react|__next|data-reactroot/i);
+});
+
+test("uses a restrained shared type scale across About and Products", async () => {
+  const [globals, about, products] = await Promise.all([
+    readBuiltPage("assets/globals.css"),
+    readBuiltPage("assets/about.css"),
+    readBuiltPage("assets/products.css"),
+  ]);
+
+  assert.match(globals, /--font-size-page-title:\s*clamp\(3\.75rem, 6\.2vw, 6\.5rem\)/);
+  assert.match(globals, /--font-size-section-title:\s*clamp\(2\.75rem, 4\.5vw, 4\.75rem\)/);
+  assert.match(globals, /--font-size-feature-title:\s*clamp\(3rem, 5\.2vw, 5\.5rem\)/);
+  assert.match(globals, /--font-size-lead:\s*clamp\(1\.25rem, 1\.6vw, 1\.625rem\)/);
+  assert.match(globals, /--font-size-caption:\s*11px/);
+
+  assert.match(about, /\.about-hero h1\s*{[\s\S]*?font-size:\s*var\(--font-size-page-title\)/);
+  assert.match(about, /\.about-story h2\s*{[\s\S]*?font-size:\s*var\(--font-size-section-title\)/);
+  assert.match(about, /\.about-story-copy \.about-story-lead\s*{[\s\S]*?font-size:\s*var\(--font-size-lead\)/);
+  assert.match(about, /@media \(max-width: 900px\)[\s\S]*?\.about-story-grid\s*{[\s\S]*?grid-template-columns:\s*1fr/);
+  assert.match(about, /@media \(max-width: 720px\)[\s\S]*?\.about-hero h1\s*{[\s\S]*?font-size:\s*clamp\(2\.8rem, 12vw, 4rem\)/);
+
+  assert.match(products, /\.products-hero h1\s*{[\s\S]*?font-size:\s*var\(--font-size-page-title\)/);
+  assert.match(products, /\.product-card-body h2\s*{[\s\S]*?font-size:\s*var\(--font-size-feature-title\)/);
+  assert.match(products, /\.product-card-summary\s*{[\s\S]*?font-size:\s*var\(--font-size-lead\)/);
+  assert.match(products, /@media \(max-width: 720px\)[\s\S]*?\.products-hero h1\s*{[\s\S]*?font-size:\s*clamp\(2\.8rem, 12vw, 4rem\)/);
 });
 
 test("optimizes the founder portrait for the public site", async () => {
