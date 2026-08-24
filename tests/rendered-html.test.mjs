@@ -254,7 +254,7 @@ test("builds the About page as a dedicated team route", async () => {
   );
   assert.match(
     html,
-    /Jacob is the founder of Flid and product lead for LeapView\. After years architecting data platforms and leading engineering teams, he now focuses on the systems, interfaces, and governance required for agents to become dependable participants in real work\./i,
+    /Jacob is the founder of Flid and product lead for LeapView\. Drawing on years of experience architecting enterprise data platforms and leading engineering teams, he designs the systems, interfaces, and governance that enable agents to participate reliably in real operational work\./i,
   );
   assert.match(html, /Ganesh Kambli/i);
   assert.match(html, /AI Engineer · Mumbai/i);
@@ -265,7 +265,7 @@ test("builds the About page as a dedicated team route", async () => {
   );
   assert.match(
     html,
-    /Based in Mumbai, Ganesh works on LeapView, helping turn ambitious ideas into reliable product capabilities\. His experience spans backend systems, AI engineering, cloud infrastructure, and security, with a strong focus on simplicity and production quality\./i,
+    /Ganesh is an AI Engineer at Flid working on LeapView\. He builds product capabilities and the engineering foundations behind them, drawing on experience across backend systems, applied AI, cloud infrastructure, and security to create simple, reliable software for production\./i,
   );
   assert.doesNotMatch(html, /Pune/i);
   assert.match(html, /href="https:\/\/www\.linkedin\.com\/in\/ganeshkambli\/"/i);
