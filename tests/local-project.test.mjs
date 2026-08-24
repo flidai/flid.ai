@@ -5,17 +5,25 @@ import test from "node:test";
 const root = new URL("../", import.meta.url);
 
 test("uses a framework-free static-site lifecycle", async () => {
-  const packageJson = JSON.parse(
-    await readFile(new URL("package.json", root), "utf8"),
-  );
+  const [packageSource, taskfile, serverSource, goModule] = await Promise.all([
+    readFile(new URL("package.json", root), "utf8"),
+    readFile(new URL("Taskfile.yml", root), "utf8"),
+    readFile(new URL("cmd/devserver/main.go", root), "utf8"),
+    readFile(new URL("go.mod", root), "utf8"),
+  ]);
+  const packageJson = JSON.parse(packageSource);
 
-  assert.equal(packageJson.scripts.dev, "node scripts/server.mjs");
+  assert.equal(packageJson.scripts.dev, "task dev");
   assert.equal(packageJson.scripts.build, "node scripts/build.mjs");
-  assert.equal(packageJson.scripts.start, "node scripts/server.mjs");
+  assert.equal(packageJson.scripts.start, "task dev");
   assert.equal(
     packageJson.scripts.test,
-    "npm run build && node --test tests/*.test.mjs",
+    "npm run build && node --test tests/*.test.mjs && go test ./...",
   );
+  assert.match(taskfile, /dev:[\s\S]*deps:\s*\[build\][\s\S]*go run \.\/cmd\/devserver/i);
+  assert.match(serverSource, /http\.Server|ListenAndServe/);
+  assert.match(goModule, /module flid\.ai\/site/);
+  await assert.rejects(access(new URL("scripts/server.mjs", root)));
   assert.deepEqual(packageJson.dependencies, {});
   assert.equal(packageJson.devDependencies["opentype.js"], "1.3.4");
   assert.doesNotMatch(
@@ -62,12 +70,14 @@ test("keeps the procedural identity independent and shared", async () => {
 test("keeps the public site at the root and the brand guide as a reference", async () => {
   await access(new URL("site/brand/index.html", root));
   await access(new URL("site/products/index.html", root));
+  await access(new URL("site/about/index.html", root));
   await access(new URL("site/assets/home.js", root));
 
-  const [rootPage, homeScript, productsPage] = await Promise.all([
+  const [rootPage, homeScript, productsPage, aboutPage] = await Promise.all([
     readFile(new URL("site/index.html", root), "utf8"),
     readFile(new URL("site/assets/home.js", root), "utf8"),
     readFile(new URL("site/products/index.html", root), "utf8"),
+    readFile(new URL("site/about/index.html", root), "utf8"),
   ]);
   const brandPage = await readFile(
     new URL("site/brand/index.html", root),
@@ -80,9 +90,17 @@ test("keeps the public site at the root and the brand guide as a reference", asy
   assert.doesNotMatch(rootPage, /data-color-mode="light"|id="contact"|05 \/ Contact/i);
   assert.doesNotMatch(rootPage, /href="\/brand\/?"/);
   assert.match(rootPage, /href="\/products\/"[^>]*>Products\s*</i);
+  assert.match(rootPage, /href="\/about\/"[^>]*>About\s*</i);
   assert.match(rootPage, /mailto:jacob@flid\.ai/);
+  assert.match(rootPage, /Start a conversation/);
+  assert.match(rootPage, /Jacob Østergaard/);
+  assert.doesNotMatch(rootPage, /Ganesh Kambli|Meet the team/);
   assert.match(productsPage, /LeapView/);
   assert.match(productsPage, /href="\/products\/"[^>]*>Products\s*</i);
+  assert.match(productsPage, /href="\/about\/"[^>]*>About\s*</i);
+  assert.match(aboutPage, /A Danish product lab building\s*<span>durable systems\.<\/span>/i);
+  assert.match(aboutPage, /Ganesh Kambli/);
+  assert.match(aboutPage, /AI Engineer/);
   assert.doesNotMatch(rootPage, /id="leapview"|id="field-work"/i);
   assert.doesNotMatch(rootPage, /href="#leapview"|href="#field-work"/i);
   assert.doesNotMatch(homeScript, /hero-signal-field\.mjs/);

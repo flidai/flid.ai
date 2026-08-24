@@ -27,9 +27,16 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.doesNotMatch(html, /id="leapview"|id="field-work"/i);
   assert.doesNotMatch(html, /href="#leapview"|href="#field-work"/i);
   assert.match(html, /Jacob Østergaard/i);
+  assert.match(html, /class="founder-portrait"/i);
+  assert.doesNotMatch(html, /Ganesh Kambli|AI Engineer|Meet the team/i);
+  assert.doesNotMatch(html, /production-ready backend and agentic AI systems/i);
   assert.doesNotMatch(html, /data-color-mode="light"/i);
   assert.doesNotMatch(html, /id="contact"|05 \/ Contact|Building something\s*<br>agents should operate/i);
-  assert.match(html, /jacob-oestergaard\.webp/i);
+  assert.match(
+    html,
+    /<img src="\/assets\/images\/jacob-oestergaard\.webp" alt="Jacob Østergaard, founder of Flid">/i,
+  );
+  assert.doesNotMatch(html, /ganesh-kambli\.webp/i);
   assert.doesNotMatch(html, /leapview-dashboard-dark\.png/i);
   assert.match(html, /hero-signal-waves\.webp/i);
   assert.match(html, /class="hero-wave-field"/i);
@@ -47,6 +54,7 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   );
   assert.match(html, /href="\/products\/"[^>]*>See our products\s*<span[^>]*>→<\/span>/i);
   assert.match(html, /href="\/products\/"[^>]*>Products\s*</i);
+  assert.match(html, /href="\/about\/"[^>]*>About\s*</i);
   assert.match(html, /href="mailto:jacob@flid\.ai"[^>]*>Contact\s*</i);
   assert.match(html, /class="site-logo-wordmark"[^>]+lockup-primary-on-dark\.svg/);
   assert.match(html, /class="site-logo-mark"[^>]+mark-primary-on-dark\.svg/);
@@ -197,13 +205,76 @@ test("builds the products page as a standalone static route", async () => {
   assert.match(html, /Products where agents do real work/i);
   assert.match(html, /LeapView/i);
   assert.match(html, /href="https:\/\/leapview\.dev\/"[^>]*>Visit LeapView\s*</i);
+  assert.match(html, /class="product-screenshot"/i);
+  assert.match(
+    html,
+    /<img[^>]+src="\/assets\/images\/leapview-dashboard-dark\.png"[^>]+width="1440"[^>]+height="900"[^>]+alt="LeapView dashboard showing filters, governed KPIs, charts, and order data"/i,
+  );
   assert.match(html, /href="mailto:jacob@flid\.ai"[^>]*>Contact\s*</i);
+  assert.match(html, /href="\/about\/"[^>]*>About\s*</i);
   assert.match(html, /class="products-logo-wordmark"[^>]+lockup-primary-on-dark\.svg/);
   assert.match(html, /class="products-logo-mark"[^>]+mark-primary-on-dark\.svg/);
   const productsFooter = html.match(/<footer class="products-footer">[\s\S]*?<\/footer>/i)?.[0] ?? "";
   assert.match(productsFooter, /Flid AI ApS · CVR 43463217 · Odense, Denmark/i);
   assert.doesNotMatch(productsFooter, /flid\.ai|© 2026/i);
   assert.match(styles, /\.products-page/);
+  assert.doesNotMatch(html, /_next|react|__next|data-reactroot/i);
+});
+
+test("builds the About page as a dedicated team route", async () => {
+  const [html, styles] = await Promise.all([
+    readBuiltPage("about/index.html"),
+    readBuiltPage("assets/about.css"),
+  ]);
+
+  assert.match(html, /<title>About — Flid<\/title>/i);
+  assert.match(
+    html,
+    /<meta name="description" content="About Flid, an independent Danish product lab building durable agent-native systems\.">/i,
+  );
+  assert.match(
+    html,
+    /<meta property="og:description" content="An independent Danish product lab building durable agent-native systems\.">/i,
+  );
+  assert.match(html, /A Danish product lab building\s*<span>durable systems\.<\/span>/i);
+  assert.match(
+    html,
+    /Founded in Odense, Flid builds software where people and agents work through the same governed data, capabilities, and evidence\./i,
+  );
+  assert.match(html, /Independent by design/i);
+  assert.match(
+    html,
+    /Flid is Danish for diligence—the care, persistence, and attention behind work made to last\./i,
+  );
+  assert.match(html, /Jacob Østergaard/i);
+  assert.match(html, /Founder/i);
+  assert.match(
+    html,
+    /Jacob is the founder of Flid and product lead for LeapView\. After years architecting data platforms and leading engineering teams, he now focuses on the systems, interfaces, and governance required for agents to become dependable participants in real work\./i,
+  );
+  assert.match(html, /Ganesh Kambli/i);
+  assert.match(html, /AI Engineer · Mumbai/i);
+  assert.match(html, /The people building Flid\./i);
+  assert.match(
+    html,
+    /Product direction and engineering stay closely connected—from first principles to production\./i,
+  );
+  assert.match(
+    html,
+    /Based in Mumbai, Ganesh works on LeapView, helping turn ambitious ideas into reliable product capabilities\. His experience spans backend systems, AI engineering, cloud infrastructure, and security, with a strong focus on simplicity and production quality\./i,
+  );
+  assert.doesNotMatch(html, /Pune/i);
+  assert.match(html, /href="https:\/\/www\.linkedin\.com\/in\/ganeshkambli\/"/i);
+  assert.match(html, /jacob-oestergaard\.webp/i);
+  assert.match(html, /ganesh-kambli\.webp/i);
+  assert.match(html, /href="\/products\/"[^>]*>Products\s*</i);
+  assert.match(html, /href="\/about\/"[^>]*>About\s*</i);
+  assert.match(html, /href="mailto:jacob@flid\.ai"[^>]*>Contact\s*</i);
+  assert.match(html, /Working on a hard agent-native problem\?/i);
+  assert.doesNotMatch(html, /small team|small enough|Built across two places|Distributed between/i);
+  assert.match(html, /Flid AI ApS · CVR 43463217 · Odense, Denmark/i);
+  assert.match(styles, /\.about-page/);
+  assert.match(styles, /\.about-team-grid/);
   assert.doesNotMatch(html, /_next|react|__next|data-reactroot/i);
 });
 
@@ -215,6 +286,14 @@ test("optimizes the founder portrait for the public site", async () => {
   assert.ok(portrait.size < 250_000, "founder portrait should stay below 250 KB");
 });
 
+test("optimizes the AI engineer portrait for the public site", async () => {
+  const portrait = await stat(
+    new URL("dist/assets/images/ganesh-kambli.webp", root),
+  );
+
+  assert.ok(portrait.size < 250_000, "AI engineer portrait should stay below 250 KB");
+});
+
 test("ships an optimized standalone hero wave field", async () => {
   const background = await stat(
     new URL("dist/assets/images/hero-signal-waves.webp", root),
@@ -223,11 +302,12 @@ test("ships an optimized standalone hero wave field", async () => {
   assert.ok(background.size < 300_000, "hero wave field should stay below 300 KB");
 });
 
-test("does not ship the removed LeapView product proof", async () => {
-  await assert.rejects(
-    access(new URL("dist/assets/images/leapview-dashboard-dark.png", root)),
-    /ENOENT/,
+test("ships an optimized LeapView product screenshot", async () => {
+  const screenshot = await stat(
+    new URL("dist/assets/images/leapview-dashboard-dark.png", root),
   );
+
+  assert.ok(screenshot.size < 250_000, "LeapView screenshot should stay below 250 KB");
 });
 
 test("builds the interactive generator as plain HTML and JavaScript", async () => {
