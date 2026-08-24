@@ -27,6 +27,7 @@ const copiedFiles = [
   ["app/globals.css", "assets/globals.css"],
   ["app/home/home.css", "assets/home.css"],
   ["app/products/products.css", "assets/products.css"],
+  ["app/about/about.css", "assets/about.css"],
   ["app/showcase/showcase.css", "assets/showcase.css"],
   ["app/generator/generator.css", "assets/generator.css"],
   ["app/brand/brand.css", "assets/brand.css"],
@@ -39,10 +40,6 @@ const copiedFiles = [
   ["lib/primer-colors.mjs", "lib/primer-colors.mjs"],
   ["lib/wordmark-generator.mjs", "lib/wordmark-generator.mjs"],
   ["vendor/geist/LICENSE.txt", "licenses/geist-OFL-1.1.txt"],
-];
-
-const omittedSiteFiles = [
-  "assets/images/leapview-dashboard-dark.png",
 ];
 
 function normalizeBasePath(basePath) {
@@ -84,11 +81,6 @@ export async function buildSite({
   await rm(outputDirectory, { recursive: true, force: true });
   await mkdir(outputDirectory, { recursive: true });
   await cp(join(root, "site"), outputDirectory, { recursive: true });
-  await Promise.all(
-    omittedSiteFiles.map((pathname) =>
-      rm(join(outputDirectory, pathname), { force: true })
-    ),
-  );
 
   for (const [source, destination] of copiedFiles) {
     const target = join(outputDirectory, destination);
@@ -96,15 +88,20 @@ export async function buildSite({
     await copyFile(join(root, source), target);
   }
 
-  const portraitTarget = join(
-    outputDirectory,
-    "assets/images/jacob-oestergaard.webp",
+  const portraits = [
+    ["Jacob Østergaard 1.png", "jacob-oestergaard.webp"],
+    ["Ganesh Kambli.png", "ganesh-kambli.webp"],
+  ];
+  const portraitDirectory = join(outputDirectory, "assets/images");
+  await mkdir(portraitDirectory, { recursive: true });
+  await Promise.all(
+    portraits.map(([source, destination]) =>
+      sharp(join(root, source))
+        .resize(960, 960, { fit: "cover", position: "center" })
+        .webp({ quality: 82, effort: 4 })
+        .toFile(join(portraitDirectory, destination)),
+    ),
   );
-  await mkdir(dirname(portraitTarget), { recursive: true });
-  await sharp(join(root, "Jacob Østergaard 1.png"))
-    .resize(960, 960, { fit: "cover", position: "center" })
-    .webp({ quality: 82, effort: 4 })
-    .toFile(portraitTarget);
 
   await generateBrandAssets(join(outputDirectory, "brand-assets"));
   await applyBasePath(outputDirectory, basePath);

@@ -5,11 +5,11 @@ independent product lab building agent-native software.
 
 ## Run locally
 
-Requirements: Node.js 22.13 or newer.
+Requirements: Node.js 22.13 or newer, Go 1.22 or newer, and Task 3.
 
 ```bash
 npm install
-npm run dev
+task dev
 ```
 
 Open:
@@ -21,11 +21,11 @@ Open:
 
 ## Commands
 
-- `npm run dev` builds and serves the static site locally.
+- `task dev` builds the site and serves it locally with the Go development server.
 - `npm run build` copies the deployable static site to `dist/`.
 - `npm run assets` regenerates the complete committed brand package.
-- `npm run start` builds and serves the static site locally.
-- `npm test` builds the site and runs all tests.
+- `npm run dev` and `npm run start` are aliases for `task dev`.
+- `npm test` builds the site and runs the JavaScript and Go tests.
 - `npm run lint` syntax-checks the JavaScript modules.
 
 ## Architecture
@@ -33,9 +33,12 @@ Open:
 The site uses plain HTML, CSS, and browser-native JavaScript modules. There is
 no application framework or runtime dependency.
 
-- `site/index.html` is the public one-page product-lab site. It presents the
-  agent-native thesis, LeapView flagship product, selective field work, and
-  founder.
+- `site/index.html` is the public product-lab homepage. It presents the
+  agent-native thesis and team.
+- `site/products/` is the public product index. It presents LeapView with a
+  current product screenshot and links to the product site.
+- `site/about/` is the public company and team page. The homepage keeps its
+  founder-led company introduction while the full team lives on this route.
 - `site/assets/home.js` progressively enhances the hero and desktop thesis
   story with the canonical 12-layer signal model. The thesis morph is driven
   by scroll position; tablets, phones, and reduced-motion users receive the
@@ -43,10 +46,10 @@ no application framework or runtime dependency.
 - `site/brand/` is the canonical brand guide and asset reference.
 - `site/showcase/` and `site/generator/` are supporting identity tools.
 - `site/assets/images/leapview-dashboard-dark.png` is the committed LeapView
-  product proof shown on the public site.
+  product proof shown on the products page.
 - `app/**/*.css` contains the page styles.
-- `Jacob Østergaard 1.png` is the source portrait used to generate an optimized
-  WebP during the static build.
+- `Jacob Østergaard 1.png` and `Ganesh Kambli.png` are the source portraits
+  used to generate optimized WebP images during the static build.
 - `lib/brand-system.mjs` is the approved brand specification.
 - `lib/logo-generator.mjs` is the deterministic SVG implementation.
 - `lib/signal-scroll-story.mjs` maps thesis scroll progress to a deterministic
@@ -55,7 +58,7 @@ no application framework or runtime dependency.
   lockups, raster exports, print PDFs, favicons, social images, and
   `brand-assets/manifest.json`.
 - `scripts/build.mjs` creates `dist/`.
-- `scripts/server.mjs` serves the built files with clean directory URLs.
+- `cmd/devserver/` contains the Go development server used by `task dev`.
 
 The public website and identity reference are separate experiences with
 separate HTML and CSS entry points. The public site does not link to the brand

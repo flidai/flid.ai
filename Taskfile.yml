@@ -1,0 +1,29 @@
+version: "3"
+
+tasks:
+  build:
+    desc: Build the static site into dist/
+    cmds:
+      - npm run build
+
+  dev:
+    desc: Build and serve the site at http://localhost:3000
+    deps: [build]
+    cmds:
+      - go run ./cmd/devserver
+
+  test:
+    desc: Build and run the JavaScript and Go test suites
+    cmds:
+      - npm test
+
+  lint:
+    desc: Check JavaScript and Go formatting
+    cmds:
+      - npm run lint
+      - test -z "$(gofmt -l ./cmd)"
+
+  assets:
+    desc: Regenerate the committed brand assets
+    cmds:
+      - npm run assets

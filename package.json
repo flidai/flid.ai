@@ -6,11 +6,11 @@
     "node": ">=22.13.0"
   },
   "scripts": {
-    "dev": "node scripts/server.mjs",
+    "dev": "task dev",
     "assets": "node scripts/generate-brand-assets.mjs brand-assets",
     "build": "node scripts/build.mjs",
-    "start": "node scripts/server.mjs",
-    "test": "npm run build && node --test tests/*.test.mjs",
+    "start": "task dev",
+    "test": "npm run build && node --test tests/*.test.mjs && go test ./...",
     "lint": "node --check site/assets/*.js scripts/*.mjs lib/*.mjs"
   },
   "dependencies": {},
