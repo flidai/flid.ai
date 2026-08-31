@@ -272,7 +272,7 @@ test("builds the About page as a dedicated team route", async () => {
   assert.match(html, /AI Engineer · Pune/i);
   assert.match(
     html,
-    /Anand is an AI Engineer at Flid working on LeapView\. He builds product capabilities and the engineering foundations behind them, drawing on experience across backend systems, frontend systems, applied AI, cloud infrastructure, and security to create simple, reliable software for production\./i,
+    /Anand is an AI Engineer at Flid building LeapView\. He works at the intersection of applied AI and frontend architecture, designing intuitive, scalable interfaces that make powerful technology accessible and practical for real-world workflows\./i,
   );
   assert.match(html, /href="https:\/\/www\.linkedin\.com\/in\/anand-bora\/"/i);
   assert.match(html, /jacob-oestergaard\.webp/i);
