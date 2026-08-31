@@ -48,8 +48,9 @@ no application framework or runtime dependency.
 - `site/assets/images/leapview-dashboard-dark.png` is the committed LeapView
   product proof shown on the products page.
 - `app/**/*.css` contains the page styles.
-- `Jacob Østergaard 1.png` and `Ganesh Kambli.png` are the source portraits
-  used to generate optimized WebP images during the static build.
+- `Jacob Østergaard 1.png`, `Ganesh Kambli.png`, and `Anand Bora.png` are the
+  source portraits used to generate optimized WebP images during the static
+  build.
 - `lib/brand-system.mjs` is the approved brand specification.
 - `lib/logo-generator.mjs` is the deterministic SVG implementation.
 - `lib/signal-scroll-story.mjs` maps thesis scroll progress to a deterministic
