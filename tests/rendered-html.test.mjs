@@ -267,10 +267,17 @@ test("builds the About page as a dedicated team route", async () => {
     html,
     /Ganesh is an AI Engineer at Flid working on LeapView\. He builds product capabilities and the engineering foundations behind them, drawing on experience across backend systems, applied AI, cloud infrastructure, and security to create simple, reliable software for production\./i,
   );
-  assert.doesNotMatch(html, /Pune/i);
   assert.match(html, /href="https:\/\/www\.linkedin\.com\/in\/ganeshkambli\/"/i);
+  assert.match(html, /Anand Bora/i);
+  assert.match(html, /AI Engineer · Pune/i);
+  assert.match(
+    html,
+    /Anand is an AI Engineer at Flid working on LeapView\. He builds product capabilities and the engineering foundations behind them, drawing on experience across backend systems, frontend systems, applied AI, cloud infrastructure, and security to create simple, reliable software for production\./i,
+  );
+  assert.match(html, /href="https:\/\/www\.linkedin\.com\/in\/anand-bora\/"/i);
   assert.match(html, /jacob-oestergaard\.webp/i);
   assert.match(html, /ganesh-kambli\.webp/i);
+  assert.match(html, /anand-bora\.webp/i);
   assert.match(html, /href="\/products\/"[^>]*>Products\s*</i);
   assert.match(html, /href="\/about\/"[^>]*>About\s*</i);
   assert.match(html, /href="mailto:jacob@flid\.ai"[^>]*>Contact\s*</i);
@@ -279,6 +286,8 @@ test("builds the About page as a dedicated team route", async () => {
   assert.match(html, /Flid AI ApS · CVR 43463217 · Odense, Denmark/i);
   assert.match(styles, /\.about-page/);
   assert.match(styles, /\.about-team-grid/);
+  assert.match(styles, /grid-template-columns:\s*repeat\(3, minmax\(0, 1fr\)\)/);
+  assert.match(styles, /@media \(max-width: 900px\)[\s\S]*?\.about-team-grid\s*{[\s\S]*?grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/);
   assert.doesNotMatch(html, /_next|react|__next|data-reactroot/i);
 });
 
@@ -321,6 +330,14 @@ test("optimizes the AI engineer portrait for the public site", async () => {
   );
 
   assert.ok(portrait.size < 250_000, "AI engineer portrait should stay below 250 KB");
+});
+
+test("optimizes Anand's portrait for the public site", async () => {
+  const portrait = await stat(
+    new URL("dist/assets/images/anand-bora.webp", root),
+  );
+
+  assert.ok(portrait.size < 250_000, "Anand's portrait should stay below 250 KB");
 });
 
 test("ships an optimized standalone hero wave field", async () => {

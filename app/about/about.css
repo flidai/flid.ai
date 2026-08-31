@@ -225,7 +225,7 @@
 
 .about-team-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(28px, 4vw, 58px);
   margin-top: clamp(64px, 8vw, 112px);
 }
@@ -321,6 +321,10 @@
   .about-story-grid {
     grid-template-columns: 1fr;
     gap: 56px;
+  }
+
+  .about-team-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

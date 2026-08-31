@@ -100,6 +100,7 @@ test("keeps the public site at the root and the brand guide as a reference", asy
   assert.match(productsPage, /href="\/about\/"[^>]*>About\s*</i);
   assert.match(aboutPage, /A Danish product lab building\s*<span>durable systems\.<\/span>/i);
   assert.match(aboutPage, /Ganesh Kambli/);
+  assert.match(aboutPage, /Anand Bora/);
   assert.match(aboutPage, /AI Engineer/);
   assert.doesNotMatch(rootPage, /id="leapview"|id="field-work"/i);
   assert.doesNotMatch(rootPage, /href="#leapview"|href="#field-work"/i);

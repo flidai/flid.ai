@@ -91,6 +91,7 @@ export async function buildSite({
   const portraits = [
     ["Jacob Østergaard 1.png", "jacob-oestergaard.webp"],
     ["Ganesh Kambli.png", "ganesh-kambli.webp"],
+    ["Anand Bora.png", "anand-bora.webp"],
   ];
   const portraitDirectory = join(outputDirectory, "assets/images");
   await mkdir(portraitDirectory, { recursive: true });
