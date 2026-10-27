@@ -3,30 +3,45 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0d1117">
+    <meta name="color-scheme" content="dark">
     <meta name="description" content="Flid is an independent product lab building agent-native software where AI agents do real work.">
+    <meta property="og:site_name" content="Flid">
     <meta property="og:title" content="Flid — Agent-native product lab">
     <meta property="og:description" content="We build products where agents do real work.">
-    <meta property="og:image" content="/brand-assets/social/share-dark-1200x630.png">
+    <meta property="og:image" content="https://flid.ai/brand-assets/social/share-dark-1200x630.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Flid: the signal mark and wordmark on a dark background">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://flid.ai/">
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://flid.ai/brand-assets/social/share-dark-1200x630.png">
+    <meta name="twitter:image:alt" content="Flid: the signal mark and wordmark on a dark background">
     <title>Flid — Agent-native product lab</title>
     <link rel="canonical" href="https://flid.ai/">
-    <link rel="icon" href="/brand-assets/favicon.svg" type="image/svg+xml">
-    <link rel="icon" href="/brand-assets/favicon/favicon.ico" sizes="any">
-    <link rel="icon" href="/brand-assets/favicon/favicon-32.png" type="image/png" sizes="32x32">
-    <link rel="apple-touch-icon" href="/brand-assets/favicon/apple-touch-icon.png">
-    <link rel="manifest" href="/brand-assets/favicon/site.webmanifest">
+    <link rel="icon" href="/assets/images/site-icon.svg" type="image/svg+xml">
+    <link rel="icon" href="/assets/images/site-icon.ico" sizes="any">
+    <link rel="icon" href="/assets/images/site-icon-32.png" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/assets/images/site-apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="preload" href="/assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="modulepreload" href="/assets/home.js">
+    <link rel="modulepreload" href="/lib/signal-scroll-story.mjs">
+    <link rel="modulepreload" href="/lib/depth-video-story.mjs">
+    <link rel="modulepreload" href="/lib/hero-scroll-transition.mjs">
     <link rel="stylesheet" href="/assets/globals.css">
     <link rel="stylesheet" href="/assets/home.css">
   </head>
   <body>
-    <main class="home-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="home-page">
       <header class="site-header">
         <div class="site-shell header-inner">
           <a class="site-logo" href="/" aria-label="Flid home">
-            <img class="site-logo-wordmark" src="/brand-assets/lockup-primary-on-dark.svg" alt="">
-            <img class="site-logo-mark" src="/brand-assets/mark-primary-on-dark.svg" alt="" aria-hidden="true">
+            <img class="site-logo-wordmark" src="/assets/images/site-wordmark-on-dark.svg" width="232" height="100" alt="">
+            <img class="site-logo-mark" src="/assets/images/site-mark-on-dark.webp" width="192" height="192" alt="" aria-hidden="true">
           </a>
           <nav aria-label="Main navigation">
             <a href="/products/">Products</a>
@@ -36,6 +51,7 @@
         </div>
       </header>
 
+      <main id="main" tabindex="-1">
       <div class="motion-sequence" data-motion-sequence>
         <div class="motion-sequence-stage" aria-hidden="true">
           <img class="hero-wave-field" src="/assets/images/hero-signal-waves.webp" width="1672" height="941" alt="" fetchpriority="high">
@@ -81,7 +97,7 @@
       <section class="about" id="about">
         <div class="site-shell about-grid">
           <figure class="founder-portrait">
-            <img src="/assets/images/jacob-oestergaard.webp" alt="Jacob Østergaard, founder of Flid">
+            <img src="/assets/images/jacob-oestergaard.webp" width="960" height="960" alt="Jacob Østergaard, founder of Flid" loading="lazy" decoding="async">
             <figcaption><span>Jacob Østergaard</span><span>Founder · Flid</span></figcaption>
           </figure>
           <div class="about-copy">
@@ -93,14 +109,15 @@
           </div>
         </div>
       </section>
+      </main>
 
       <footer class="site-footer">
         <div class="site-shell footer-inner">
-          <img src="/brand-assets/lockup-primary-on-dark.svg" alt="Flid">
+          <img src="/assets/images/site-lockup-on-dark.svg" width="232" height="100" alt="Flid" loading="lazy">
           <p>Flid AI ApS · CVR 43463217 · Odense, Denmark</p>
         </div>
       </footer>
-    </main>
+    </div>
     <script type="module" src="/assets/home.js"></script>
   </body>
 </html>

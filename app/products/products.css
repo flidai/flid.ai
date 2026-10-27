@@ -1,5 +1,4 @@
 .products-page {
-  min-width: 320px;
   background: var(--bgColor-default);
   color: var(--fgColor-default);
 }
@@ -18,23 +17,27 @@
   backdrop-filter: blur(18px);
 }
 
+/* Flex (not a fixed two-column grid) so the nav wraps onto its own row at 200%
+   text or very narrow widths instead of overlapping the wordmark. */
 .products-header-inner {
-  display: grid;
-  grid-template-columns: 1fr auto;
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
+  column-gap: 24px;
   min-height: 82px;
 }
 
 .products-logo,
 .products-header nav,
-.products-footer-inner,
-.product-capabilities {
+.products-footer-inner {
   display: flex;
   align-items: center;
 }
 
 .products-logo {
   position: relative;
+  flex: none;
   width: 112px;
   aspect-ratio: 232 / 100;
   isolation: isolate;
@@ -58,24 +61,48 @@
   transition: transform 720ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.products-logo:hover .products-logo-mark,
+@media (hover: hover) {
+  .products-logo:hover .products-logo-mark {
+    transform: rotate(360deg);
+  }
+}
+
 .products-logo:focus-visible .products-logo-mark {
   transform: rotate(360deg);
 }
 
 .products-header nav {
-  justify-self: end;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  margin-left: auto;
   gap: clamp(22px, 2.8vw, 42px);
   color: var(--fgColor-muted);
   font-size: 14px;
   font-weight: 520;
 }
 
+.products-header nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.products-header nav a[aria-current="page"] {
+  color: var(--fgColor-default);
+}
+
 .products-page a {
   transition: color 180ms ease;
 }
 
-.products-page a:hover,
+@media (hover: hover) {
+  .products-page a:hover {
+    color: var(--fgColor-accent);
+  }
+}
+
 .products-page a:focus-visible {
   color: var(--fgColor-accent);
 }
@@ -106,6 +133,7 @@
   font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  text-wrap: balance;
 }
 
 .products-hero h1 {
@@ -159,10 +187,24 @@
 }
 
 .product-card {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(100px, 0.22fr) minmax(0, 1fr);
-  gap: clamp(30px, 7vw, 120px);
+  gap: clamp(48px, 5vw, 72px) clamp(30px, 7vw, 120px);
   padding-block: clamp(80px, 11vw, 170px);
+}
+
+/* Full-bleed divider, matching the section borders around the shell. */
+.product-card + .product-card::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: var(--borderColor-default);
+  box-shadow: 0 0 0 100vmax var(--borderColor-default);
+  clip-path: inset(0 -100vmax);
+  content: "";
 }
 
 .product-card-index {
@@ -193,67 +235,209 @@
   line-height: 1.45;
 }
 
-.product-capabilities {
+/* Status labels are plain text, not controls: no hover, no pointer. */
+.product-status {
+  display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 36px;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.product-capabilities span {
-  padding: 9px 12px;
-  border: 1px solid var(--borderColor-muted);
+.product-status li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  border: 1px solid var(--borderColor-default);
+  border-radius: 999px;
   color: var(--fgColor-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 11px;
-  letter-spacing: 0.04em;
+  font-size: var(--font-size-caption);
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.product-status-dev::before {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--fgColor-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--fgColor-accent) 22%, transparent);
+  content: "";
+}
+
+.product-features {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 28px;
+  margin: 40px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.product-features li {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--borderColor-default);
+}
+
+.product-features strong {
+  color: var(--fgColor-default);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.product-features span {
+  color: var(--fgColor-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.product-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 28px;
+  margin-top: 36px;
 }
 
 .product-link {
   display: inline-flex;
   align-items: center;
   gap: 28px;
-  margin-top: 42px;
-  padding-bottom: 9px;
+  min-height: 44px;
+  margin-top: 32px;
+  padding-block: 10px 9px;
   border-bottom: 1px solid currentColor;
   font-weight: 620;
 }
 
-.product-screenshot {
+.product-actions .product-link {
+  margin-top: 0;
+}
+
+.product-link-quiet {
+  gap: 10px;
+  border-bottom-color: transparent;
+  color: var(--fgColor-muted);
+  font-weight: 520;
+}
+
+.product-gallery {
   grid-column: 1 / -1;
-  margin: clamp(34px, 5vw, 72px) 0 0;
+}
+
+.product-gallery-bar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.product-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 4px;
+  border: 1px solid var(--borderColor-default);
+  border-radius: 999px;
+  background: var(--bgColor-muted);
+}
+
+.product-tabs button {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--fgColor-muted);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 560;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: color 180ms ease, background-color 180ms ease;
+}
+
+@media (hover: hover) {
+  .product-tabs button:hover {
+    color: var(--fgColor-default);
+  }
+}
+
+.product-tabs button[aria-selected="true"] {
+  background: var(--bgColor-accent-muted);
+  color: var(--fgColor-default);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fgColor-accent) 45%, transparent);
+}
+
+.product-tabs button:focus-visible {
+  outline: 2px solid var(--fgColor-accent);
+  outline-offset: 2px;
+}
+
+/* Every view shares one grid cell, so the gallery is as tall as its tallest
+   view and switching tabs never moves the content below it. */
+.product-views {
+  display: grid;
+}
+
+.product-view {
+  grid-area: 1 / 1;
+  margin: 0;
+  transition: opacity 220ms ease, visibility 0s linear 0s;
+}
+
+.product-view[hidden] {
+  display: block;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 220ms ease, visibility 0s linear 220ms;
+}
+
+.product-view a {
+  display: block;
   overflow: hidden;
   border: 1px solid var(--borderColor-default);
   background: var(--bgColor-muted);
 }
 
-.product-screenshot a {
-  display: block;
-  color: var(--fgColor-muted);
-}
-
-.product-screenshot figcaption {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 46px;
-  padding-inline: 16px;
-  border-bottom: 1px solid var(--borderColor-default);
-  font-family: var(--font-geist-mono), monospace;
-  font-size: var(--font-size-caption);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.product-screenshot img {
+.product-view img {
   display: block;
   width: 100%;
   height: auto;
+  background-color: var(--bgColor-default);
   transition: transform 480ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.product-screenshot a:hover img,
-.product-screenshot a:focus-visible img {
+@media (hover: hover) {
+  .product-view a:hover img {
+    transform: scale(1.012);
+  }
+}
+
+.product-view a:focus-visible img {
   transform: scale(1.012);
+}
+
+/* The frame clips overflow, so the default outset ring would be cut off. */
+.product-view a:focus-visible {
+  outline-offset: -3px;
+}
+
+.product-view figcaption {
+  max-width: 760px;
+  margin-top: 14px;
+  color: var(--fgColor-muted);
+  font-size: 15px;
+  line-height: 1.5;
 }
 
 .products-invitation {
@@ -290,6 +474,7 @@
 
 .products-footer-inner img {
   width: 92px;
+  height: auto;
 }
 
 .products-footer-inner p {
@@ -297,6 +482,10 @@
 }
 
 @media (max-width: 720px) {
+  .products-shell {
+    padding-inline: 20px;
+  }
+
   .products-header-inner {
     min-height: 70px;
   }
@@ -305,9 +494,16 @@
     width: 96px;
   }
 
+  /* Extend the 41px-tall logo link to a 44px touch target. */
+  .products-logo::after {
+    position: absolute;
+    inset: -2px 0;
+    content: "";
+  }
+
   .products-header nav {
-    gap: 16px;
-    font-size: 12px;
+    gap: 18px;
+    font-size: 13px;
   }
 
   .products-hero {
@@ -326,7 +522,7 @@
   }
 
   .product-card {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 24px;
     padding-block: 80px;
   }
@@ -343,11 +539,82 @@
   .products-footer-inner p {
     display: block;
   }
+
+  .product-features {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    margin-top: 32px;
+  }
+
+  .product-actions {
+    gap: 0 24px;
+    margin-top: 28px;
+  }
+
+  .product-gallery {
+    margin-top: 24px;
+  }
+
+  .product-gallery-bar {
+    margin-bottom: 12px;
+  }
+
+  /* An even grid instead of a pill row, so no tab is left alone on a line:
+     three tabs share one row, four make a two-by-two grid. */
+  .product-tabs {
+    display: grid;
+    flex: 1;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+    border-radius: 14px;
+  }
+
+  .product-tabs:has(> :nth-child(4)) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .product-tabs button {
+    padding: 4px 6px;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.2;
+  }
+
+  .product-view figcaption {
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 721px) and (max-width: 1080px) {
+  .product-features {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+}
+
+.not-found-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 32px;
+  margin-top: 28px;
+}
+
+.not-found-links .product-link {
+  margin-top: 0;
+}
+
+@media (max-width: 400px) {
+  .products-kicker {
+    letter-spacing: 0.08em;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .products-logo-mark,
-  .product-screenshot img {
+  .product-view,
+  .product-view[hidden],
+  .product-view img,
+  .product-tabs button {
     transition: none;
   }
 
@@ -356,8 +623,8 @@
     transform: none;
   }
 
-  .product-screenshot a:hover img,
-  .product-screenshot a:focus-visible img {
+  .product-view a:hover img,
+  .product-view a:focus-visible img {
     transform: none;
   }
 }

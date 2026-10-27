@@ -3,70 +3,194 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0d1117">
+    <meta name="color-scheme" content="dark">
     <meta name="description" content="Products from Flid, an independent lab building agent-native software.">
+    <meta property="og:site_name" content="Flid">
     <meta property="og:title" content="Products — Flid">
     <meta property="og:description" content="Products where agents do real work.">
-    <meta property="og:image" content="/brand-assets/social/share-dark-1200x630.png">
+    <meta property="og:image" content="https://flid.ai/brand-assets/social/share-dark-1200x630.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Flid: the signal mark and wordmark on a dark background">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://flid.ai/products/">
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://flid.ai/brand-assets/social/share-dark-1200x630.png">
+    <meta name="twitter:image:alt" content="Flid: the signal mark and wordmark on a dark background">
     <title>Products — Flid</title>
     <link rel="canonical" href="https://flid.ai/products/">
-    <link rel="icon" href="/brand-assets/favicon.svg" type="image/svg+xml">
-    <link rel="icon" href="/brand-assets/favicon/favicon.ico" sizes="any">
-    <link rel="icon" href="/brand-assets/favicon/favicon-32.png" type="image/png" sizes="32x32">
-    <link rel="apple-touch-icon" href="/brand-assets/favicon/apple-touch-icon.png">
-    <link rel="manifest" href="/brand-assets/favicon/site.webmanifest">
+    <link rel="icon" href="/assets/images/site-icon.svg" type="image/svg+xml">
+    <link rel="icon" href="/assets/images/site-icon.ico" sizes="any">
+    <link rel="icon" href="/assets/images/site-icon-32.png" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/assets/images/site-apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="preload" href="/assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="/assets/globals.css">
     <link rel="stylesheet" href="/assets/products.css">
+    <script type="module" src="/assets/products.js"></script>
   </head>
   <body>
-    <main class="products-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="products-page">
       <header class="products-header">
         <div class="products-shell products-header-inner">
           <a class="products-logo" href="/" aria-label="Flid home">
-            <img class="products-logo-wordmark" src="/brand-assets/lockup-primary-on-dark.svg" alt="">
-            <img class="products-logo-mark" src="/brand-assets/mark-primary-on-dark.svg" alt="" aria-hidden="true">
+            <img class="products-logo-wordmark" src="/assets/images/site-wordmark-on-dark.svg" width="232" height="100" alt="">
+            <img class="products-logo-mark" src="/assets/images/site-mark-on-dark.webp" width="192" height="192" alt="" aria-hidden="true">
           </a>
           <nav aria-label="Main navigation">
-            <a href="/products/">Products</a>
+            <a href="/products/" aria-current="page">Products</a>
             <a href="/about/">About</a>
             <a href="mailto:jacob@flid.ai">Contact</a>
           </nav>
         </div>
       </header>
 
+      <main id="main" tabindex="-1">
       <section class="products-hero">
         <div class="products-shell">
           <p class="products-kicker">FLID / PRODUCTS</p>
           <h1>Products where agents do real work.</h1>
-          <p class="products-intro">We build agent-native software from the foundation up: governed data, explicit capabilities, and interfaces that work for people and machines.</p>
+          <p class="products-intro">We build <span class="nb">agent-native</span> software from the foundation up: governed data, explicit capabilities, and interfaces that work for people and machines.</p>
         </div>
         <div class="products-signal" aria-hidden="true"></div>
       </section>
 
       <section class="products-list" aria-label="Flid products">
         <div class="products-shell">
-          <article class="product-card">
+          <article class="product-card" id="leapview" aria-labelledby="leapview-title">
             <div class="product-card-index">01</div>
             <div class="product-card-body">
-              <p class="products-kicker">OPEN SOURCE / IN DEVELOPMENT</p>
-              <h2>LeapView</h2>
-              <p class="product-card-summary">An agent-native BI platform for governed metrics, data access, and exploration. Dashboards, definitions, and permissions stay close to the data and version-controlled.</p>
-              <div class="product-capabilities" aria-label="LeapView capabilities">
-                <span>Dashboards as code</span>
-                <span>Agent-trusted metrics</span>
-                <span>Open and governed</span>
+              <ul class="product-status" aria-label="LeapView status">
+                <li class="product-status-tag">Open source</li>
+                <li class="product-status-dev">In development</li>
+              </ul>
+              <h2 id="leapview-title">LeapView</h2>
+              <p class="product-card-summary">An <span class="nb">agent-native</span> BI platform for governed metrics, data access, and exploration. Dashboards, definitions, and permissions stay close to the data and version-controlled.</p>
+              <ul class="product-features" aria-label="LeapView capabilities">
+                <li><strong>Dashboards as code</strong><span>Dashboards, metrics, and access rules live in YAML files you review like any other code.</span></li>
+                <li><strong>Agent-trusted metrics</strong><span>People and AI agents query the same governed definitions, so answers match the dashboards.</span></li>
+                <li><strong>Open and governed</strong><span>Open source and self-hostable, with authorization and audit built in.</span></li>
+              </ul>
+              <div class="product-actions">
+                <a class="product-link" href="https://leapview.dev/">Visit LeapView <span aria-hidden="true">↗</span></a>
+                <a class="product-link product-link-quiet" href="https://leapview.dev/docs/getting-started">Get started <span aria-hidden="true">↗</span></a>
+                <a class="product-link product-link-quiet" href="https://github.com/flidai/leapview">GitHub <span aria-hidden="true">↗</span></a>
+                <a class="product-link product-link-quiet" href="https://leapview.dev/visuals">Chart library <span aria-hidden="true">↗</span></a>
               </div>
-              <a class="product-link" href="https://leapview.dev/">Visit LeapView <span aria-hidden="true">↗</span></a>
             </div>
-            <figure class="product-screenshot">
-              <a href="https://leapview.dev/visuals" aria-label="Explore the LeapView visual showcase">
-                <figcaption><span>LeapView / Visual showcase</span><span>Product interface</span></figcaption>
-                <img src="/assets/images/leapview-dashboard-dark.png" width="1440" height="900" alt="LeapView dashboard showing filters, governed KPIs, charts, and order data" decoding="async">
-              </a>
-            </figure>
+            <div class="product-gallery" data-product-gallery>
+              <div class="product-gallery-bar">
+                <div class="product-tabs" role="tablist" aria-label="LeapView views">
+                  <button type="button" role="tab" id="leapview-tab-dashboard" aria-controls="leapview-view-dashboard" aria-selected="true">Dashboard</button>
+                  <button type="button" role="tab" id="leapview-tab-metrics" aria-controls="leapview-view-metrics" aria-selected="false" tabindex="-1">Metrics as code</button>
+                  <button type="button" role="tab" id="leapview-tab-charts" aria-controls="leapview-view-charts" aria-selected="false" tabindex="-1">Chart library</button>
+                </div>
+              </div>
+              <div class="product-views">
+                <figure class="product-view" role="tabpanel" id="leapview-view-dashboard" aria-labelledby="leapview-tab-dashboard">
+                  <a href="https://leapview.dev/visuals" aria-label="Dashboard: open on leapview.dev">
+                    <picture>
+                      <source type="image/avif" srcset="/assets/images/products/leapview-dashboard-720.avif 720w, /assets/images/products/leapview-dashboard-1080.avif 1080w, /assets/images/products/leapview-dashboard-1440.avif 1440w, /assets/images/products/leapview-dashboard-2160.avif 2160w" sizes="(max-width: 720px) calc(100vw - 42px), (max-width: 1440px) calc(91.5vw - 2px), 1294px">
+                      <img src="/assets/images/products/leapview-dashboard-1440.webp" srcset="/assets/images/products/leapview-dashboard-720.webp 720w, /assets/images/products/leapview-dashboard-1080.webp 1080w, /assets/images/products/leapview-dashboard-1440.webp 1440w, /assets/images/products/leapview-dashboard-2160.webp 2160w" sizes="(max-width: 720px) calc(100vw - 42px), (max-width: 1440px) calc(91.5vw - 2px), 1294px" width="1440" height="900" alt="LeapView Visual Showcase dashboard with KPI cards, a revenue chart, an order status donut, delivery bars, product categories, and an orders table" decoding="async" fetchpriority="high">
+                    </picture>
+                  </a>
+                  <figcaption>A live LeapView dashboard: KPIs, charts, and an orders table built on one governed semantic model.</figcaption>
+                </figure>
+                <figure class="product-view" role="tabpanel" id="leapview-view-metrics" aria-labelledby="leapview-tab-metrics" hidden>
+                  <a href="https://leapview.dev/#build" aria-label="Metrics as code: open on leapview.dev">
+                    <picture>
+                      <source type="image/avif" srcset="/assets/images/products/leapview-metrics-720.avif 720w, /assets/images/products/leapview-metrics-1080.avif 1080w, /assets/images/products/leapview-metrics-1440.avif 1440w, /assets/images/products/leapview-metrics-2160.avif 2160w" sizes="(max-width: 720px) calc(100vw - 42px), (max-width: 1440px) calc(91.5vw - 2px), 1294px">
+                      <img src="/assets/images/products/leapview-metrics-1440.webp" srcset="/assets/images/products/leapview-metrics-720.webp 720w, /assets/images/products/leapview-metrics-1080.webp 1080w, /assets/images/products/leapview-metrics-1440.webp 1440w, /assets/images/products/leapview-metrics-2160.webp 2160w" sizes="(max-width: 720px) calc(100vw - 42px), (max-width: 1440px) calc(91.5vw - 2px), 1294px" width="1440" height="900" alt="LeapView project files with the sales semantic model open, defining order count and revenue metrics in YAML" decoding="async" loading="lazy">
+                    </picture>
+                  </a>
+                  <figcaption>Metrics are defined once in YAML. Dashboards and agents both read these definitions.</figcaption>
+                </figure>
+                <figure class="product-view" role="tabpanel" id="leapview-view-charts" aria-labelledby="leapview-tab-charts" hidden>
+                  <a href="https://leapview.dev/visuals" aria-label="Chart library: open on leapview.dev">
+                    <picture>
+                      <source type="image/avif" srcset="/assets/images/products/leapview-charts-720.avif 720w, /assets/images/products/leapview-charts-1080.avif 1080w, /assets/images/products/leapview-charts-1440.avif 1440w, /assets/images/products/leapview-charts-2160.avif 2160w" sizes="(max-width: 720px) calc(100vw - 42px), (max-width: 1440px) calc(91.5vw - 2px), 1294px">
+                      <img src="/assets/images/products/leapview-charts-1440.webp" srcset="/assets/images/products/leapview-charts-720.webp 720w, /assets/images/products/leapview-charts-1080.webp 1080w, /assets/images/products/leapview-charts-1440.webp 1440w, /assets/images/products/leapview-charts-2160.webp 2160w" sizes="(max-width: 720px) calc(100vw - 42px), (max-width: 1440px) calc(91.5vw - 2px), 1294px" width="1440" height="900" alt="Six LeapView charts: a scatter plot, a funnel, a treemap, a gauge, a heatmap, and a Sankey diagram" decoding="async" loading="lazy">
+                    </picture>
+                  </a>
+                  <figcaption>A few of the chart types in LeapView’s visual library, each rendered from the same visual contract.</figcaption>
+                </figure>
+              </div>
+            </div>
           </article>
+          <article class="product-card" id="alloy-catalog" aria-labelledby="alloy-catalog-title">
+            <div class="product-card-index">02</div>
+            <div class="product-card-body">
+              <ul class="product-status" aria-label="Alloy Catalog status">
+                <li class="product-status-tag">Engineering data</li>
+                <li class="product-status-dev">In development</li>
+              </ul>
+              <h2 id="alloy-catalog-title">Alloy Catalog</h2>
+              <p class="product-card-summary">Your parts, assemblies, and drawings. Connected. Find engineering files, trace where parts are used, and explore the relationships behind a design—from one searchable catalog built for people and agents.</p>
+              <ul class="product-features" aria-label="Alloy Catalog capabilities">
+                <li><strong>Search engineering files</strong><span>Find any part by name, material, weight, or class across CAD data and the ERP.</span></li>
+                <li><strong>Assembly relationships</strong><span>See where every part is used, its bill of materials, drawings, and similar parts.</span></li>
+                <li><strong>Agent-ready access</strong><span>Ask questions in plain language. Answers cite the files and records they come from.</span></li>
+              </ul>
+              <div class="product-actions">
+                <a class="product-link" href="https://alloycatalog.com/">Visit Alloy Catalog <span aria-hidden="true">↗</span></a>
+                <a class="product-link product-link-quiet" href="https://alloycatalog.com/#how">How it works <span aria-hidden="true">↗</span></a>
+                <a class="product-link product-link-quiet" href="https://alloycatalog.com/#pilot">Pilot program <span aria-hidden="true">↗</span></a>
+                <a class="product-link product-link-quiet" href="mailto:jacob@flid.ai?subject=Alloy%20Catalog%20demo">Book a demo <span aria-hidden="true">↗</span></a>
+              </div>
+            </div>
+            <div class="product-gallery" data-product-gallery>
+              <div class="product-gallery-bar">
+                <div class="product-tabs" role="tablist" aria-label="Alloy Catalog views">
+                  <button type="button" role="tab" id="alloy-catalog-tab-search" aria-controls="alloy-catalog-view-search" aria-selected="true">Find a part</button>
+                  <button type="button" role="tab" id="alloy-catalog-tab-ask" aria-controls="alloy-catalog-view-ask" aria-selected="false" tabindex="-1">Ask a question</button>
+                  <button type="button" role="tab" id="alloy-catalog-tab-part" aria-controls="alloy-catalog-view-part" aria-selected="false" tabindex="-1">Part page</button>
+                  <button type="button" role="tab" id="alloy-catalog-tab-data-quality" aria-controls="alloy-catalog-view-data-quality" aria-selected="false" tabindex="-1">Data quality</button>
+                </div>
+              </div>
+              <div class="product-views">
+                <figure class="product-view" role="tabpanel" id="alloy-catalog-view-search" aria-labelledby="alloy-catalog-tab-search">
+                  <a href="https://alloycatalog.com/#product" aria-label="Find a part: open on alloycatalog.com">
+                    <picture>
+                      <source type="image/avif" srcset="/assets/images/products/alloy-search-720.avif 720w, /assets/images/products/alloy-search-1080.avif 1080w, /assets/images/products/alloy-search-1440.avif 1440w, /assets/images/products/alloy-search-2080.avif 2080w" sizes="(max-width: 720px) calc(100vw - 42px), (max-width: 1440px) calc(91.5vw - 2px), 1294px">
+                      <img src="/assets/images/products/alloy-search-1440.webp" srcset="/assets/images/products/alloy-search-720.webp 720w, /assets/images/products/alloy-search-1080.webp 1080w, /assets/images/products/alloy-search-1440.webp 1440w, /assets/images/products/alloy-search-2080.webp 2080w" sizes="(max-width: 720px) calc(100vw - 42px), (max-width: 1440px) calc(91.5vw - 2px), 1294px" width="1040" height="500" alt="Alloy Catalog search results for cast iron housings heavier than 10 kg, filtered by class, material, and product line" decoding="async" loading="lazy">
+                    </picture>
+                  </a>
+                  <figcaption>Search every part by name, material, or weight, then narrow by class and product line.</figcaption>
+                </figure>
+                <figure class="product-view" role="tabpanel" id="alloy-catalog-view-ask" aria-labelledby="alloy-catalog-tab-ask" hidden>
+                  <a href="https://alloycatalog.com/#product" aria-label="Ask a question: open on alloycatalog.com">
+                    <picture>
+                      <source type="image/avif" srcset="/assets/images/products/alloy-ask-720.avif 720w, /assets/images/products/alloy-ask-1080.avif 1080w, /assets/images/products/alloy-ask-1440.avif 1440w, /assets/images/products/alloy-ask-2080.avif 2080w" sizes="(max-width: 720px) calc(100vw - 42px), (max-width: 1440px) calc(91.5vw - 2px), 1294px">
+                      <img src="/assets/images/products/alloy-ask-1440.webp" srcset="/assets/images/products/alloy-ask-720.webp 720w, /assets/images/products/alloy-ask-1080.webp 1080w, /assets/images/products/alloy-ask-1440.webp 1440w, /assets/images/products/alloy-ask-2080.webp 2080w" sizes="(max-width: 720px) calc(100vw - 42px), (max-width: 1440px) calc(91.5vw - 2px), 1294px" width="1040" height="500" alt="The Alloy Catalog agent answering which assemblies use part AC-40120, with numbered source citations" decoding="async" loading="lazy">
+                    </picture>
+                  </a>
+                  <figcaption>The built-in agent answers in plain language and cites the files and ERP records it used.</figcaption>
+                </figure>
+                <figure class="product-view" role="tabpanel" id="alloy-catalog-view-part" aria-labelledby="alloy-catalog-tab-part" hidden>
+                  <a href="https://alloycatalog.com/#product" aria-label="Part page: open on alloycatalog.com">
+                    <picture>
+                      <source type="image/avif" srcset="/assets/images/products/alloy-part-720.avif 720w, /assets/images/products/alloy-part-1080.avif 1080w, /assets/images/products/alloy-part-1440.avif 1440w, /assets/images/products/alloy-part-2080.avif 2080w" sizes="(max-width: 720px) calc(100vw - 42px), (max-width: 1440px) calc(91.5vw - 2px), 1294px">
+                      <img src="/assets/images/products/alloy-part-1440.webp" srcset="/assets/images/products/alloy-part-720.webp 720w, /assets/images/products/alloy-part-1080.webp 1080w, /assets/images/products/alloy-part-1440.webp 1440w, /assets/images/products/alloy-part-2080.webp 2080w" sizes="(max-width: 720px) calc(100vw - 42px), (max-width: 1440px) calc(91.5vw - 2px), 1294px" width="1040" height="500" alt="Alloy Catalog part page for a cast gear housing showing material, mass, drawing, stock, where it is used, and similar parts" decoding="async" loading="lazy">
+                    </picture>
+                  </a>
+                  <figcaption>One page per part number: model, drawing, ERP stock, where it is used, and who knows it.</figcaption>
+                </figure>
+                <figure class="product-view" role="tabpanel" id="alloy-catalog-view-data-quality" aria-labelledby="alloy-catalog-tab-data-quality" hidden>
+                  <a href="https://alloycatalog.com/#product" aria-label="Data quality: open on alloycatalog.com">
+                    <picture>
+                      <source type="image/avif" srcset="/assets/images/products/alloy-data-quality-720.avif 720w, /assets/images/products/alloy-data-quality-1080.avif 1080w, /assets/images/products/alloy-data-quality-1440.avif 1440w, /assets/images/products/alloy-data-quality-2080.avif 2080w" sizes="(max-width: 720px) calc(100vw - 42px), (max-width: 1440px) calc(91.5vw - 2px), 1294px">
+                      <img src="/assets/images/products/alloy-data-quality-1440.webp" srcset="/assets/images/products/alloy-data-quality-720.webp 720w, /assets/images/products/alloy-data-quality-1080.webp 1080w, /assets/images/products/alloy-data-quality-1440.webp 1440w, /assets/images/products/alloy-data-quality-2080.webp 2080w" sizes="(max-width: 720px) calc(100vw - 42px), (max-width: 1440px) calc(91.5vw - 2px), 1294px" width="1040" height="500" alt="Alloy Catalog class view showing how complete the housing data is for material, mass, bore diameter, mounting pattern, and surface treatment" decoding="async" loading="lazy">
+                    </picture>
+                  </a>
+                  <figcaption>See how complete your master data is, class by class, and where each value came from.</figcaption>
+                </figure>
+              </div>
+            </div>
+          </article>
+
         </div>
       </section>
 
@@ -77,13 +201,14 @@
           <a class="product-link" href="mailto:jacob@flid.ai">Start a conversation <span aria-hidden="true">↗</span></a>
         </div>
       </section>
+      </main>
 
       <footer class="products-footer">
         <div class="products-shell products-footer-inner">
-          <img src="/brand-assets/lockup-primary-on-dark.svg" alt="Flid">
+          <img src="/assets/images/site-lockup-on-dark.svg" width="232" height="100" alt="Flid" loading="lazy">
           <p>Flid AI ApS · CVR 43463217 · Odense, Denmark</p>
         </div>
       </footer>
-    </main>
+    </div>
   </body>
 </html>

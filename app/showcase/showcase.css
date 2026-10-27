@@ -5,6 +5,7 @@
   --showcase-muted: var(--fgColor-muted);
   --showcase-line: var(--borderColor-muted);
   --showcase-accent: var(--fgColor-accent);
+  --text-micro: clamp(0.6875rem, 0.45rem + 0.25vw, 0.9375rem);
   --lockup-mark-size: clamp(104px, 8.5vw, 136px);
   --lockup-wordmark-size: clamp(3rem, 4.2vw, 4.75rem);
   --lockup-gap: clamp(18px, 2vw, 30px);
@@ -13,32 +14,19 @@
   color: var(--showcase-paper);
 }
 
+/* Layout, logo, and label come from identity-header.css; this page only sets its type. */
 .showcase-header {
-  min-height: 74px;
-  padding-inline: clamp(20px, 3.5vw, 56px);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--showcase-line);
+  border-bottom-color: var(--showcase-line);
   color: var(--showcase-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.6rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.12em;
 }
 
-.showcase-header > a,
-.showcase-header nav a {
-  color: var(--showcase-paper);
-}
-
-.showcase-header nav {
-  display: flex;
-  gap: 28px;
-}
-
-.showcase-header a:hover,
-.showcase-footer a:hover {
-  color: var(--showcase-accent);
+@media (hover: hover) {
+  .showcase-footer a:hover {
+    color: var(--showcase-accent);
+  }
 }
 
 .showcase-page a:focus-visible {
@@ -66,13 +54,19 @@
   margin: 0;
   color: var(--showcase-accent);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.62rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.13em;
   text-transform: uppercase;
 }
 
+.showcase-hero-copy,
+.showcase-hero-preview {
+  min-width: 0;
+}
+
 .showcase-hero-copy h1 {
   max-width: 800px;
+  overflow-wrap: anywhere;
   margin: 38px 0 34px;
   font-size: clamp(4.2rem, 7.6vw, 8.4rem);
   font-weight: 430;
@@ -132,7 +126,7 @@
   gap: 24px;
   color: var(--bgColor-default);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.56rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.1em;
 }
 
@@ -144,11 +138,10 @@
   aspect-ratio: 1;
 }
 
-.showcase-mark svg {
+.showcase-mark img {
   display: block;
   width: 100%;
   height: 100%;
-  overflow: visible;
 }
 
 .showcase-wordmark {
@@ -234,7 +227,7 @@
   border-bottom: 1px solid var(--showcase-line);
   color: var(--showcase-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.55rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -272,12 +265,13 @@
 .matrix-variation p {
   color: var(--showcase-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.55rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.07em;
   text-transform: uppercase;
 }
 
 .matrix-variation h2 {
+  overflow-wrap: anywhere;
   margin: 20px 0 15px;
   font-size: clamp(2.4rem, 4.2vw, 5rem);
   font-weight: 440;
@@ -353,7 +347,7 @@
   border-top: 1px solid var(--showcase-line);
   color: var(--showcase-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.5rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -403,7 +397,7 @@
   border-bottom: 1px solid var(--showcase-line);
   color: var(--showcase-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.54rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.075em;
   text-transform: uppercase;
 }
@@ -433,18 +427,17 @@
   max-width: 440px;
   margin: 0;
   color: var(--showcase-muted);
-  font-size: 0.7rem;
+  font-size: max(0.7rem, var(--text-micro));
   line-height: 1.55;
 }
 
 .type-study-card > footer span {
   color: var(--showcase-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.5rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.06em;
   text-align: right;
   text-transform: uppercase;
-  white-space: nowrap;
 }
 
 .application-grid {
@@ -490,7 +483,7 @@
   bottom: 24px;
   color: var(--showcase-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.54rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.09em;
 }
 
@@ -555,7 +548,7 @@
   gap: 22px;
   border-top: 1px solid var(--showcase-line);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.52rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.07em;
   text-transform: uppercase;
 }
@@ -606,7 +599,7 @@
 .scale-sample > span {
   color: var(--showcase-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.54rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.07em;
   text-transform: uppercase;
 }
@@ -652,7 +645,7 @@
 .showcase-footer a {
   margin: 0;
   color: var(--showcase-muted);
-  font-size: 0.7rem;
+  font-size: max(0.7rem, var(--text-micro));
 }
 
 .showcase-footer a {
@@ -677,7 +670,8 @@
   }
 
   .matrix-variation h2 {
-    font-size: 2.5rem;
+    /* The rem floor scales with enlarged text; the vw term keeps 320px phones in their column. */
+    font-size: clamp(1.75rem, 7vw, 2.5rem);
   }
 
   .lockup-sample {
@@ -691,11 +685,12 @@
   }
 
   .application-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .application-card {
-    min-height: 520px;
+    min-height: 0;
+    aspect-ratio: 3 / 1;
   }
 
   .application-card:first-child {
@@ -724,12 +719,9 @@
     min-height: 600px;
   }
 
-  .scale-board {
-    overflow-x: auto;
-  }
-
   .scale-sample {
-    min-width: 760px;
+    grid-template-columns: 130px minmax(0, 1fr) 130px;
+    gap: 24px;
   }
 }
 
@@ -738,10 +730,6 @@
     --lockup-mark-size: 96px;
     --lockup-wordmark-size: 2.75rem;
     --lockup-gap: 16px;
-  }
-
-  .showcase-header nav > span {
-    display: none;
   }
 
   .showcase-hero-copy {
@@ -814,8 +802,13 @@
   }
 
   .application-card {
-    min-height: 420px;
+    min-height: 0;
     padding: 48px 20px;
+    aspect-ratio: 16 / 10;
+  }
+
+  .application-card > span {
+    bottom: 16px;
   }
 
   .type-study-grid {
@@ -883,6 +876,76 @@
   .showcase-footer p {
     grid-column: 1 / -1;
     grid-row: 2;
+  }
+}
+
+/* Large text sizes wrap lockups and captions instead of widening the page. */
+.type-study-lockup,
+.lockup-sample-logo,
+.reverse-study-lockup,
+.application-lockup,
+.showcase-lockup-logo {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.type-study-card > header,
+.lockup-sample footer,
+.reverse-study-card footer,
+.hero-preview-meta {
+  flex-wrap: wrap;
+}
+
+.type-study-card > footer p,
+.showcase-footer p {
+  overflow-wrap: anywhere;
+}
+
+/* Touch-sized targets on tablets, phone landscape, and any coarse pointer. */
+@media (max-width: 1080px), (pointer: coarse) {
+  .showcase-footer a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+@media (max-width: 720px) {
+  /* Scale ladder: restack each row instead of scrolling sideways. */
+  .scale-sample {
+    min-height: 0;
+    padding-block: 28px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
+  }
+
+  .scale-sample header {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .scale-sample > span {
+    text-align: left;
+  }
+
+  .lockup-sample footer,
+  .reverse-study-card footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .reverse-study-card footer span {
+    text-align: left;
+  }
+
+  /* 14px for body copy. */
+  .type-study-card > footer p,
+  .showcase-footer p {
+    font-size: 0.875rem;
   }
 }
 

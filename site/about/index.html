@@ -3,39 +3,51 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0d1117">
+    <meta name="color-scheme" content="dark">
     <meta name="description" content="About Flid, an independent Danish product lab building durable agent-native systems.">
+    <meta property="og:site_name" content="Flid">
     <meta property="og:title" content="About — Flid">
     <meta property="og:description" content="An independent Danish product lab building durable agent-native systems.">
-    <meta property="og:image" content="/brand-assets/social/share-dark-1200x630.png">
+    <meta property="og:image" content="https://flid.ai/brand-assets/social/share-dark-1200x630.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Flid: the signal mark and wordmark on a dark background">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://flid.ai/about/">
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://flid.ai/brand-assets/social/share-dark-1200x630.png">
+    <meta name="twitter:image:alt" content="Flid: the signal mark and wordmark on a dark background">
     <title>About — Flid</title>
     <link rel="canonical" href="https://flid.ai/about/">
-    <link rel="icon" href="/brand-assets/favicon.svg" type="image/svg+xml">
-    <link rel="icon" href="/brand-assets/favicon/favicon.ico" sizes="any">
-    <link rel="icon" href="/brand-assets/favicon/favicon-32.png" type="image/png" sizes="32x32">
-    <link rel="apple-touch-icon" href="/brand-assets/favicon/apple-touch-icon.png">
-    <link rel="manifest" href="/brand-assets/favicon/site.webmanifest">
+    <link rel="icon" href="/assets/images/site-icon.svg" type="image/svg+xml">
+    <link rel="icon" href="/assets/images/site-icon.ico" sizes="any">
+    <link rel="icon" href="/assets/images/site-icon-32.png" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/assets/images/site-apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="preload" href="/assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="/assets/globals.css">
     <link rel="stylesheet" href="/assets/about.css">
   </head>
   <body>
-    <main class="about-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="about-page">
       <header class="about-header">
         <div class="about-shell about-header-inner">
           <a class="about-logo" href="/" aria-label="Flid home">
-            <img class="about-logo-wordmark" src="/brand-assets/lockup-primary-on-dark.svg" alt="">
-            <img class="about-logo-mark" src="/brand-assets/mark-primary-on-dark.svg" alt="" aria-hidden="true">
+            <img class="about-logo-wordmark" src="/assets/images/site-wordmark-on-dark.svg" width="232" height="100" alt="">
+            <img class="about-logo-mark" src="/assets/images/site-mark-on-dark.webp" width="192" height="192" alt="" aria-hidden="true">
           </a>
           <nav aria-label="Main navigation">
             <a href="/products/">Products</a>
-            <a href="/about/">About</a>
+            <a href="/about/" aria-current="page">About</a>
             <a href="mailto:jacob@flid.ai">Contact</a>
           </nav>
         </div>
       </header>
 
+      <main id="main" tabindex="-1">
       <section class="about-hero">
         <div class="about-shell">
           <p class="about-kicker">FLID / ABOUT</p>
@@ -54,7 +66,7 @@
           <div class="about-story-copy">
             <p class="about-story-lead">Independent by design, Flid stays close to the products, the technical decisions, and the people using them.</p>
             <p>Flid is Danish for diligence—the care, persistence, and attention behind work made to last.</p>
-            <p>We apply that standard to agent-native software: governed foundations, explicit actions, and evidence that people can inspect.</p>
+            <p>We apply that standard to <span class="nb">agent-native</span> software: governed foundations, explicit actions, and evidence that people can inspect.</p>
           </div>
         </div>
       </section>
@@ -98,17 +110,18 @@
       <section class="about-invitation">
         <div class="about-shell">
           <p class="about-kicker">WORK WITH US</p>
-          <h2>Working on a hard agent-native problem?</h2>
+          <h2>Working on a hard <span class="nb">agent-native</span> problem?</h2>
           <a class="about-link" href="mailto:jacob@flid.ai">Start a conversation <span aria-hidden="true">↗</span></a>
         </div>
       </section>
+      </main>
 
       <footer class="about-footer">
         <div class="about-shell about-footer-inner">
-          <img src="/brand-assets/lockup-primary-on-dark.svg" alt="Flid">
+          <img src="/assets/images/site-lockup-on-dark.svg" width="232" height="100" alt="Flid" loading="lazy">
           <p>Flid AI ApS · CVR 43463217 · Odense, Denmark</p>
         </div>
       </footer>
-    </main>
+    </div>
   </body>
 </html>

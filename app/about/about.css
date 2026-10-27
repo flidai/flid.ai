@@ -1,5 +1,4 @@
 .about-page {
-  min-width: 320px;
   background: var(--bgColor-default);
   color: var(--fgColor-default);
 }
@@ -18,10 +17,14 @@
   backdrop-filter: blur(18px);
 }
 
+/* Flex (not a fixed two-column grid) so the nav wraps onto its own row at 200%
+   text or very narrow widths instead of overlapping the wordmark. */
 .about-header-inner {
-  display: grid;
-  grid-template-columns: 1fr auto;
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
+  column-gap: 24px;
   min-height: 82px;
 }
 
@@ -34,6 +37,7 @@
 
 .about-logo {
   position: relative;
+  flex: none;
   width: 112px;
   aspect-ratio: 232 / 100;
   isolation: isolate;
@@ -57,24 +61,48 @@
   transition: transform 720ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.about-logo:hover .about-logo-mark,
+@media (hover: hover) {
+  .about-logo:hover .about-logo-mark {
+    transform: rotate(360deg);
+  }
+}
+
 .about-logo:focus-visible .about-logo-mark {
   transform: rotate(360deg);
 }
 
 .about-header nav {
-  justify-self: end;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  margin-left: auto;
   gap: clamp(22px, 2.8vw, 42px);
   color: var(--fgColor-muted);
   font-size: 14px;
   font-weight: 520;
 }
 
+.about-header nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.about-header nav a[aria-current="page"] {
+  color: var(--fgColor-default);
+}
+
 .about-page a {
   transition: color 180ms ease;
 }
 
-.about-page a:hover,
+@media (hover: hover) {
+  .about-page a:hover {
+    color: var(--fgColor-accent);
+  }
+}
+
 .about-page a:focus-visible {
   color: var(--fgColor-accent);
 }
@@ -164,7 +192,7 @@
 
 .about-story-grid {
   display: grid;
-  grid-template-columns: minmax(300px, 0.82fr) minmax(0, 1.18fr);
+  grid-template-columns: minmax(max(300px, 25vw), 0.82fr) minmax(0, 1.18fr);
   gap: clamp(64px, 10vw, 156px);
 }
 
@@ -177,7 +205,9 @@
 }
 
 .about-story h2 {
-  max-width: 560px;
+  /* Grows with the type only on very wide screens, so "operating system."
+     keeps its line at 2560px; identical to 560px up to ~1440px. */
+  max-width: max(560px, 8.6em);
   margin: 30px 0 0;
   font-size: var(--font-size-section-title);
 }
@@ -232,6 +262,9 @@
 
 .about-team-member figure {
   margin: 0;
+  /* Captions respond to the width of their own card, not the viewport, so every
+     card makes the same layout choice at every page width. */
+  container: team-card / inline-size;
 }
 
 .about-team-member img {
@@ -256,6 +289,17 @@
   text-transform: uppercase;
 }
 
+/* The widest name + role row needs ~295px (11px mono caps, 0.1em tracking, 24px
+   gap). Below 320px, stack the role under the name so neither wraps and the
+   bios below all start at the same height. */
+@container team-card (max-width: 320px) {
+  .about-team-member figcaption {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+}
+
 .about-team-member figcaption h3,
 .about-team-member figcaption p {
   margin: 0;
@@ -264,6 +308,15 @@
 
 .about-team-member figcaption h3 {
   color: var(--fgColor-default);
+}
+
+/* Pad the 12px-tall name link to a 44px touch target without moving the caption. */
+.about-team-member figcaption h3 a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7em;
+  min-height: 44px;
+  margin-block: -16px;
 }
 
 .about-team-member > p {
@@ -289,8 +342,9 @@
   display: inline-flex;
   align-items: center;
   gap: 28px;
-  margin-top: 42px;
-  padding-bottom: 9px;
+  min-height: 44px;
+  margin-top: 32px;
+  padding-block: 10px 9px;
   border-bottom: 1px solid currentColor;
   font-weight: 620;
 }
@@ -311,6 +365,7 @@
 
 .about-footer-inner img {
   width: 92px;
+  height: auto;
 }
 
 .about-footer-inner p {
@@ -323,12 +378,29 @@
     gap: 56px;
   }
 
+  /* One column of photo + bio rows avoids an orphan card in a two-column grid. */
   .about-team-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
+    gap: 64px;
+  }
+
+  .about-team-member {
+    display: grid;
+    grid-template-columns: minmax(200px, 0.8fr) minmax(0, 1.2fr);
+    gap: 40px;
+    align-items: start;
+  }
+
+  .about-team-member > p {
+    margin-top: 0;
   }
 }
 
 @media (max-width: 720px) {
+  .about-shell {
+    padding-inline: 20px;
+  }
+
   .about-header-inner {
     min-height: 70px;
   }
@@ -337,9 +409,16 @@
     width: 96px;
   }
 
+  /* Extend the 41px-tall logo link to a 44px touch target. */
+  .about-logo::after {
+    position: absolute;
+    inset: -2px 0;
+    content: "";
+  }
+
   .about-header nav {
-    gap: 14px;
-    font-size: 11px;
+    gap: 18px;
+    font-size: 13px;
   }
 
   .about-hero {
@@ -357,20 +436,22 @@
   }
 
   .about-team-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .about-team-grid {
     gap: 68px;
-  }
-
-  .about-team-member figcaption {
-    gap: 18px;
   }
 
   .about-footer-inner {
     align-items: flex-start;
     flex-direction: column;
+  }
+}
+
+@media (max-width: 560px) {
+  .about-team-member {
+    display: block;
+  }
+
+  .about-team-member > p {
+    margin-top: 18px;
   }
 }
 

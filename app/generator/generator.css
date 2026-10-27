@@ -1,5 +1,7 @@
 .generator-page {
   --generator-line: var(--borderColor-muted);
+  --text-micro: clamp(0.6875rem, 0.45rem + 0.25vw, 0.9375rem);
+  --panel-pad-x: clamp(24px, 4vw, 64px);
   min-height: 100vh;
   background:
     linear-gradient(color-mix(in srgb, var(--fgColor-default) 2%, transparent) 1px, transparent 1px),
@@ -9,57 +11,23 @@
   color: var(--fgColor-default);
 }
 
+/* Layout, logo, and label come from identity-header.css; this page only sets its type. */
 .generator-header {
-  min-height: 74px;
-  padding-inline: clamp(20px, 3.5vw, 56px);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--generator-line);
   color: var(--fgColor-muted);
+  border-bottom-color: var(--generator-line);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.6rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.12em;
 }
 
-.generator-header nav {
-  display: flex;
-  align-items: center;
-  gap: 26px;
-}
-
-.generator-header nav a {
-  color: var(--fgColor-default);
-  transition: color 160ms ease;
-}
-
-.generator-header nav a:hover {
-  color: var(--fgColor-accent);
-}
-
-.generator-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--fgColor-default);
-}
-
-.generator-brand-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--fgColor-accent);
-  box-shadow: 0 0 14px var(--bgColor-accent-muted);
-}
-
 .generator-layout {
-  min-height: calc(100vh - 74px);
+  min-height: calc(100vh - 82px);
   display: grid;
   grid-template-columns: minmax(340px, 0.76fr) minmax(520px, 1.4fr);
 }
 
 .generator-panel {
-  padding: clamp(36px, 5vw, 72px) clamp(24px, 4vw, 64px);
+  padding: clamp(36px, 5vw, 72px) var(--panel-pad-x);
   border-right: 1px solid var(--generator-line);
 }
 
@@ -71,13 +39,14 @@
   margin-bottom: 22px;
   color: var(--fgColor-accent);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.62rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
 .generator-intro h1 {
   margin-bottom: 22px;
+  overflow-wrap: anywhere;
   font-size: clamp(3rem, 5.4vw, 5.6rem);
   font-weight: 440;
   letter-spacing: -0.07em;
@@ -94,12 +63,13 @@
 .generator-presets {
   margin-top: 46px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   border-top: 1px solid var(--generator-line);
   border-left: 1px solid var(--generator-line);
 }
 
 .generator-presets button {
+  min-width: 0;
   min-height: 70px;
   padding: 12px;
   display: flex;
@@ -118,10 +88,16 @@
     background-color 160ms ease;
 }
 
-.generator-presets button:hover,
 .generator-presets button.is-active {
   color: var(--fgColor-default);
   background: var(--bgColor-accent-muted);
+}
+
+@media (hover: hover) {
+  .generator-presets button:hover {
+    color: var(--fgColor-default);
+    background: var(--bgColor-accent-muted);
+  }
 }
 
 .generator-presets button.is-active {
@@ -129,14 +105,17 @@
 }
 
 .generator-presets span {
-  font-size: 0.57rem;
+  overflow-wrap: anywhere;
+  font-size: var(--text-micro);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .generator-presets strong {
+  flex: none;
+  white-space: nowrap;
   color: var(--fgColor-accent);
-  font-size: 0.63rem;
+  font-size: var(--text-micro);
   font-weight: 500;
 }
 
@@ -149,12 +128,14 @@
   margin-top: 20px;
   padding-left: 2px;
   display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--generator-line);
   color: var(--fgColor-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.61rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -200,7 +181,7 @@
   justify-content: space-between;
   color: var(--fgColor-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.61rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -236,7 +217,7 @@
 
 .generator-color-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   border-bottom: 1px solid var(--generator-line);
 }
 
@@ -280,6 +261,7 @@
 .generator-actions {
   margin-top: 34px;
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
 }
 
@@ -289,15 +271,24 @@
   border: 1px solid transparent;
   cursor: pointer;
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.62rem;
+  font-size: var(--text-micro);
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
+.generator-export-note {
+  max-width: 460px;
+  margin: 18px 0 0;
+  color: var(--fgColor-muted);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+
 .export-button {
   flex: 1;
   display: flex;
+  align-items: center;
   justify-content: space-between;
   color: var(--bgColor-default);
   background: var(--fgColor-accent);
@@ -309,9 +300,13 @@
   border-color: var(--generator-line) !important;
 }
 
+/* Pinned beside the scrolling controls so the preview stays visible while adjusting them. */
 .generator-stage {
-  position: relative;
-  min-height: 760px;
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100svh;
+  min-height: 520px;
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -344,10 +339,14 @@
 .generator-preview {
   position: relative;
   z-index: 2;
-  width: min(68%, 650px);
+  width: min(68%, 650px, calc(100svh - 128px));
   aspect-ratio: 1;
   color: var(--fgColor-default);
   filter: drop-shadow(0 0 26px color-mix(in srgb, var(--preview-accent) 13%, transparent));
+  /* The mark is rebuilt on every slider step: keep its paint on its own layer so the
+     sticky stage and the controls beside it are never repainted with it. */
+  contain: layout paint style;
+  will-change: transform;
 }
 
 .generator-preview svg {
@@ -378,7 +377,7 @@
   justify-content: space-between;
   color: var(--fgColor-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.56rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.1em;
 }
 
@@ -391,27 +390,27 @@
 }
 
 .generator-notes {
-  padding: 0 clamp(20px, 3.5vw, 56px) 56px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--generator-line);
   background: var(--bgColor-default);
 }
 
 .generator-notes > div {
   min-height: 180px;
-  padding: 28px;
+  padding: 28px clamp(20px, 3.5vw, 56px);
   border-right: 1px solid var(--generator-line);
   border-bottom: 1px solid var(--generator-line);
 }
 
-.generator-notes > div:first-child {
-  border-left: 1px solid var(--generator-line);
+.generator-notes > div:last-child {
+  border-right: 0;
 }
 
 .generator-notes span {
   color: var(--fgColor-accent);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.57rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.09em;
 }
 
@@ -425,14 +424,73 @@
 
 .generator-page button:focus-visible,
 .generator-page input:focus-visible,
-.generator-brand:focus-visible {
+.generator-page a:focus-visible {
   outline: 2px solid var(--fgColor-accent);
   outline-offset: 3px;
 }
 
+@media (max-width: 1080px), (pointer: coarse) {
+  .generator-mode button {
+    min-height: 44px;
+  }
+
+  /* A 44px hit area around the slim track: the negative margins keep the layout height
+     the 32px control had, so the controls do not grow. */
+  .generator-control input[type="range"] {
+    height: 44px;
+    margin-block: -2px -6px;
+  }
+
+  .generator-control input[type="range"]::-webkit-slider-thumb {
+    width: 22px;
+    height: 22px;
+    margin-top: -11px;
+  }
+
+  .generator-control input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--bgColor-default);
+    background: var(--fgColor-accent);
+    box-shadow: 0 0 0 1px var(--fgColor-accent);
+  }
+
+  /* The visible swatch stays a 32px ring; the input around it is the 44px target. */
+  .generator-color-row input {
+    width: 44px;
+    height: 44px;
+    margin-block: -6px;
+    border-color: transparent;
+  }
+
+  .generator-color-row input::-webkit-color-swatch-wrapper {
+    padding: 6px;
+  }
+
+  .generator-color-row input::-webkit-color-swatch {
+    border: 1px solid var(--borderColor-default);
+  }
+
+  .generator-color-row input::-moz-color-swatch {
+    border: 6px solid transparent;
+    border-radius: 50%;
+    background-clip: padding-box;
+  }
+}
+
 @media (max-width: 960px) {
+  html {
+    /* Keep keyboard focus clear of the pinned stage above and the Export bar below. */
+    --generator-stage-height: max(240px, 38svh);
+    scroll-padding-top: calc(var(--generator-stage-height) + 16px);
+    scroll-padding-bottom: 96px;
+  }
+
+  /* Flex column (not grid) so the stage stays sticky for as long as the panel scrolls beneath it. */
   .generator-layout {
-    grid-template-columns: 1fr;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
   }
 
   .generator-panel {
@@ -441,43 +499,132 @@
   }
 
   .generator-stage {
-    min-height: 720px;
+    z-index: 10;
+    order: -1;
+    align-self: stretch;
+    height: auto;
+    min-height: var(--generator-stage-height);
+    border-bottom: 1px solid var(--generator-line);
+  }
+
+  .generator-preview {
+    width: auto;
+    max-width: 90%;
+    height: calc(var(--generator-stage-height) * 0.74);
+  }
+
+  .generator-stage-meta {
+    right: 20px;
+    left: 20px;
+  }
+
+  .generator-stage-meta-top {
+    top: 14px;
+  }
+
+  .generator-stage-meta-bottom {
+    bottom: 14px;
+  }
+
+  /* Keep Export reachable while the controls scroll under the sticky stage. */
+  .generator-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    margin: 28px calc(var(--panel-pad-x) * -1) 0;
+    padding: 12px var(--panel-pad-x);
+    border-top: 1px solid var(--generator-line);
+    background: var(--bgColor-default);
+  }
+}
+
+/* Landscape phones: pinned preview beside the controls instead of stacked over them. */
+@media (max-width: 960px) and (max-height: 520px) and (orientation: landscape) {
+  html {
+    scroll-padding-top: 16px;
+    scroll-padding-bottom: 16px;
+  }
+
+  .generator-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  }
+
+  .generator-stage {
+    grid-column: 1;
+    grid-row: 1;
+    order: 0;
+    align-self: start;
+    height: 100svh;
+    min-height: 0;
+    border-right: 1px solid var(--generator-line);
+    border-bottom: 0;
+  }
+
+  .generator-panel {
+    grid-column: 2;
+    grid-row: 1;
+    padding-block: 28px;
+  }
+
+  .generator-preview {
+    height: min(74svh, 100%);
+  }
+
+  .generator-presets {
+    margin-top: 28px;
+  }
+
+  .generator-actions {
+    position: static;
+    margin: 28px 0 0;
+    padding: 0;
+    border-top: 0;
+    background: none;
   }
 }
 
 @media (max-width: 680px) {
-  .generator-header nav > span {
-    display: none;
+  .generator-page {
+    --panel-pad-x: 20px;
   }
 
   .generator-panel {
-    padding: 36px 20px;
+    padding: 28px 20px;
   }
 
   .generator-presets {
-    grid-template-columns: 1fr;
+    margin-top: 32px;
   }
 
-  .generator-stage {
-    min-height: 500px;
-  }
-
-  .generator-preview {
-    width: 82%;
+  .generator-presets button {
+    min-height: 64px;
+    padding: 10px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
   }
 
   .generator-notes {
-    padding-inline: 20px;
     grid-template-columns: 1fr;
   }
 
   .generator-notes > div {
     min-height: 150px;
-    border-left: 1px solid var(--generator-line);
+    padding-inline: 20px;
+    border-right: 0;
   }
 
   .generator-notes p {
     margin-top: 30px;
+  }
+}
+
+@media (max-width: 720px) {
+  /* 14px for body copy. */
+  .generator-intro > p:last-child,
+  .generator-notes p {
+    font-size: 0.875rem;
   }
 }
 

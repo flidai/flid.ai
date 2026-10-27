@@ -15,17 +15,68 @@ import {
 } from "/lib/hero-scroll-transition.mjs";
 
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
-const depthViewport = matchMedia("(min-width: 901px)");
+// Matches the compact story layout in home.css: narrow screens, portrait
+// tablets, and every short landscape viewport (phones turned sideways can be
+// wider than 900px).
+const compactStory = matchMedia(
+  "(max-width: 900px), (orientation: portrait) and (max-width: 1100px), " +
+    "(max-height: 520px) and (orientation: landscape)",
+);
+const saveData = navigator.connection?.saveData === true;
 const motionSequence = document.querySelector("[data-motion-sequence]");
-const sequenceCanvas = motionSequence?.querySelector(
+let sequenceCanvas = motionSequence?.querySelector(
   "[data-motion-sequence-canvas]",
 );
 const hero = document.querySelector("[data-hero-transition]");
+const heroSticky = hero?.querySelector(".hero-sticky");
+const heroCopy = hero?.querySelector(".hero-copy");
+const heroWaveField = motionSequence?.querySelector(".hero-wave-field");
 const story = document.querySelector("[data-signal-story]");
 const storySticky = story?.querySelector(".signal-story-sticky");
+const fallbackStarters = [];
+const mobileStoryContentLeft = -2;
+const mobileStoryContentWidth = 112;
 
 function setSequenceLive(live) {
   motionSequence?.classList.toggle("is-canvas-live", Boolean(live));
+}
+
+// Scroll ranges use the pinned element's own height. Layout is sized in svh,
+// while innerHeight grows when the mobile toolbar collapses, which would make
+// the animation jump mid-scroll.
+function pinnedScrollRange(section, sticky) {
+  return Math.max(1, section.offsetHeight - (sticky?.offsetHeight || innerHeight));
+}
+
+// A canvas that has handed out a WebGL context cannot return a 2D context, so
+// the procedural fallback always draws into a fresh canvas.
+function replaceSequenceCanvas() {
+  if (!sequenceCanvas) return undefined;
+  const replacement = sequenceCanvas.cloneNode(false);
+  sequenceCanvas.replaceWith(replacement);
+  sequenceCanvas = replacement;
+  return replacement;
+}
+
+function startFallbackMotion() {
+  setSequenceLive(false);
+  story?.classList.remove("is-depth-live");
+  const canvas = replaceSequenceCanvas();
+  for (const start of fallbackStarters) start(canvas);
+}
+
+function afterPageLoad() {
+  return new Promise((resolve) => {
+    const idle = () => {
+      if ("requestIdleCallback" in window) {
+        requestIdleCallback(() => resolve(), { timeout: 600 });
+      } else {
+        setTimeout(resolve, 60);
+      }
+    };
+    if (document.readyState === "complete") idle();
+    else addEventListener("load", idle, { once: true });
+  });
 }
 
 function createSharedDepthSequence(canvas) {
@@ -41,6 +92,7 @@ function createSharedDepthSequence(canvas) {
     });
   } catch (error) {
     console.warn("Depth video sequence unavailable.", error);
+    replaceSequenceCanvas();
     return undefined;
   }
 
@@ -51,7 +103,7 @@ function createSharedDepthSequence(canvas) {
     schedulers,
     readyPromise: undefined,
   };
-  sequence.readyPromise = renderer.load().then(
+  sequence.readyPromise = afterPageLoad().then(() => renderer.load()).then(
     () => {
       sequence.ready = true;
       for (const schedule of schedulers) schedule();
@@ -60,8 +112,8 @@ function createSharedDepthSequence(canvas) {
     (error) => {
       sequence.failed = true;
       renderer.destroy();
-      setSequenceLive(false);
       console.warn("Depth video sequence unavailable.", error);
+      startFallbackMotion();
       return false;
     },
   );
@@ -70,14 +122,22 @@ function createSharedDepthSequence(canvas) {
 }
 
 const depthSequence =
-  story?.dataset.depthDemo === "local" && !reducedMotion.matches
+  story?.dataset.depthDemo === "local" && !reducedMotion.matches && !saveData
     ? createSharedDepthSequence(sequenceCanvas)
     : undefined;
 
+const colorCache = new Map();
+
 function readColor(token, fallback) {
-  return getComputedStyle(document.documentElement)
-    .getPropertyValue(token)
-    .trim() || fallback;
+  if (!colorCache.has(token)) {
+    colorCache.set(
+      token,
+      getComputedStyle(document.documentElement)
+        .getPropertyValue(token)
+        .trim() || fallback,
+    );
+  }
+  return colorCache.get(token);
 }
 
 function prepareCanvas(canvas, context) {
@@ -99,34 +159,61 @@ function prepareCanvas(canvas, context) {
   return { width, height };
 }
 
+let appliedHeroState = "";
+
+// Hero values go straight to the elements that use them. Writing custom
+// properties on .motion-sequence invalidated the whole story subtree on every
+// scroll frame; direct opacity/transform writes only touch the element itself.
+// The bottom fade is a pseudo-element, so it reads --hero-wave-opacity from its
+// owner, .hero-sticky, which only contains the hero.
+const heroInertBelowOpacity = 0.3;
+
 function applyHeroState(state) {
+  const key = [
+    state.copyOpacity,
+    state.copyScale,
+    state.copyTranslateY,
+    state.waveOpacity,
+    state.waveWarp,
+  ].join();
+  if (key === appliedHeroState) return;
+  appliedHeroState = key;
   hero?.classList.add("is-transition-live");
-  motionSequence?.style.setProperty("--hero-copy-opacity", state.copyOpacity);
-  motionSequence?.style.setProperty("--hero-copy-scale", state.copyScale);
-  motionSequence?.style.setProperty(
-    "--hero-copy-translate-y",
-    `${state.copyTranslateY}px`,
-  );
-  motionSequence?.style.setProperty("--hero-wave-opacity", state.waveOpacity);
-  motionSequence?.style.setProperty("--hero-wave-warp", state.waveWarp);
+  // The buttons must stop taking focus and taps well before the copy is fully
+  // gone; at low opacity they still look dim but remain tappable "ghosts".
+  if (hero) {
+    const inert = state.copyOpacity < heroInertBelowOpacity;
+    if (hero.inert !== inert) hero.inert = inert;
+  }
+  if (heroCopy) {
+    heroCopy.style.opacity = state.copyOpacity;
+    heroCopy.style.transform =
+      `translateY(${state.copyTranslateY}px) scale(${state.copyScale})`;
+  }
+  if (heroWaveField) {
+    heroWaveField.style.opacity = state.waveOpacity;
+    heroWaveField.style.transform = `scale(${1 + state.waveWarp * 0.045})`;
+  }
+  heroSticky?.style.setProperty("--hero-wave-opacity", state.waveOpacity);
 }
 
 function resetHeroState() {
+  appliedHeroState = "";
+  if (hero) hero.inert = false;
   hero?.classList.remove("is-transition-live");
-  motionSequence?.style.removeProperty("--hero-copy-opacity");
-  motionSequence?.style.removeProperty("--hero-copy-scale");
-  motionSequence?.style.removeProperty("--hero-copy-translate-y");
-  motionSequence?.style.removeProperty("--hero-wave-opacity");
-  motionSequence?.style.removeProperty("--hero-wave-warp");
+  heroCopy?.style.removeProperty("opacity");
+  heroCopy?.style.removeProperty("transform");
+  heroWaveField?.style.removeProperty("opacity");
+  heroWaveField?.style.removeProperty("transform");
+  heroSticky?.style.removeProperty("--hero-wave-opacity");
 }
 
 if (hero) {
-  const canvas = sequenceCanvas;
-  const sticky = hero.querySelector(".hero-sticky");
+  const sticky = heroSticky;
 
   function heroProgress() {
     const bounds = hero.getBoundingClientRect();
-    const scrollRange = Math.max(1, hero.offsetHeight - innerHeight);
+    const scrollRange = pinnedScrollRange(hero, sticky);
     return Math.min(1, Math.max(0, -bounds.top / scrollRange));
   }
 
@@ -173,7 +260,7 @@ if (hero) {
     return scheduleHeroTransition;
   }
 
-  function initProceduralHeroTransition() {
+  function initProceduralHeroTransition(canvas) {
     const context = canvas?.getContext("2d");
     if (!canvas || !sticky || !context) return;
     const particles = [];
@@ -228,10 +315,13 @@ if (hero) {
     });
   }
 
-  if (!depthSequence) {
-    if (!depthViewport.matches) initMobileHeroTransition();
-    else initProceduralHeroTransition();
+  function startHeroFallback(canvas) {
+    if (compactStory.matches) initMobileHeroTransition();
+    else initProceduralHeroTransition(canvas);
   }
+
+  if (depthSequence) fallbackStarters.push(startHeroFallback);
+  else startHeroFallback(sequenceCanvas);
 }
 
 function heroOccludesStory() {
@@ -246,24 +336,30 @@ if (story) {
   const sticky = storySticky;
   const initialCanvas = sequenceCanvas;
   const steps = [...story.querySelectorAll("[data-story-step]")];
+  const copyElements = steps.map((step) =>
+    step.querySelector(".signal-story-copy"));
 
+  // Captions reveal word by word. A span per letter meant ~140 elements
+  // restyled on every scroll frame; words keep the left-to-right reveal at
+  // roughly a sixth of the cost.
   function prepareStorySubtitle(element) {
     const text = element.textContent.replace(/\s+/g, " ").trim();
-    const characters = [...text];
+    const words = text.split(" ");
     const revealSpan = 0.9;
-    const characterWindow = Math.min(0.12, 5 / Math.max(1, characters.length));
+    const wordWindow = Math.min(0.2, 2 / Math.max(1, words.length));
     element.textContent = "";
     element.setAttribute("aria-label", text);
-    element.style.setProperty("--character-window", characterWindow.toFixed(6));
+    element.style.setProperty("--word-window", wordWindow.toFixed(6));
 
-    characters.forEach((character, index) => {
+    words.forEach((word, index) => {
       const span = document.createElement("span");
-      const start = characters.length <= 1
+      const start = words.length <= 1
         ? 0
-        : index / (characters.length - 1) * revealSpan;
+        : index / (words.length - 1) * revealSpan;
       span.setAttribute("aria-hidden", "true");
-      span.style.setProperty("--character-start", start.toFixed(6));
-      span.textContent = character;
+      span.style.setProperty("--word-start", start.toFixed(6));
+      span.textContent = word;
+      if (index > 0) element.append(" ");
       element.append(span);
     });
   }
@@ -275,11 +371,21 @@ if (story) {
 
   function storyProgress() {
     const bounds = story.getBoundingClientRect();
-    const scrollRange = Math.max(1, story.offsetHeight - innerHeight);
+    const scrollRange = pinnedScrollRange(story, sticky);
     return Math.min(1, Math.max(0, -bounds.top / scrollRange));
   }
 
+  // What renderStoryCopy last wrote, so unchanged values (the inactive steps
+  // sit at a constant opacity and reveal) are not rewritten every frame.
+  const appliedCopy = steps.map(() => ({}));
+  function forgetAppliedCopy() {
+    for (const applied of appliedCopy) {
+      applied.opacity = applied.reveal = applied.hidden = applied.shift = undefined;
+    }
+  }
+
   function revealStaticStory() {
+    forgetAppliedCopy();
     story.classList.remove("is-live", "is-depth-live");
     setSequenceLive(false);
     for (const step of steps) {
@@ -287,8 +393,18 @@ if (story) {
       step.style.removeProperty("opacity");
       step.style.setProperty("--copy-reveal", "1");
       step.querySelector(".signal-story-copy")?.style.removeProperty(
-        "--story-step-shift",
+        "transform",
       );
+    }
+  }
+
+  // Above the story the copy must stay hidden; otherwise scrolling back up
+  // leaves the last rendered caption over the hero.
+  function hideStoryCopy() {
+    forgetAppliedCopy();
+    for (const step of steps) {
+      step.style.opacity = "0";
+      step.setAttribute("aria-hidden", "true");
     }
   }
 
@@ -314,12 +430,27 @@ if (story) {
         index,
         steps.length,
       );
-      step.style.opacity = String(copyOpacity);
-      step.style.setProperty("--copy-reveal", reveal.toFixed(6));
-      step.setAttribute("aria-hidden", String(index !== activeScene));
-      step
-        .querySelector(".signal-story-copy")
-        ?.style.setProperty("--story-step-shift", `${shift.toFixed(2)}px`);
+      const applied = appliedCopy[index];
+      const opacity = String(copyOpacity);
+      const revealValue = reveal.toFixed(6);
+      const hidden = String(index !== activeScene);
+      const shiftValue = `translateY(${shift.toFixed(2)}px)`;
+      if (applied.opacity !== opacity) {
+        step.style.opacity = applied.opacity = opacity;
+      }
+      if (applied.reveal !== revealValue) {
+        step.style.setProperty("--copy-reveal", applied.reveal = revealValue);
+      }
+      if (applied.hidden !== hidden) {
+        step.setAttribute("aria-hidden", applied.hidden = hidden);
+      }
+      if (applied.shift !== shiftValue) {
+        // A direct transform; a custom property here would restyle every
+        // word below the caption as well.
+        if (copyElements[index]) {
+          copyElements[index].style.transform = applied.shift = shiftValue;
+        }
+      }
     });
 
   }
@@ -332,6 +463,17 @@ if (story) {
     let inViewport = false;
 
     function storyLayout(width, height) {
+      // The scenes occupy the left two thirds of the design so desktop copy
+      // can sit on the right. Phones stack the copy below the canvas, so fit
+      // the occupied range to the full width instead of cropping it mid-screen.
+      if (compactStory.matches) {
+        const scale = width / mobileStoryContentWidth;
+        return {
+          scale,
+          originX: -mobileStoryContentLeft * scale,
+          originY: (height - signalStorySettings.designHeight * scale) / 2,
+        };
+      }
       const scale = Math.max(
         width / signalStorySettings.designWidth,
         height / signalStorySettings.designHeight,
@@ -375,7 +517,10 @@ if (story) {
         revealStaticStory();
         return;
       }
-      if (heroOccludesStory()) return;
+      if (heroOccludesStory()) {
+        hideStoryCopy();
+        return;
+      }
 
       const progress = storyProgress();
       story.classList.add("is-live");
@@ -427,8 +572,8 @@ if (story) {
 
     function readMotionState() {
       const scrollOffset = -hero.getBoundingClientRect().top;
-      const introScrollRange = Math.max(1, hero.offsetHeight - innerHeight);
-      const storyScrollRange = Math.max(1, story.offsetHeight - innerHeight);
+      const introScrollRange = pinnedScrollRange(hero, heroSticky);
+      const storyScrollRange = pinnedScrollRange(story, sticky);
       return createMotionSequenceState(
         scrollOffset,
         introScrollRange,
@@ -439,7 +584,6 @@ if (story) {
     function scheduleDepthSequence() {
       if (
         animationFrame ||
-        !sequence.ready ||
         sequence.failed ||
         !inViewport ||
         reducedMotion.matches
@@ -451,16 +595,24 @@ if (story) {
 
     function renderDepthSequence(timestamp) {
       animationFrame = undefined;
-      if (
-        !sequence.ready ||
-        sequence.failed ||
-        !inViewport ||
-        reducedMotion.matches
-      ) return;
+      if (sequence.failed || !inViewport || reducedMotion.matches) return;
       const motionState = readMotionState();
       const heroState = createHeroTransitionState(motionState.introProgress);
       applyHeroState(heroState);
       targetProgress = motionState.storyProgress;
+      // The hero and captions follow the scroll while the video is still
+      // loading; only the particles wait for it.
+      if (!sequence.ready) {
+        renderedProgress = targetProgress;
+        lastRenderTimestamp = undefined;
+        if (motionState.storyActive) {
+          story.classList.add("is-live", "is-depth-live");
+          renderStoryCopy(targetProgress);
+        } else {
+          hideStoryCopy();
+        }
+        return;
+      }
       const deltaMs = lastRenderTimestamp === undefined
         ? 1000 / 60
         : timestamp - lastRenderTimestamp;
@@ -473,6 +625,8 @@ if (story) {
       if (motionState.storyActive) {
         story.classList.add("is-live", "is-depth-live");
         renderStoryCopy(renderedProgress);
+      } else {
+        hideStoryCopy();
       }
       setSequenceLive(heroState.particleProgress > 0);
 
@@ -486,6 +640,9 @@ if (story) {
     }
 
     function updatePointer(event) {
+      // Touch scrolling is not a hover; treating it as one makes the scene
+      // lurch toward the finger and snap back on release.
+      if (event.pointerType === "touch") return;
       const bounds = sticky.getBoundingClientRect();
       pointer.x = Math.max(
         -1,
@@ -521,13 +678,19 @@ if (story) {
     );
     visibilityObserver.observe(motionSequence);
     new ResizeObserver(() => {
-      if (sequence.ready) renderer.resize();
-      scheduleDepthSequence();
+      if (!sequence.ready || sequence.failed) return;
+      // Resizing clears the drawing buffer; redraw in the same frame so the
+      // browser never presents an empty canvas.
+      renderer.resize();
+      if (animationFrame) cancelAnimationFrame(animationFrame);
+      animationFrame = undefined;
+      renderDepthSequence(performance.now());
     }).observe(canvas);
     addEventListener("scroll", scheduleDepthSequence, { passive: true });
     addEventListener("resize", scheduleDepthSequence, { passive: true });
     sticky.addEventListener("pointermove", updatePointer, { passive: true });
-    sticky.addEventListener("pointerleave", () => {
+    sticky.addEventListener("pointerleave", (event) => {
+      if (event.pointerType === "touch") return;
       pointer.x = 0;
       pointer.y = 0;
       scheduleDepthSequence();
@@ -546,8 +709,26 @@ if (story) {
   if (sticky && initialCanvas && steps.length) {
     if (depthSequence) {
       initDepthMotionSequence(initialCanvas, depthSequence);
+      fallbackStarters.push(initProceduralStory);
     } else {
       initProceduralStory(initialCanvas);
     }
   }
 }
+
+// The logo links home; on the homepage itself, return to the top instead of
+// reloading the page, which would restart the video and WebGL scene.
+document.querySelector(".site-logo")?.addEventListener("click", (event) => {
+  const link = event.currentTarget;
+  if (
+    event.defaultPrevented ||
+    event.button !== 0 ||
+    event.metaKey ||
+    event.ctrlKey ||
+    event.shiftKey ||
+    event.altKey ||
+    new URL(link.href).pathname !== location.pathname
+  ) return;
+  event.preventDefault();
+  scrollTo({ top: 0, behavior: reducedMotion.matches ? "auto" : "smooth" });
+});

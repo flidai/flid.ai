@@ -23,7 +23,8 @@ test("defines one continuous local depth story without external runtime URLs", (
   );
   assert.equal(depthVideoStorySettings.densityScale, 1.55);
   assert.equal(depthVideoStorySettings.maximumPixelRatio, 1.35);
-  assert.equal(depthVideoStorySettings.playheadResponseMs, 170);
+  assert.equal(depthVideoStorySettings.playheadResponseMs, 120);
+  assert.equal(depthVideoStorySettings.playheadMaxStepMs, 250);
 });
 
 test("matches the measured adaptive point-density ratios", () => {
@@ -113,8 +114,18 @@ test("uses video depth, edge recovery, and point perspective without transition 
   assert.match(depthVertexShader, /sourceContentMask/);
   assert.match(
     depthVertexShader,
-    /1\.0\s*-\s*smoothstep\(0\.11,\s*0\.14,\s*uv\.y\)/,
+    /1\.0\s*-\s*smoothstep\(0\.11,\s*0\.30,\s*uv\.y\)/,
     "the source mask must cover the full embedded demo watermark",
+  );
+  assert.match(
+    depthVertexShader,
+    /smoothstep\(0\.48,\s*0\.64,\s*uv\.x\)/,
+    "the watermark mask must stay fully opaque from x = 0.64 and feather outward",
+  );
+  assert.match(
+    depthVertexShader,
+    /smoothstep\(0\.0,\s*0\.09,\s*edgeDistance\.y\)/,
+    "the bright top and bottom source rows must feather out instead of forming a seam",
   );
   assert.doesNotMatch(depthVertexShader, /uAvoidRect|rectangleInfluence/);
   assert.doesNotMatch(
@@ -149,10 +160,10 @@ test("skips duplicate texture work and the second depth sample during holds", ()
 });
 
 test("smooths the rendered playhead independently of display refresh rate", () => {
-  const simulate = (framesPerSecond) => {
+  const simulate = (framesPerSecond, seconds = 1) => {
     let playhead = 0;
     const frameDuration = 1_000 / framesPerSecond;
-    for (let frame = 0; frame < framesPerSecond; frame += 1) {
+    for (let frame = 0; frame < framesPerSecond * seconds; frame += 1) {
       playhead = advanceDepthPlayhead(playhead, 1, frameDuration);
     }
     return playhead;
@@ -163,6 +174,63 @@ test("smooths the rendered playhead independently of display refresh rate", () =
   assert.ok(atSixtyHertz > 0.99 && atSixtyHertz <= 1);
   assert.ok(Math.abs(atSixtyHertz - atOneTwentyHertz) < 0.0001);
   assert.equal(advanceDepthPlayhead(0.99999, 1, 16.67), 1);
+});
+
+test("settles in the same wall-clock time on slow devices as on fast ones", () => {
+  // A 10 fps or 5 fps device must not need proportionally more time to catch
+  // up: the captions follow this playhead, so lag would read as a stuck page.
+  const settleMs = (framesPerSecond, distance = 1) => {
+    const frameDuration = 1_000 / framesPerSecond;
+    let playhead = 1 - distance;
+    let elapsed = 0;
+    while (playhead !== 1 && elapsed < 10_000) {
+      playhead = advanceDepthPlayhead(playhead, 1, frameDuration);
+      elapsed += frameDuration;
+    }
+    return elapsed;
+  };
+
+  for (const distance of [0.05, 0.3, 1]) {
+    const fast = settleMs(60, distance);
+    assert.ok(fast < 1_300, `60 fps settled in ${fast}ms for ${distance}`);
+    for (const framesPerSecond of [30, 10, 5]) {
+      const slow = settleMs(framesPerSecond, distance);
+      const frame = 1_000 / framesPerSecond;
+      // Slow devices may overshoot the fast device's time by at most the
+      // coarser frame period; they must never take several times longer.
+      assert.ok(
+        slow <= fast + frame + 1,
+        `${framesPerSecond} fps took ${slow}ms vs ${fast}ms at 60 fps (${distance})`,
+      );
+    }
+  }
+});
+
+test("catches up from a long stall in one bounded step instead of crawling", () => {
+  // A frame that arrives after a 250 ms+ hitch is clamped to 250 ms, which is
+  // still a full exponential step rather than the old 50 ms crawl.
+  const stalled = advanceDepthPlayhead(0, 1, 5_000);
+  assert.ok(stalled > 0.7 && stalled < 1, `stalled step moved to ${stalled}`);
+  assert.equal(advanceDepthPlayhead(0, 1, 0), 0);
+  assert.equal(advanceDepthPlayhead(0, 1, Number.NaN), 0);
+});
+
+test("moves smoothly at 60 fps without jumping a visible distance per frame", () => {
+  let playhead = 0;
+  let previousStep = 0;
+  for (let frame = 0; frame < 120; frame += 1) {
+    const next = advanceDepthPlayhead(playhead, 1, 1_000 / 60);
+    const step = next - playhead;
+    // Exponential approach: each step is no larger than the previous one,
+    // except the last sub-frame snap onto the target.
+    assert.ok(
+      step <= previousStep + 1e-9 ||
+        frame === 0 ||
+        (next === 1 && step <= depthVideoStorySettings.playheadSnapDistance * 2),
+    );
+    previousStep = step;
+    playhead = next;
+  }
 });
 
 test("paces video seeking instead of chasing every scroll event", () => {
@@ -198,4 +266,77 @@ test("paces video seeking instead of chasing every scroll event", () => {
     DepthVideoStory.prototype.seekRecord.toString(),
     /fastSeek/,
   );
+});
+
+test("displays a decoded frame before a continuing scroll starts the next seek", () => {
+  const record = {
+    width: 640, height: 360, seekInFlight: false,
+    needsTextureUpdate: true, uploadedTime: 0, decodedTime: 1,
+  };
+  const gl = new Proxy({}, { get: () => () => {} });
+  const renderer = {
+    disposed: false, vertexCount: 100, progress: 0.5, records: [record],
+    gl, uniforms: {}, canvas: { clientWidth: 390, clientHeight: 456 },
+    pointer: { x: 0, y: 0 }, color: "#f0f6fc", entrance: 1,
+    planeScale: () => [1, 1],
+    uploadRecord(frame) {
+      if (frame.needsTextureUpdate && !frame.seekInFlight) {
+        frame.uploadedTime = frame.decodedTime;
+        frame.needsTextureUpdate = false;
+      }
+    },
+    seekRecord(frame) { frame.seekInFlight = true; },
+  };
+  const originalDpr = globalThis.devicePixelRatio;
+  globalThis.devicePixelRatio = 1;
+  try {
+    DepthVideoStory.prototype.render.call(renderer, 100);
+    assert.equal(record.uploadedTime, 1, "the completed frame must reach the GPU");
+    assert.equal(record.seekInFlight, true, "scrubbing must continue to the next frame");
+  } finally {
+    if (originalDpr === undefined) delete globalThis.devicePixelRatio;
+    else globalThis.devicePixelRatio = originalDpr;
+  }
+});
+
+test("renders from the cached canvas size without forcing layout", () => {
+  const record = {
+    width: 640, height: 360, seekInFlight: false,
+    needsTextureUpdate: false, uploadedTime: 0, decodedTime: 0,
+  };
+  const viewport = [];
+  const gl = new Proxy({}, {
+    get: (_, name) => (...args) => {
+      if (name === "uniform2f" && args[0] === "uViewport") viewport.push(args.slice(1));
+    },
+  });
+  const canvas = {};
+  for (const name of ["clientWidth", "clientHeight"]) {
+    Object.defineProperty(canvas, name, {
+      get() { throw new Error(`render must not read canvas.${name}`); },
+    });
+  }
+  const renderer = {
+    disposed: false, contextLost: false, vertexCount: 100, progress: 0.5,
+    records: [record], gl, uniforms: { uViewport: "uViewport" }, canvas,
+    cssWidth: 390, cssHeight: 456,
+    pointer: { x: 0, y: 0 }, color: "#f0f6fc", entrance: 1,
+    planeScale: DepthVideoStory.prototype.planeScale,
+    uploadRecord() {},
+    seekRecord() {},
+  };
+  const originalDpr = globalThis.devicePixelRatio;
+  globalThis.devicePixelRatio = 3;
+  try {
+    DepthVideoStory.prototype.render.call(renderer, 100);
+    assert.deepEqual(viewport, [[390, 456]]);
+
+    viewport.length = 0;
+    renderer.contextLost = true;
+    assert.equal(DepthVideoStory.prototype.render.call(renderer, 116), undefined);
+    assert.deepEqual(viewport, [], "a lost WebGL context must not receive draws");
+  } finally {
+    if (originalDpr === undefined) delete globalThis.devicePixelRatio;
+    else globalThis.devicePixelRatio = originalDpr;
+  }
 });
