@@ -6,24 +6,33 @@
     <meta name="theme-color" content="#0d1117">
     <meta name="color-scheme" content="dark">
     <meta name="description" content="Products from Flid, an independent lab building agent-native software.">
+    <meta property="og:site_name" content="Flid">
     <meta property="og:title" content="Products — Flid">
     <meta property="og:description" content="Products where agents do real work.">
     <meta property="og:image" content="https://flid.ai/brand-assets/social/share-dark-1200x630.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Flid: the signal mark and wordmark on a dark background">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://flid.ai/products/">
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://flid.ai/brand-assets/social/share-dark-1200x630.png">
+    <meta name="twitter:image:alt" content="Flid: the signal mark and wordmark on a dark background">
     <title>Products — Flid</title>
     <link rel="canonical" href="https://flid.ai/products/">
-    <link rel="icon" href="/brand-assets/favicon.svg" type="image/svg+xml">
-    <link rel="icon" href="/brand-assets/favicon/favicon.ico" sizes="any">
-    <link rel="icon" href="/brand-assets/favicon/favicon-32.png" type="image/png" sizes="32x32">
-    <link rel="apple-touch-icon" href="/brand-assets/favicon/apple-touch-icon.png">
-    <link rel="manifest" href="/brand-assets/favicon/site.webmanifest">
+    <link rel="icon" href="/assets/images/site-icon.svg" type="image/svg+xml">
+    <link rel="icon" href="/assets/images/site-icon.ico" sizes="any">
+    <link rel="icon" href="/assets/images/site-icon-32.png" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/assets/images/site-apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="preload" href="/assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="/assets/globals.css">
     <link rel="stylesheet" href="/assets/products.css">
   </head>
   <body>
-    <main class="products-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="products-page">
       <header class="products-header">
         <div class="products-shell products-header-inner">
           <a class="products-logo" href="/" aria-label="Flid home">
@@ -38,11 +47,12 @@
         </div>
       </header>
 
+      <main id="main" tabindex="-1">
       <section class="products-hero">
         <div class="products-shell">
           <p class="products-kicker">FLID / PRODUCTS</p>
           <h1>Products where agents do real work.</h1>
-          <p class="products-intro">We build agent-native software from the foundation up: governed data, explicit capabilities, and interfaces that work for people and machines.</p>
+          <p class="products-intro">We build <span class="nb">agent-native</span> software from the foundation up: governed data, explicit capabilities, and interfaces that work for people and machines.</p>
         </div>
         <div class="products-signal" aria-hidden="true"></div>
       </section>
@@ -54,7 +64,7 @@
             <div class="product-card-body">
               <p class="products-kicker">OPEN SOURCE / IN DEVELOPMENT</p>
               <h2>LeapView</h2>
-              <p class="product-card-summary">An agent-native BI platform for governed metrics, data access, and exploration. Dashboards, definitions, and permissions stay close to the data and version-controlled.</p>
+              <p class="product-card-summary">An <span class="nb">agent-native</span> BI platform for governed metrics, data access, and exploration. Dashboards, definitions, and permissions stay close to the data and version-controlled.</p>
               <div class="product-capabilities" aria-label="LeapView capabilities">
                 <span>Dashboards as code</span>
                 <span>Agent-trusted metrics</span>
@@ -93,13 +103,14 @@
           <a class="product-link" href="mailto:jacob@flid.ai">Start a conversation <span aria-hidden="true">↗</span></a>
         </div>
       </section>
+      </main>
 
       <footer class="products-footer">
         <div class="products-shell products-footer-inner">
-          <img src="/brand-assets/lockup-primary-on-dark.svg" width="232" height="100" alt="Flid" loading="lazy">
+          <img src="/assets/images/site-lockup-on-dark.svg" width="232" height="100" alt="Flid" loading="lazy">
           <p>Flid AI ApS · CVR 43463217 · Odense, Denmark</p>
         </div>
       </footer>
-    </main>
+    </div>
   </body>
 </html>

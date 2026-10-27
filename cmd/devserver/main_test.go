@@ -123,6 +123,52 @@ func TestStaticHandlerRejectsUnsupportedAndUnsafeRequests(t *testing.T) {
 	}
 }
 
+func TestStaticHandlerServesBrandedNotFoundPage(t *testing.T) {
+	root := fixtureSite(t)
+	writeFixture(t, filepath.Join(root, "404.html"), "<h1>Not found</h1>")
+	handler, err := newStaticHandler(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, path := range []string{"/missing", "/missing/", "/missing/deep/path", "/missing.png"} {
+		t.Run(path, func(t *testing.T) {
+			response := httptest.NewRecorder()
+			handler.ServeHTTP(response, httptest.NewRequest(http.MethodGet, path, nil))
+			if response.Code != http.StatusNotFound {
+				t.Fatalf("status = %d, want %d", response.Code, http.StatusNotFound)
+			}
+			if response.Body.String() != "<h1>Not found</h1>" {
+				t.Fatalf("body = %q, want the 404 page", response.Body.String())
+			}
+			if got := response.Header().Get("Content-Type"); got != "text/html; charset=utf-8" {
+				t.Fatalf("Content-Type = %q", got)
+			}
+			if got := response.Header().Get("Cache-Control"); got != "no-store" {
+				t.Fatalf("Cache-Control = %q, want no-store", got)
+			}
+		})
+	}
+
+	head := httptest.NewRecorder()
+	handler.ServeHTTP(head, httptest.NewRequest(http.MethodHead, "/missing", nil))
+	if head.Code != http.StatusNotFound || head.Body.Len() != 0 {
+		t.Fatalf("HEAD = %d with %d body bytes, want 404 with none", head.Code, head.Body.Len())
+	}
+
+	existing := httptest.NewRecorder()
+	handler.ServeHTTP(existing, httptest.NewRequest(http.MethodGet, "/about/", nil))
+	if existing.Code != http.StatusOK || existing.Body.String() != "about" {
+		t.Fatalf("existing route = %d %q, want 200 about", existing.Code, existing.Body.String())
+	}
+
+	direct := httptest.NewRecorder()
+	handler.ServeHTTP(direct, httptest.NewRequest(http.MethodGet, "/404.html", nil))
+	if direct.Code != http.StatusOK {
+		t.Fatalf("direct /404.html status = %d, want %d", direct.Code, http.StatusOK)
+	}
+}
+
 func TestNewStaticHandlerRequiresDirectory(t *testing.T) {
 	_, err := newStaticHandler(filepath.Join(t.TempDir(), "missing"))
 	if err == nil {

@@ -106,27 +106,45 @@ function syncControls() {
   }
 }
 
-function render() {
-  preview.innerHTML = generateLogoSvg(options);
+// Compact markup roughly halves the preview's DOM without changing a pixel. While a slider
+// is moving, a draft drops to two decimals and far fewer outline vertices; the settled
+// preview is the full-precision geometry. Downloads below use the canonical output.
+const PREVIEW_RENDERING = {
+  full: { compact: true },
+  draft: { compact: true, precision: 2, quality: "draft" },
+};
+
+function render(quality = "full") {
+  preview.innerHTML = generateLogoSvg({
+    ...options,
+    ...PREVIEW_RENDERING[quality],
+  });
   preview.style.setProperty("--preview-accent", options.accent);
   meta.textContent = `${getMarkCount(options.layers)} MARKS · ${options.mode.toUpperCase()}`;
   syncControls();
 }
 
-// The SVG is 175-490 KB of path data, so coalesce slider drags to one render per frame.
+// The SVG is 175-490 KB of path data. Input events coalesce to one render per frame, and
+// that render is a lighter draft; the full-quality mark follows as soon as the drag settles.
+const SETTLE_DELAY_MS = 160;
 let pendingFrame = 0;
+let settleTimer = 0;
 
 function scheduleRender() {
+  clearTimeout(settleTimer);
+  settleTimer = setTimeout(renderNow, SETTLE_DELAY_MS);
   if (pendingFrame) return;
   pendingFrame = requestAnimationFrame(() => {
     pendingFrame = 0;
-    render();
+    render("draft");
   });
 }
 
 function renderNow() {
   cancelAnimationFrame(pendingFrame);
+  clearTimeout(settleTimer);
   pendingFrame = 0;
+  settleTimer = 0;
   render();
 }
 
@@ -152,6 +170,7 @@ function hashOptions() {
 }
 
 const EXPORT_DEBOUNCE_MS = 600;
+const EXPORT_SIZE_PX = 512;
 let lastExport = -Infinity;
 
 function downloadSvg() {
@@ -160,7 +179,8 @@ function downloadSvg() {
   lastExport = performance.now();
 
   renderNow();
-  const svg = generateLogoSvg(options);
+  // A natural size stops viewers opening the file at a collapsed or window-filling scale.
+  const svg = generateLogoSvg({ ...options, size: EXPORT_SIZE_PX });
   const blob = new Blob([svg], { type: "image/svg+xml" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
@@ -193,6 +213,8 @@ for (const control of controls) {
     options = { ...options, [control.dataset.control]: Number(control.value) };
     scheduleRender();
   });
+  // Releasing the thumb (or any committed keyboard step) finishes at full quality at once.
+  control.addEventListener("change", renderNow);
 }
 
 for (const control of colorControls) {

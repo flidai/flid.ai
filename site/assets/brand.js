@@ -22,12 +22,15 @@ function renderScaleReferences(manifest) {
         const className = iconOnly
           ? "reference-asset is-icon"
           : "reference-asset is-lockup";
+        // Intrinsic size reserves the box before the lazy image arrives, so a deep link
+        // never lands off target when it decodes.
+        const { width, height } = asset.files.png[0];
 
         return `
           <article class="reference-scale-row">
             <header><strong>${reference.size}px</strong><span>${reference.label} · ${reference.layers}L</span></header>
             <div class="reference-lockup" style="--reference-size:${reference.size}px">
-              <img class="${className}" src="${asset.path}" alt="" loading="lazy" decoding="async">
+              <img class="${className}" src="${asset.path}" alt="" width="${width}" height="${height}" loading="lazy" decoding="async">
             </div>
             <span>${reference.role}</span>
           </article>`;
@@ -45,10 +48,10 @@ function renderAssetLibrary(manifest) {
           : asset.theme === "adaptive"
             ? "is-accent"
             : "is-dark";
-      const label = asset.id.replaceAll("-", " ").replace(
-        /\b\w/g,
-        (character) => character.toUpperCase(),
-      );
+      const label = asset.id
+        .replaceAll("-", " ")
+        .replace(/\b\w/g, (character) => character.toUpperCase())
+        .replace(/\bLinkedin\b/g, "LinkedIn");
       const downloads = [];
       if (asset.files?.svg) {
         downloads.push({ label: "SVG", path: asset.files.svg });
@@ -60,13 +63,13 @@ function renderAssetLibrary(manifest) {
         downloads.push({ label: "ICO", path: asset.files.ico });
       }
       for (const png of asset.files?.png ?? []) {
-        const suffix = png.scale
-          ? `${png.scale}×`
-          : png.width === png.height
-            ? `${png.width}`
-            : "";
+        // Name the real pixel size so the right export is obvious before downloading.
+        const pixels =
+          png.width === png.height
+            ? `${png.width}px`
+            : `${png.width}×${png.height}`;
         downloads.push({
-          label: `PNG${suffix ? ` ${suffix}` : ""}`,
+          label: png.scale ? `PNG ${png.scale}× · ${pixels}` : `PNG ${pixels}`,
           path: png.path,
         });
       }
@@ -111,8 +114,10 @@ document.querySelector("[data-brand-colors]").innerHTML = Object.values(
   .join("");
 
 // Sections above #assets are filled in after the manifest loads, so the browser's own
-// hash and scroll restoration land far from the target. Restore both once the page has its height.
+// hash and scroll restoration land far from the target. Restore both once the page has its
+// height, and keep correcting while late layout (images, fonts) still moves the target.
 const SCROLL_KEY = "flid-brand-scroll";
+const SETTLE_WINDOW_MS = 2500;
 let userScrolled = false;
 
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
@@ -134,31 +139,79 @@ function saveScroll() {
   }
 }
 
-function restoreScroll() {
-  if (userScrolled) return;
-
+// Where this visit should land: the saved position on Back/Forward/reload, else the hash.
+function restoreTarget() {
   const [navigation] = performance.getEntriesByType("navigation");
   if (navigation?.type === "back_forward" || navigation?.type === "reload") {
     try {
       const saved = JSON.parse(sessionStorage.getItem(SCROLL_KEY));
-      if (saved?.href === location.href) {
-        scrollTo({ top: saved.y, behavior: "instant" });
-        return;
-      }
+      if (saved?.href === location.href) return { top: saved.y };
     } catch {
       // Fall through to the hash target.
     }
   }
 
-  const target =
-    location.hash.length > 1
-      ? document.getElementById(decodeURIComponent(location.hash.slice(1)))
-      : null;
-  // scrollIntoView honours each section's scroll-margin-top (the sticky header).
-  target?.scrollIntoView({ block: "start", behavior: "instant" });
+  try {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const element = id ? document.getElementById(id) : null;
+    if (element) return { element };
+  } catch {
+    // A malformed hash has no target.
+  }
+
+  return null;
+}
+
+function applyTarget(target) {
+  if (target.element) {
+    // scrollIntoView honours each section's scroll-margin-top (the sticky header).
+    target.element.scrollIntoView({ block: "start", behavior: "instant" });
+  } else {
+    scrollTo({ top: target.top, behavior: "instant" });
+  }
+}
+
+let stopSettling = () => {};
+
+function restoreScroll() {
+  stopSettling();
+  if (userScrolled) return;
+
+  const target = restoreTarget();
+  if (!target) return;
+
+  applyTarget(target);
+
+  // Images and fonts above the target settle after the first restore and shift it.
+  // Re-apply on each layout change until the page is still or the reader takes over.
+  const observer = new ResizeObserver(() => {
+    if (!userScrolled) applyTarget(target);
+  });
+  const stop = () => {
+    observer.disconnect();
+    clearTimeout(timer);
+    for (const type of takeover) window.removeEventListener(type, stop);
+  };
+  const timer = setTimeout(stop, SETTLE_WINDOW_MS);
+  const takeover = ["wheel", "touchstart", "keydown", "pointerdown"];
+  observer.observe(document.body);
+  for (const type of takeover) {
+    window.addEventListener(type, stop, { once: true, passive: true });
+  }
+  stopSettling = stop;
+}
+
+// requestAnimationFrame never fires in a hidden or prerendered page, so a timer backs it up.
+function scheduleRestore() {
+  requestAnimationFrame(restoreScroll);
+  setTimeout(restoreScroll, 300);
 }
 
 window.addEventListener("pagehide", saveScroll);
+// A page restored from the back/forward cache keeps its position; anything else reloads it.
+window.addEventListener("pageshow", (event) => {
+  if (!event.persisted) scheduleRestore();
+});
 
 fetch("/brand-assets/manifest.json")
   .then((response) => {
@@ -175,7 +228,7 @@ fetch("/brand-assets/manifest.json")
     document.querySelector("[data-brand-assets]").textContent =
       "Brand assets could not be loaded.";
   })
-  .finally(() => requestAnimationFrame(restoreScroll));
+  .finally(scheduleRestore);
 
 // Mark the section being read in the chip row and keep its chip in view.
 const chipRow = document.querySelector(".guide-header nav");
@@ -184,62 +237,98 @@ const readableSections = [...document.querySelectorAll(".guide-section[id]")];
 const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
 let activeChip = null;
 
+// Scroll the chip row itself, never the page, so the active chip is fully visible.
 function revealChip(chip) {
   const row = chipRow.getBoundingClientRect();
   const box = chip.getBoundingClientRect();
-  const inset = 32;
-  // Scroll the row itself ("nearest"), never the page.
-  if (box.left < row.left + inset) {
+  const inset = 40;
+  let delta = 0;
+
+  if (box.left < row.left + inset) delta = box.left - row.left - inset;
+  else if (box.right > row.right - inset) delta = box.right - row.right + inset;
+
+  if (delta) {
     chipRow.scrollBy({
-      left: box.left - row.left - inset,
-      behavior: reduceMotion.matches ? "instant" : "smooth",
-    });
-  } else if (box.right > row.right - inset) {
-    chipRow.scrollBy({
-      left: box.right - row.right + inset,
+      left: delta,
       behavior: reduceMotion.matches ? "instant" : "smooth",
     });
   }
 }
 
-function updateActiveChip() {
-  // The section whose top has passed the line anchor links scroll to.
-  const line = anchorLine();
-  const current = readableSections.findLast(
-    (section) => section.getBoundingClientRect().top <= line + 2,
-  );
-  const chip = chips.find((candidate) => candidate.hash === `#${current?.id}`) ?? null;
-  if (chip === activeChip) return;
-
-  activeChip?.removeAttribute("aria-current");
-  activeChip = chip;
-  if (chip) {
-    chip.setAttribute("aria-current", "location");
-    revealChip(chip);
+function setActiveChip(chip) {
+  if (chip !== activeChip) {
+    activeChip?.removeAttribute("aria-current");
+    activeChip = chip;
+    chip?.setAttribute("aria-current", "location");
   }
+  if (chip) revealChip(chip);
 }
 
 function anchorLine() {
   return parseFloat(getComputedStyle(readableSections[0]).scrollMarginTop) || 0;
 }
 
-// A thin band at the anchor line: sections crossing it change which chip is current.
-let sectionObserver = null;
+// The section whose top has passed the line chip links scroll to (with room for rounding).
+const ANCHOR_TOLERANCE = 40;
 
-function observeSections() {
-  const line = Math.round(anchorLine());
-  const below = Math.max(0, innerHeight - line - 8);
+function currentSection() {
+  const line = anchorLine() + ANCHOR_TOLERANCE;
+  const atEnd = scrollY + innerHeight >= document.documentElement.scrollHeight - 2;
+  if (atEnd) return readableSections.at(-1);
 
-  sectionObserver?.disconnect();
-  sectionObserver = new IntersectionObserver(updateActiveChip, {
-    rootMargin: `-${line}px 0px -${below}px 0px`,
-  });
-  for (const section of readableSections) sectionObserver.observe(section);
+  return readableSections.findLast(
+    (section) => section.getBoundingClientRect().top <= line,
+  );
+}
+
+function updateActiveChip() {
+  const current = currentSection();
+  const chip = chips.find((candidate) => candidate.hash === `#${current?.id}`) ?? null;
+  if (chip !== activeChip) setActiveChip(chip);
+}
+
+// After a chip tap the page scrolls (often smoothly) to its section. The tapped chip is
+// the answer, so scroll updates wait until the scrolling stops, then re-check.
+const SCROLL_IDLE_MS = 160;
+let tapped = false;
+let idleTimer = 0;
+let scrollFrame = 0;
+
+function settleAfterScroll() {
+  tapped = false;
   updateActiveChip();
 }
 
-observeSections();
-addEventListener("resize", observeSections);
+function onScroll() {
+  if (tapped) {
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(settleAfterScroll, SCROLL_IDLE_MS);
+    return;
+  }
+  if (scrollFrame) return;
+  scrollFrame = requestAnimationFrame(() => {
+    scrollFrame = 0;
+    updateActiveChip();
+  });
+}
+
+for (const chip of chips) {
+  chip.addEventListener("click", () => {
+    setActiveChip(chip);
+    tapped = true;
+    // If the page is already at the target no scroll event follows.
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(settleAfterScroll, 400);
+  });
+}
+
+addEventListener("scroll", onScroll, { passive: true });
+addEventListener("scrollend", () => {
+  clearTimeout(idleTimer);
+  settleAfterScroll();
+});
+addEventListener("resize", updateActiveChip);
+updateActiveChip();
 
 const sourceElement = document.querySelector("[data-generator-source]");
 fetch("/lib/logo-generator.mjs")

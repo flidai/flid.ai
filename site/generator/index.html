@@ -14,20 +14,30 @@
     <meta name="twitter:card" content="summary_large_image">
     <title>Signal Mark Generator — Flid</title>
     <link rel="canonical" href="https://flid.ai/generator/">
-    <link rel="icon" href="/brand-assets/favicon.svg" type="image/svg+xml">
-    <link rel="icon" href="/brand-assets/favicon/favicon.ico" sizes="any">
-    <link rel="icon" href="/brand-assets/favicon/favicon-32.png" type="image/png" sizes="32x32">
-    <link rel="apple-touch-icon" href="/brand-assets/favicon/apple-touch-icon.png">
-    <link rel="manifest" href="/brand-assets/favicon/site.webmanifest">
+    <link rel="icon" href="/assets/images/site-icon.svg" type="image/svg+xml">
+    <link rel="icon" href="/assets/images/site-icon.ico" sizes="any">
+    <link rel="icon" href="/assets/images/site-icon-32.png" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/assets/images/site-apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="preload" href="/assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="/assets/globals.css">
+    <link rel="stylesheet" href="/assets/identity-header.css">
     <link rel="stylesheet" href="/assets/generator.css">
     <script type="module" src="/assets/generator.js"></script>
   </head>
   <body>
-    <main class="generator-page">
-      <header class="generator-header">
-        <a href="/" class="generator-brand" aria-label="Back to Flid home"><span class="generator-brand-dot" aria-hidden="true"></span>FLID / SIGNAL LAB</a>
-        <nav aria-label="Signal lab navigation"><a href="/brand/">Brand guide ↗</a><a href="/showcase">Showcase ↗</a><span>PROCEDURAL MARK · STATIC</span></nav>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <main class="generator-page" id="main" tabindex="-1">
+      <header class="generator-header tool-header">
+        <div class="tool-header-brand">
+          <a class="tool-logo" href="/" aria-label="Flid home">
+            <img class="tool-logo-wordmark" src="/assets/images/site-wordmark-on-dark.svg" width="232" height="100" alt="">
+            <img class="tool-logo-mark" src="/assets/images/site-mark-on-dark.webp" width="192" height="192" alt="" aria-hidden="true">
+          </a>
+          <span class="tool-label">Signal lab</span>
+        </div>
+        <nav class="tool-header-nav" aria-label="Signal lab navigation"><a href="/brand/">Brand guide&nbsp;↗</a><a href="/showcase">Showcase&nbsp;↗</a><span>PROCEDURAL MARK · STATIC</span></nav>
+        <a class="tool-site-link" href="/">Public site&nbsp;↗</a>
       </header>
 
       <section class="generator-layout">
@@ -68,6 +78,7 @@
             <button type="button" class="export-button" data-export>Export SVG <span aria-hidden="true">↓</span></button>
             <button type="button" class="reset-button" data-reset>Reset</button>
           </div>
+          <p class="generator-export-note">Exports a transparent 512&nbsp;px SVG in the colours shown. The default Field colour is near-white, so open the file on a dark background.</p>
         </aside>
 
         <section class="generator-stage" aria-label="Generated logo preview">

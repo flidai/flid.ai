@@ -14,25 +14,32 @@
     <meta name="twitter:card" content="summary_large_image">
     <title>Brand Guide — Flid</title>
     <link rel="canonical" href="https://flid.ai/brand/">
-    <link rel="icon" href="/brand-assets/favicon.svg" type="image/svg+xml">
-    <link rel="icon" href="/brand-assets/favicon/favicon.ico" sizes="any">
-    <link rel="icon" href="/brand-assets/favicon/favicon-32.png" type="image/png" sizes="32x32">
-    <link rel="apple-touch-icon" href="/brand-assets/favicon/apple-touch-icon.png">
-    <link rel="manifest" href="/brand-assets/favicon/site.webmanifest">
+    <link rel="icon" href="/assets/images/site-icon.svg" type="image/svg+xml">
+    <link rel="icon" href="/assets/images/site-icon.ico" sizes="any">
+    <link rel="icon" href="/assets/images/site-icon-32.png" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/assets/images/site-apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="preload" href="/assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="/assets/globals.css">
+    <link rel="stylesheet" href="/assets/identity-header.css">
     <link rel="stylesheet" href="/assets/brand.css">
     <script type="module" src="/assets/brand.js"></script>
   </head>
   <body>
-    <main class="brand-guide">
-      <header class="guide-header">
-        <a class="guide-header-brand" href="/" aria-label="Flid home">
-          <img class="guide-lockup-asset guide-lockup-compact" src="/brand-assets/lockup-primary-on-dark.svg" alt="">
-        </a>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <main class="brand-guide" id="main" tabindex="-1">
+      <header class="guide-header tool-header">
+        <div class="guide-header-brand tool-header-brand">
+          <a class="tool-logo" href="/" aria-label="Flid home">
+            <img class="tool-logo-wordmark" src="/assets/images/site-wordmark-on-dark.svg" width="232" height="100" alt="">
+            <img class="tool-logo-mark" src="/assets/images/site-mark-on-dark.webp" width="192" height="192" alt="" aria-hidden="true">
+          </a>
+          <span class="tool-label">Brand guide</span>
+        </div>
         <nav aria-label="Brand guide navigation">
           <a href="#foundation">Foundation</a><a href="#logo">Logo</a><a href="#scale">Scale</a><a class="guide-nav-more" href="#typography">Type</a><a class="guide-nav-more" href="#color">Color</a><a class="guide-nav-more" href="#usage">Rules</a><a href="#assets">Assets</a><a class="guide-nav-more" href="#generator">Source</a><a class="guide-nav-extra" href="/showcase">Explorations ↗</a><a class="guide-nav-extra" href="/generator">Generator ↗</a>
         </nav>
-        <div class="guide-header-actions"><a href="/">Public site ↗</a><a class="guide-action-secondary" href="/showcase">Explorations ↗</a><a class="guide-action-secondary" href="/generator">Live generator ↗</a></div>
+        <div class="guide-header-actions"><a class="guide-action-secondary" href="/showcase">Explorations ↗</a><a class="guide-action-secondary" href="/generator">Live generator ↗</a><a class="tool-site-link" href="/">Public site ↗</a></div>
       </header>
 
       <section class="guide-hero">

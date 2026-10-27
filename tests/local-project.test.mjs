@@ -54,7 +54,7 @@ test("contains no framework or hosted-site integration", async () => {
 
 test("keeps the procedural identity independent and shared", async () => {
   const [showcase, brand, generator] = await Promise.all([
-    readFile(new URL("site/assets/showcase.js", root), "utf8"),
+    readFile(new URL("lib/showcase-markup.mjs", root), "utf8"),
     readFile(new URL("site/assets/brand.js", root), "utf8"),
     readFile(new URL("site/assets/generator.js", root), "utf8"),
   ]);
@@ -65,6 +65,21 @@ test("keeps the procedural identity independent and shared", async () => {
   }
   assert.match(brand, /brand-assets\/manifest\.json/);
   assert.doesNotMatch(brand, /generateLogoSvg|React|Next|jsx|tsx/);
+});
+
+test("ships crawler, error, and install files with the static site", async () => {
+  for (const path of ["404.html", "robots.txt", "sitemap.xml", "site.webmanifest"]) {
+    await access(new URL(`site/${path}`, root));
+  }
+  const [server, notFound] = await Promise.all([
+    readFile(new URL("cmd/devserver/main.go", root), "utf8"),
+    readFile(new URL("site/404.html", root), "utf8"),
+  ]);
+
+  assert.match(server, /404\.html/);
+  assert.match(server, /WriteHeader\(http\.StatusNotFound\)/);
+  assert.match(server, /"\.xml":/);
+  assert.match(notFound, /<main id="main" tabindex="-1">/);
 });
 
 test("keeps the public site at the root and the brand guide as a reference", async () => {

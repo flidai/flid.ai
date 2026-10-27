@@ -8,8 +8,21 @@
   font-display: swap;
 }
 
+/* Metrics-matched stand-in used until Geist arrives, so the swap does not
+   reflow text. size-adjust matches Geist's average advance width against Arial
+   at the weights the site uses; the overrides are Geist's vertical metrics
+   divided by size-adjust. */
+@font-face {
+  font-family: "Geist Fallback";
+  src: local("Arial"), local("Helvetica Neue"), local("Helvetica"), local("Liberation Sans");
+  size-adjust: 103%;
+  ascent-override: 97.6%;
+  descent-override: 28.6%;
+  line-gap-override: 0%;
+}
+
 :root {
-  --font-geist-sans: "Geist", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-geist-sans: "Geist", "Geist Fallback", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-geist-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   --font-inter: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-inter-tight: "Arial Narrow", "Roboto Condensed", Inter, ui-sans-serif, sans-serif;
@@ -65,6 +78,108 @@ summary {
 :where(a, button, summary):focus-visible {
   outline: 2px solid var(--fgColor-accent);
   outline-offset: 3px;
+}
+
+/* Keep a compound word such as "agent-native" on one line. It only breaks at
+   the hyphen when it is wider than the whole line (very large text). */
+.nb {
+  display: inline-block;
+  max-width: 100%;
+}
+
+/* Balanced headings avoid one-word last lines; pretty body copy avoids
+   orphans. Long words may break instead of overflowing at 200% text. */
+:where(h1, h2, h3) {
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+:where(p, li, figcaption) {
+  text-wrap: pretty;
+}
+
+/* Skip link: first focusable element on the page, visible only on focus. */
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 1000;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid var(--borderColor-default);
+  background: var(--bgColor-default);
+  color: var(--fgColor-default);
+  font-size: 14px;
+  font-weight: 560;
+  letter-spacing: 0;
+}
+
+.skip-link:not(:focus) {
+  width: 1px;
+  height: 1px;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip-link:focus-visible {
+  outline: 2px solid var(--fgColor-accent);
+  outline-offset: 2px;
+}
+
+/* #main receives focus from the skip link; it is not an interactive control. */
+main:focus {
+  outline: none;
+}
+
+/* The home page keeps its own header layout, but a hard 320px floor makes the
+   page scroll sideways at 260-280 CSS px (150% zoom, foldable phones). */
+body .home-page {
+  min-width: 0;
+}
+
+/* The home header shares the Products/About behavior: nav targets are at least
+   44px wide, and at 200% text or 260-320px widths the nav wraps onto its own
+   row instead of overlapping the wordmark. Selectors are one step more
+   specific than home.css so the shared rule wins regardless of load order. */
+body .header-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: 24px;
+}
+
+body .site-header nav {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  margin-left: auto;
+}
+
+.site-header nav a {
+  justify-content: center;
+  min-width: 44px;
+}
+
+/* Forced colors repaints the page with the user's palette, which turns the
+   off-white wordmark and mark invisible on a light Canvas. Keep the logo on a
+   dark plate. */
+@media (forced-colors: active) {
+  .site-logo,
+  .products-logo,
+  .about-logo,
+  .site-footer img,
+  .products-footer img,
+  .about-footer img {
+    forced-color-adjust: none;
+    background: #0d1117;
+    box-shadow: 0 0 0 6px #0d1117;
+  }
 }
 
 ::selection {

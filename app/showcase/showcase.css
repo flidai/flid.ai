@@ -5,7 +5,7 @@
   --showcase-muted: var(--fgColor-muted);
   --showcase-line: var(--borderColor-muted);
   --showcase-accent: var(--fgColor-accent);
-  --text-micro: 0.6875rem;
+  --text-micro: clamp(0.6875rem, 0.45rem + 0.25vw, 0.9375rem);
   --lockup-mark-size: clamp(104px, 8.5vw, 136px);
   --lockup-wordmark-size: clamp(3rem, 4.2vw, 4.75rem);
   --lockup-gap: clamp(18px, 2vw, 30px);
@@ -14,34 +14,16 @@
   color: var(--showcase-paper);
 }
 
+/* Layout, logo, and label come from identity-header.css; this page only sets its type. */
 .showcase-header {
-  min-height: 74px;
-  padding-inline: clamp(20px, 3.5vw, 56px);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  column-gap: 20px;
-  border-bottom: 1px solid var(--showcase-line);
+  border-bottom-color: var(--showcase-line);
   color: var(--showcase-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.6rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.12em;
 }
 
-.showcase-header > a,
-.showcase-header nav a {
-  color: var(--showcase-paper);
-}
-
-.showcase-header nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 28px;
-}
-
 @media (hover: hover) {
-  .showcase-header a:hover,
   .showcase-footer a:hover {
     color: var(--showcase-accent);
   }
@@ -72,7 +54,7 @@
   margin: 0;
   color: var(--showcase-accent);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.62rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.13em;
   text-transform: uppercase;
 }
@@ -144,7 +126,7 @@
   gap: 24px;
   color: var(--bgColor-default);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.56rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.1em;
 }
 
@@ -156,11 +138,10 @@
   aspect-ratio: 1;
 }
 
-.showcase-mark svg {
+.showcase-mark img {
   display: block;
   width: 100%;
   height: 100%;
-  overflow: visible;
 }
 
 .showcase-wordmark {
@@ -246,7 +227,7 @@
   border-bottom: 1px solid var(--showcase-line);
   color: var(--showcase-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.55rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -284,12 +265,13 @@
 .matrix-variation p {
   color: var(--showcase-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.55rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.07em;
   text-transform: uppercase;
 }
 
 .matrix-variation h2 {
+  overflow-wrap: anywhere;
   margin: 20px 0 15px;
   font-size: clamp(2.4rem, 4.2vw, 5rem);
   font-weight: 440;
@@ -365,7 +347,7 @@
   border-top: 1px solid var(--showcase-line);
   color: var(--showcase-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.5rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -415,7 +397,7 @@
   border-bottom: 1px solid var(--showcase-line);
   color: var(--showcase-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.54rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.075em;
   text-transform: uppercase;
 }
@@ -445,14 +427,14 @@
   max-width: 440px;
   margin: 0;
   color: var(--showcase-muted);
-  font-size: 0.7rem;
+  font-size: max(0.7rem, var(--text-micro));
   line-height: 1.55;
 }
 
 .type-study-card > footer span {
   color: var(--showcase-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.5rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.06em;
   text-align: right;
   text-transform: uppercase;
@@ -501,7 +483,7 @@
   bottom: 24px;
   color: var(--showcase-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.54rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.09em;
 }
 
@@ -566,7 +548,7 @@
   gap: 22px;
   border-top: 1px solid var(--showcase-line);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.52rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.07em;
   text-transform: uppercase;
 }
@@ -617,7 +599,7 @@
 .scale-sample > span {
   color: var(--showcase-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.54rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.07em;
   text-transform: uppercase;
 }
@@ -663,7 +645,7 @@
 .showcase-footer a {
   margin: 0;
   color: var(--showcase-muted);
-  font-size: 0.7rem;
+  font-size: max(0.7rem, var(--text-micro));
 }
 
 .showcase-footer a {
@@ -688,7 +670,8 @@
   }
 
   .matrix-variation h2 {
-    font-size: 2.5rem;
+    /* The rem floor scales with enlarged text; the vw term keeps 320px phones in their column. */
+    font-size: clamp(1.75rem, 7vw, 2.5rem);
   }
 
   .lockup-sample {
@@ -747,10 +730,6 @@
     --lockup-mark-size: 96px;
     --lockup-wordmark-size: 2.75rem;
     --lockup-gap: 16px;
-  }
-
-  .showcase-header nav > span {
-    display: none;
   }
 
   .showcase-hero-copy {
@@ -924,49 +903,14 @@
 
 /* Touch-sized targets on tablets, phone landscape, and any coarse pointer. */
 @media (max-width: 1080px), (pointer: coarse) {
-  .showcase-header > a,
-  .showcase-header nav a,
   .showcase-footer a {
     min-height: 44px;
     display: inline-flex;
     align-items: center;
   }
-
-  .showcase-header > a,
-  .showcase-header nav a {
-    white-space: nowrap;
-  }
-}
-
-/* 11px floor for labels. */
-@media (max-width: 1080px) {
-  .showcase-header,
-  .showcase-hero-copy > p,
-  .showcase-section-heading > span,
-  .hero-preview-meta,
-  .matrix-variation > span,
-  .matrix-variation p,
-  .lockup-sample footer,
-  .type-study-card > header,
-  .type-study-card > footer span,
-  .application-card > span,
-  .reverse-study-card footer,
-  .scale-sample header span,
-  .scale-sample > span,
-  .showcase-footer a {
-    font-size: var(--text-micro);
-  }
 }
 
 @media (max-width: 720px) {
-  .showcase-header {
-    min-height: 64px;
-  }
-
-  .showcase-header nav {
-    column-gap: 20px;
-  }
-
   /* Scale ladder: restack each row instead of scrolling sideways. */
   .scale-sample {
     min-height: 0;
@@ -1002,19 +946,6 @@
   .type-study-card > footer p,
   .showcase-footer p {
     font-size: 0.875rem;
-  }
-}
-
-@media (max-width: 440px) {
-  .showcase-header {
-    padding-inline: 16px;
-    flex-wrap: wrap;
-    column-gap: 12px;
-    letter-spacing: 0.02em;
-  }
-
-  .showcase-header nav {
-    column-gap: 10px;
   }
 }
 

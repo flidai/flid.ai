@@ -80,6 +80,8 @@ body {
 .site-header nav a {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  min-width: 44px;
   min-height: 44px;
 }
 
@@ -88,25 +90,39 @@ body {
   transition: color 180ms ease;
 }
 
-.site-header nav a:focus-visible,
+.site-header nav a:focus-visible {
+  color: var(--fgColor-accent);
+}
+
 .site-footer a:focus-visible {
   color: var(--fgColor-default);
 }
 
 @media (hover: hover) {
-  .site-header nav a:hover,
+  /* Matches Products and About, where links turn accent blue on hover. */
+  .site-header nav a:hover {
+    color: var(--fgColor-accent);
+  }
+
   .site-footer a:hover {
     color: var(--fgColor-default);
   }
 }
 
+/* Copy and wave opacity/transform are written straight to their elements by
+   home.js. The one value that has to travel through CSS is the bottom fade's
+   opacity, because the fade is a pseudo-element (a non-inherited registered
+   property would not reach it). It is set on .hero-sticky, so a write only
+   restyles that small subtree, never the pinned story. */
+
+html:has(.home-page) {
+  /* Keyboard focus must jump, not animate through the pinned story. Explicit
+     scrollTo({ behavior: "smooth" }) calls, like the logo, still animate. */
+  scroll-behavior: auto;
+}
+
 .motion-sequence {
   --motion-stage-height: calc(100svh + 80px);
-  --hero-copy-opacity: 1;
-  --hero-copy-scale: 1;
-  --hero-copy-translate-y: 0px;
-  --hero-wave-opacity: 1;
-  --hero-wave-warp: 0;
 
   position: relative;
   isolation: isolate;
@@ -163,7 +179,7 @@ body {
   /* The fade only blends the wave field. It sits above the particle canvas, so
      it must leave with the waves; otherwise its edge sweeps a straight seam
      across the particles while the hero scrolls away. */
-  opacity: var(--hero-wave-opacity);
+  opacity: var(--hero-wave-opacity, 1);
   pointer-events: none;
   content: "";
 }
@@ -187,9 +203,7 @@ body {
   height: 100%;
   object-fit: cover;
   object-position: center center;
-  opacity: var(--hero-wave-opacity);
   pointer-events: none;
-  transform: scale(calc(1 + var(--hero-wave-warp) * 0.045));
   transform-origin: center;
   will-change: opacity, transform;
 }
@@ -198,9 +212,7 @@ body {
   position: relative;
   z-index: 2;
   width: min(100%, 820px);
-  opacity: var(--hero-copy-opacity);
   text-align: center;
-  transform: translateY(var(--hero-copy-translate-y)) scale(var(--hero-copy-scale));
   transform-origin: center;
   will-change: opacity, transform;
 }
@@ -326,7 +338,6 @@ body {
   pointer-events: none;
   top: 0;
   height: 100svh;
-  min-height: 640px;
   overflow: hidden;
   isolation: isolate;
 }
@@ -382,7 +393,6 @@ body {
   width: min(40vw, 560px);
   background: none;
   text-wrap: balance;
-  transform: translateY(var(--story-step-shift, 0));
   will-change: transform;
 }
 
@@ -397,12 +407,14 @@ body {
   text-wrap: pretty;
 }
 
+/* Captions reveal word by word. Each word reads the step's --copy-reveal, so
+   only a couple dozen elements restyle per frame instead of one per letter. */
 .signal-story-subtitle > span {
   opacity: calc(
     0.12 + 0.88 * clamp(
       0,
-      (var(--copy-reveal, 0) - var(--character-start, 0)) /
-        var(--character-window, 0.08),
+      (var(--copy-reveal, 0) - var(--word-start, 0)) /
+        var(--word-window, 0.2),
       1
     )
   );
@@ -534,12 +546,15 @@ body {
 }
 
 /* Desktop captions sit beside the particle cloud and can cross it; a soft
-   halo keeps them legible. Phones stack the caption below the canvas. */
+   halo keeps them legible over dense particles. Compact layouts stack the
+   caption below the canvas and drop it. */
 @media (min-width: 901px) {
   .signal-story-copy {
     text-shadow:
-      0 0 18px var(--bgColor-default),
-      0 0 36px var(--bgColor-default);
+      0 0 6px var(--bgColor-default),
+      0 0 16px var(--bgColor-default),
+      0 0 32px var(--bgColor-default),
+      0 0 56px color-mix(in srgb, var(--bgColor-default) 80%, transparent);
   }
 }
 
@@ -565,7 +580,16 @@ body {
   }
 }
 
-@media (max-width: 900px) {
+/* Compact story layout: the canvas sits on top and the caption stacks below
+   it. It serves narrow screens, portrait tablets (where the side-by-side
+   layout leaves a third of the screen empty above and below the cloud), and
+   every short landscape viewport (phones turned sideways can be wider than
+   900px, but are still under ~520px tall, where the side-by-side desktop
+   layout puts captions over the cloud). Keep in sync with compactStory in
+   site/assets/home.js. */
+@media (max-width: 900px),
+  (orientation: portrait) and (max-width: 1100px),
+  (max-height: 520px) and (orientation: landscape) {
   .motion-sequence {
     --mobile-story-canvas-top: 9svh;
     --mobile-story-canvas-height: 54svh;
@@ -584,11 +608,6 @@ body {
     mask-image: linear-gradient(to right, transparent, black 7%, black 93%, transparent);
   }
 
-  .hero-wave-field {
-    -webkit-mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
-    mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
-  }
-
   .signal-story {
     height: 340svh;
     margin-top: -100svh;
@@ -602,7 +621,6 @@ body {
     position: sticky;
     top: 0;
     height: 100svh;
-    min-height: 0;
     overflow: hidden;
   }
 
@@ -647,6 +665,7 @@ body {
     width: min(calc(100vw - 48px), 420px);
     padding: 0;
     background: none;
+    text-shadow: none;
   }
 
   .signal-story.is-depth-live .signal-story-step,
@@ -673,6 +692,34 @@ body {
   }
 }
 
+@media (max-width: 900px) {
+  .hero-wave-field {
+    -webkit-mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
+  }
+}
+
+/* Portrait tablets use the compact layout at a larger scale, centred in the
+   taller screen so the cloud and caption read as one group. */
+@media (min-width: 901px) and (max-width: 1100px) and (orientation: portrait) {
+  .motion-sequence {
+    --mobile-story-canvas-top: 16svh;
+    --mobile-story-canvas-height: 56svh;
+  }
+
+  .signal-story-copy,
+  .signal-story-step-intro .signal-story-copy,
+  .signal-story.is-depth-live .signal-story-copy,
+  .signal-story.is-depth-live .signal-story-step-intro .signal-story-copy {
+    width: min(calc(100vw - 96px), 640px);
+  }
+
+  .signal-story-subtitle,
+  .signal-story-step-intro .signal-story-subtitle {
+    font-size: clamp(2rem, 3.4vw, 2.4rem);
+  }
+}
+
 @media (max-width: 720px) {
   .site-shell {
     padding-inline: 20px;
@@ -685,6 +732,14 @@ body {
 
   .site-logo {
     width: 96px;
+  }
+
+  /* Extend the 41px-tall logo link to a 44px touch target, matching the
+     Products and About headers. */
+  .site-logo::after {
+    position: absolute;
+    inset: -2px 0;
+    content: "";
   }
 
   .site-header nav {
@@ -755,9 +810,19 @@ body {
     transition: none;
   }
 
+  /* Keep the hero wave art as a still backdrop; only the animated canvas and
+     the scroll-driven pinning go away. The stage leaves the flow and covers
+     exactly the hero, which starts under the header. */
   .motion-sequence-stage {
+    position: absolute;
+    top: -82px;
+    right: 0;
+    left: 0;
+    height: 100svh;
+  }
+
+  .motion-sequence-canvas {
     display: none;
-    margin-bottom: 0;
   }
 
   .hero {
@@ -834,6 +899,10 @@ body {
   .hero {
     margin-top: -70px;
   }
+
+  .motion-sequence-stage {
+    top: -70px;
+  }
 }
 
 /* Landscape phones: the pinned hero is only ~390px tall, so size the copy by
@@ -859,5 +928,38 @@ body {
 
   .button {
     min-height: 44px;
+  }
+}
+
+/* Landscape story: a shorter canvas and a height-sized caption keep the closing
+   caption clear of the bottom edge, including at 200% zoom (720x450 CSS px) and
+   on 568x320 phones. Reduced motion keeps its own static card layout. */
+@media (max-height: 520px) and (orientation: landscape) and (prefers-reduced-motion: no-preference) {
+  .motion-sequence {
+    --mobile-story-canvas-top: 8svh;
+    --mobile-story-canvas-height: 50svh;
+  }
+
+  .signal-story-step,
+  .signal-story-step:first-child {
+    padding-top: calc(
+      var(--mobile-story-canvas-top) +
+      var(--mobile-story-canvas-height) +
+      max(12px, 3svh)
+    );
+    padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  }
+
+  .signal-story-copy,
+  .signal-story-step-intro .signal-story-copy,
+  .signal-story.is-depth-live .signal-story-copy,
+  .signal-story.is-depth-live .signal-story-step-intro .signal-story-copy {
+    width: min(calc(100vw - 48px), 600px);
+  }
+
+  .signal-story-subtitle,
+  .signal-story-step-intro .signal-story-subtitle {
+    font-size: clamp(1.05rem, 6vh, 1.5rem);
+    line-height: 1.2;
   }
 }

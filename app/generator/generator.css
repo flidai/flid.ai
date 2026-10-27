@@ -1,6 +1,6 @@
 .generator-page {
   --generator-line: var(--borderColor-muted);
-  --text-micro: 0.6875rem;
+  --text-micro: clamp(0.6875rem, 0.45rem + 0.25vw, 0.9375rem);
   --panel-pad-x: clamp(24px, 4vw, 64px);
   min-height: 100vh;
   background:
@@ -11,56 +11,17 @@
   color: var(--fgColor-default);
 }
 
+/* Layout, logo, and label come from identity-header.css; this page only sets its type. */
 .generator-header {
-  min-height: 74px;
-  padding-inline: clamp(20px, 3.5vw, 56px);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  column-gap: 20px;
-  border-bottom: 1px solid var(--generator-line);
   color: var(--fgColor-muted);
+  border-bottom-color: var(--generator-line);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.6rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.12em;
 }
 
-.generator-header nav {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0 26px;
-}
-
-.generator-header nav a {
-  color: var(--fgColor-default);
-  transition: color 160ms ease;
-}
-
-@media (hover: hover) {
-  .generator-header nav a:hover {
-    color: var(--fgColor-accent);
-  }
-}
-
-.generator-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--fgColor-default);
-}
-
-.generator-brand-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--fgColor-accent);
-  box-shadow: 0 0 14px var(--bgColor-accent-muted);
-}
-
 .generator-layout {
-  min-height: calc(100vh - 74px);
+  min-height: calc(100vh - 82px);
   display: grid;
   grid-template-columns: minmax(340px, 0.76fr) minmax(520px, 1.4fr);
 }
@@ -78,7 +39,7 @@
   margin-bottom: 22px;
   color: var(--fgColor-accent);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.62rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
@@ -145,7 +106,7 @@
 
 .generator-presets span {
   overflow-wrap: anywhere;
-  font-size: 0.57rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -154,7 +115,7 @@
   flex: none;
   white-space: nowrap;
   color: var(--fgColor-accent);
-  font-size: 0.63rem;
+  font-size: var(--text-micro);
   font-weight: 500;
 }
 
@@ -174,7 +135,7 @@
   border-bottom: 1px solid var(--generator-line);
   color: var(--fgColor-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.61rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -220,7 +181,7 @@
   justify-content: space-between;
   color: var(--fgColor-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.61rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -310,10 +271,18 @@
   border: 1px solid transparent;
   cursor: pointer;
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.62rem;
+  font-size: var(--text-micro);
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.generator-export-note {
+  max-width: 460px;
+  margin: 18px 0 0;
+  color: var(--fgColor-muted);
+  font-size: 0.8125rem;
+  line-height: 1.6;
 }
 
 .export-button {
@@ -374,6 +343,10 @@
   aspect-ratio: 1;
   color: var(--fgColor-default);
   filter: drop-shadow(0 0 26px color-mix(in srgb, var(--preview-accent) 13%, transparent));
+  /* The mark is rebuilt on every slider step: keep its paint on its own layer so the
+     sticky stage and the controls beside it are never repainted with it. */
+  contain: layout paint style;
+  will-change: transform;
 }
 
 .generator-preview svg {
@@ -404,7 +377,7 @@
   justify-content: space-between;
   color: var(--fgColor-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.56rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.1em;
 }
 
@@ -437,7 +410,7 @@
 .generator-notes span {
   color: var(--fgColor-accent);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.57rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.09em;
 }
 
@@ -451,27 +424,21 @@
 
 .generator-page button:focus-visible,
 .generator-page input:focus-visible,
-.generator-brand:focus-visible {
+.generator-page a:focus-visible {
   outline: 2px solid var(--fgColor-accent);
   outline-offset: 3px;
 }
 
 @media (max-width: 1080px), (pointer: coarse) {
-  .generator-header nav a,
-  .generator-brand {
-    min-height: 44px;
-    display: inline-flex;
-    align-items: center;
-    white-space: nowrap;
-  }
-
   .generator-mode button {
     min-height: 44px;
   }
 
+  /* A 44px hit area around the slim track: the negative margins keep the layout height
+     the 32px control had, so the controls do not grow. */
   .generator-control input[type="range"] {
-    height: 32px;
-    margin-top: 4px;
+    height: 44px;
+    margin-block: -2px -6px;
   }
 
   .generator-control input[type="range"]::-webkit-slider-thumb {
@@ -480,25 +447,34 @@
     margin-top: -11px;
   }
 
-  .generator-color-row input {
-    width: 32px;
-    height: 32px;
+  .generator-control input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--bgColor-default);
+    background: var(--fgColor-accent);
+    box-shadow: 0 0 0 1px var(--fgColor-accent);
   }
-}
 
-@media (max-width: 1080px) {
-  /* 11px floor for labels. */
-  .generator-header,
-  .generator-kicker,
-  .generator-mode,
-  .generator-control > span,
-  .generator-color-row label > span,
-  .generator-actions button,
-  .generator-stage-meta,
-  .generator-presets span,
-  .generator-presets strong,
-  .generator-notes span {
-    font-size: var(--text-micro);
+  /* The visible swatch stays a 32px ring; the input around it is the 44px target. */
+  .generator-color-row input {
+    width: 44px;
+    height: 44px;
+    margin-block: -6px;
+    border-color: transparent;
+  }
+
+  .generator-color-row input::-webkit-color-swatch-wrapper {
+    padding: 6px;
+  }
+
+  .generator-color-row input::-webkit-color-swatch {
+    border: 1px solid var(--borderColor-default);
+  }
+
+  .generator-color-row input::-moz-color-swatch {
+    border: 6px solid transparent;
+    border-radius: 50%;
+    background-clip: padding-box;
   }
 }
 
@@ -613,10 +589,6 @@
     --panel-pad-x: 20px;
   }
 
-  .generator-header nav > span {
-    display: none;
-  }
-
   .generator-panel {
     padding: 28px 20px;
   }
@@ -649,30 +621,10 @@
 }
 
 @media (max-width: 720px) {
-  .generator-header {
-    min-height: 64px;
-  }
-
   /* 14px for body copy. */
   .generator-intro > p:last-child,
   .generator-notes p {
     font-size: 0.875rem;
-  }
-}
-
-@media (max-width: 440px) {
-  .generator-header {
-    padding-inline: 16px;
-    column-gap: 12px;
-    letter-spacing: 0.02em;
-  }
-
-  .generator-header nav {
-    column-gap: 10px;
-  }
-
-  .generator-brand {
-    gap: 8px;
   }
 }
 

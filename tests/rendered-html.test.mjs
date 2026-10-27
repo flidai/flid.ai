@@ -1,11 +1,16 @@
 import assert from "node:assert/strict";
 import { access, readFile, stat } from "node:fs/promises";
+import { pathToFileURL } from "node:url";
 import test from "node:test";
 
 const root = new URL("../", import.meta.url);
+// FLID_DIST points the suite at a build in another directory (preview builds).
+const dist = process.env.FLID_DIST
+  ? pathToFileURL(`${process.env.FLID_DIST.replace(/\/$/, "")}/`)
+  : new URL("dist/", root);
 
 async function readBuiltPage(pathname) {
-  return readFile(new URL(`dist/${pathname}`, root), "utf8");
+  return readFile(new URL(pathname, dist), "utf8");
 }
 
 test("builds the Flid public site at the root as plain HTML", async () => {
@@ -88,18 +93,16 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.match(script, /signal-scroll-story\.mjs/);
   assert.match(script, /hero-scroll-transition\.mjs/);
   assert.match(script, /depth-video-story\.mjs/);
-  assert.match(script, /min-width:\s*901px/);
-  assert.equal(
-    (script.match(/matchMedia\(["']\(min-width:\s*901px\)["']\)/g) || []).length,
-    1,
-    "only the hero transition should restrict depth media to desktop",
-  );
+  // One media query mirrors the compact story layout in home.css, including
+  // short landscape phones wider than 900px.
+  assert.equal((script.match(/matchMedia\(/g) || []).length, 2, "reduced motion plus the compact story layout");
+  assert.match(script, /const compactStory = matchMedia\(\s*"\(max-width: 900px\), \(orientation: portrait\) and \(max-width: 1100px\), " \+\s*"\(max-height: 520px\) and \(orientation: landscape\)",?\s*\)/);
   assert.match(
     script,
     /story\?\.dataset\.depthDemo\s*===\s*["']local["']\s*&&\s*!reducedMotion\.matches[\s\S]*?createSharedDepthSequence\(sequenceCanvas\)[\s\S]*?initDepthMotionSequence\(initialCanvas, depthSequence\)/,
   );
   assert.match(html, /data-depth-demo="local"/);
-  await access(new URL("dist/assets/depth-reference/depth-story.mp4", root));
+  await access(new URL("assets/depth-reference/depth-story.mp4", dist));
   assert.match(script, /visitSignalStoryFrame/);
   assert.match(script, /getContext\(["']2d["']\)/);
   assert.match(script, /devicePixelRatio/);
@@ -122,7 +125,7 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.match(script, /createMotionSequenceState\(/);
   assert.match(
     script,
-    /function startHeroFallback\(canvas\)\s*\{\s*if\s*\(!depthViewport\.matches\)\s*initMobileHeroTransition\(\);/,
+    /function startHeroFallback\(canvas\)\s*\{\s*if\s*\(compactStory\.matches\)\s*initMobileHeroTransition\(\);/,
   );
   assert.match(
     script,
@@ -163,11 +166,15 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.match(script, /addEventListener\(["']scroll["']/);
   assert.match(styles, /\.hero-wave-field/);
   assert.match(styles, /\.hero-sticky/);
-  assert.match(styles, /--hero-copy-opacity/);
+  // Hero motion writes opacity/transform straight onto the two moving layers;
+  // only the fade pseudo-element reads a custom property, scoped to .hero-sticky.
+  assert.match(script, /heroCopy\.style\.opacity = state\.copyOpacity;/);
+  assert.match(script, /heroSticky\?\.style\.setProperty\("--hero-wave-opacity"/);
+  assert.doesNotMatch(script, /motionSequence\?*\.style\.setProperty\("--hero-/, "root-level hero variables restyle the whole subtree every frame");
   assert.match(styles, /\.hero-sticky::after/);
   assert.match(
     styles,
-    /\.hero-sticky::after\s*\{[^}]*opacity:\s*var\(--hero-wave-opacity\);/s,
+    /\.hero-sticky::after\s*\{[^}]*opacity:\s*var\(--hero-wave-opacity(?:,\s*1)?\);/s,
     "the hero fade must leave with the waves so it cannot cut across the particles",
   );
   assert.match(styles, /linear-gradient\(to bottom, transparent/);
@@ -321,7 +328,7 @@ test("builds the About page as a dedicated team route", async () => {
   assert.match(html, /href="\/products\/"[^>]*>Products\s*</i);
   assert.match(html, /href="\/about\/"[^>]*>About\s*</i);
   assert.match(html, /href="mailto:jacob@flid\.ai"[^>]*>Contact\s*</i);
-  assert.match(html, /Working on a hard agent-native problem\?/i);
+  assert.match(html, /Working on a hard <span class="nb">agent-native<\/span> problem\?/i);
   assert.doesNotMatch(html, /small team|small enough|Built across two places|Distributed between/i);
   assert.match(html, /Flid AI ApS · CVR 43463217 · Odense, Denmark/i);
   assert.match(styles, /\.about-page/);
@@ -358,7 +365,7 @@ test("uses a restrained shared type scale across About and Products", async () =
 
 test("optimizes the founder portrait for the public site", async () => {
   const portrait = await stat(
-    new URL("dist/assets/images/jacob-oestergaard.webp", root),
+    new URL("assets/images/jacob-oestergaard.webp", dist),
   );
 
   assert.ok(portrait.size < 250_000, "founder portrait should stay below 250 KB");
@@ -366,7 +373,7 @@ test("optimizes the founder portrait for the public site", async () => {
 
 test("optimizes the AI engineer portrait for the public site", async () => {
   const portrait = await stat(
-    new URL("dist/assets/images/ganesh-kambli.webp", root),
+    new URL("assets/images/ganesh-kambli.webp", dist),
   );
 
   assert.ok(portrait.size < 250_000, "AI engineer portrait should stay below 250 KB");
@@ -374,7 +381,7 @@ test("optimizes the AI engineer portrait for the public site", async () => {
 
 test("optimizes Anand's portrait for the public site", async () => {
   const portrait = await stat(
-    new URL("dist/assets/images/anand-bora.webp", root),
+    new URL("assets/images/anand-bora.webp", dist),
   );
 
   assert.ok(portrait.size < 250_000, "Anand's portrait should stay below 250 KB");
@@ -382,7 +389,7 @@ test("optimizes Anand's portrait for the public site", async () => {
 
 test("ships an optimized standalone hero wave field", async () => {
   const background = await stat(
-    new URL("dist/assets/images/hero-signal-waves.webp", root),
+    new URL("assets/images/hero-signal-waves.webp", dist),
   );
 
   assert.ok(background.size < 300_000, "hero wave field should stay below 300 KB");
@@ -390,7 +397,7 @@ test("ships an optimized standalone hero wave field", async () => {
 
 test("ships an optimized LeapView product screenshot", async () => {
   const screenshot = await stat(
-    new URL("dist/assets/images/leapview-dashboard-dark.png", root),
+    new URL("assets/images/leapview-dashboard-dark.png", dist),
   );
 
   assert.ok(screenshot.size < 250_000, "LeapView screenshot should stay below 250 KB");
@@ -418,7 +425,8 @@ test("builds the interactive generator as plain HTML and JavaScript", async () =
 test("builds the logo showcase without an application framework", async () => {
   const [html, script] = await Promise.all([
     readBuiltPage("showcase/index.html"),
-    readBuiltPage("assets/showcase.js"),
+    // The showcase is prerendered by the build from this module; no script ships with the page.
+    readFile(new URL("lib/showcase-markup.mjs", root), "utf8"),
   ]);
 
   assert.match(html, /<title>Logo Showcase — Flid<\/title>/i);
@@ -534,7 +542,12 @@ test("retains responsive and reduced-motion styling", async () => {
   );
   assert.match(
     homeCss,
-    /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*?\.motion-sequence-stage\s*\{[^}]*display:\s*none;/,
+    /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*?\.motion-sequence-canvas\s*\{\s*display:\s*none;/,
+  );
+  assert.doesNotMatch(
+    homeCss,
+    /@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{[^@]*?\.motion-sequence-stage\s*\{[^}]*display:\s*none;/,
+    "reduced motion keeps the hero wave art as a still backdrop",
   );
   assert.match(
     homeCss,
@@ -555,4 +568,227 @@ test("keeps .ai out of visual wordmarks while preserving the domain", async () =
   assert.doesNotMatch(combined, /class="[^"]*wordmark[^"]*"[^>]*>\\s*flid\\.ai/i);
   assert.match(combined, /flid\.ai/);
   assert.match(combined, /Flid AI ApS/);
+});
+
+const publicPages = [
+  ["index.html", "/"],
+  ["products/index.html", "/products/"],
+  ["about/index.html", "/about/"],
+  ["404.html", null],
+];
+const allPages = [
+  ...publicPages.map(([file]) => file),
+  "brand/index.html",
+  "showcase/index.html",
+  "generator/index.html",
+];
+
+test("gives every owned page header, main, and footer landmarks plus a skip link", async () => {
+  for (const [file] of publicPages) {
+    const html = await readBuiltPage(file);
+    const mainOpen = html.search(/<main\b/);
+    const mainClose = html.indexOf("</main>");
+    assert.ok(mainOpen > 0 && mainClose > mainOpen, `${file} needs a <main>`);
+    assert.equal((html.match(/<main\b/g) || []).length, 1, `${file} has one <main>`);
+    assert.match(html, /<main id="main" tabindex="-1">/, file);
+    const main = html.slice(mainOpen, mainClose);
+    assert.doesNotMatch(main, /<header\b|<footer\b/, `${file}: header/footer must not be inside <main>`);
+    assert.ok(html.search(/<header\b/) > 0 && html.search(/<header\b/) < mainOpen, `${file}: <header> precedes <main>`);
+    assert.ok(html.search(/<footer\b/) > mainClose, `${file}: <footer> follows <main>`);
+    assert.match(
+      html,
+      /<body>\s*<a class="skip-link" href="#main">Skip to content<\/a>/,
+      `${file}: the skip link must be the first element in <body>`,
+    );
+  }
+  const globals = await readBuiltPage("assets/globals.css");
+  assert.match(globals, /\.skip-link:not\(:focus\)\s*\{[^}]*clip-path:\s*inset\(50%\)/s);
+  assert.match(globals, /\.skip-link:focus-visible/);
+});
+
+test("preloads the Geist font on every page and avoids the stylesheet @import chain", async () => {
+  const preload =
+    '<link rel="preload" href="/assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>';
+  for (const file of allPages) {
+    const html = await readBuiltPage(file);
+    assert.equal(html.split(preload).length - 1, 1, `${file} needs exactly one font preload`);
+    assert.ok(
+      html.indexOf(preload) < html.indexOf('rel="stylesheet"'),
+      `${file}: the preload must precede the stylesheets`,
+    );
+  }
+
+  const globals = await readBuiltPage("assets/globals.css");
+  assert.doesNotMatch(globals, /@import/, "built globals.css must not chain a second request");
+  assert.match(globals, /--bgColor-default:\s*#0d1117/, "Primer tokens are inlined");
+  assert.match(globals, /font-family:\s*"Geist Fallback"[^}]*size-adjust:[^}]*ascent-override:/s);
+  assert.match(globals, /--font-geist-sans:\s*"Geist",\s*"Geist Fallback"/);
+});
+
+test("keeps headings balanced, body copy pretty, and compound words whole", async () => {
+  const globals = await readBuiltPage("assets/globals.css");
+  assert.match(globals, /:where\(h1, h2, h3\)\s*\{[^}]*text-wrap:\s*balance/s);
+  assert.match(globals, /:where\(h1, h2, h3\)\s*\{[^}]*overflow-wrap:\s*anywhere/s);
+  assert.match(globals, /:where\(p, li, figcaption\)\s*\{[^}]*text-wrap:\s*pretty/s);
+  assert.match(globals, /\.nb\s*\{[^}]*display:\s*inline-block;[^}]*max-width:\s*100%/s);
+  for (const file of ["products/index.html", "about/index.html"]) {
+    const html = await readBuiltPage(file);
+    const bare = html
+      .replace(/<span class="nb">agent-native<\/span>/g, "")
+      .replace(/<(meta|title)[^>]*>[^<]*/g, "");
+    assert.doesNotMatch(bare, /agent-native/, `${file}: visible "agent-native" must be wrapped in .nb`);
+  }
+});
+
+test("does not force a 320px minimum width that scrolls sideways on narrow screens", async () => {
+  const [products, about, globals] = await Promise.all([
+    readBuiltPage("assets/products.css"),
+    readBuiltPage("assets/about.css"),
+    readBuiltPage("assets/globals.css"),
+  ]);
+  assert.doesNotMatch(products, /min-width:\s*320px/);
+  assert.doesNotMatch(about, /min-width:\s*320px/);
+  assert.match(globals, /body \.home-page\s*\{\s*min-width:\s*0/);
+});
+
+test("lets headers wrap and keeps nav targets at least 44px wide", async () => {
+  const [products, about, globals] = await Promise.all([
+    readBuiltPage("assets/products.css"),
+    readBuiltPage("assets/about.css"),
+    readBuiltPage("assets/globals.css"),
+  ]);
+  assert.match(products, /\.products-header-inner\s*\{[^}]*display:\s*flex;[^}]*flex-wrap:\s*wrap/s);
+  assert.match(about, /\.about-header-inner\s*\{[^}]*display:\s*flex;[^}]*flex-wrap:\s*wrap/s);
+  assert.match(products, /\.products-header nav a\s*\{[^}]*justify-content:\s*center;[^}]*min-width:\s*44px;[^}]*min-height:\s*44px/s);
+  assert.match(about, /\.about-header nav a\s*\{[^}]*justify-content:\s*center;[^}]*min-width:\s*44px;[^}]*min-height:\s*44px/s);
+  assert.match(globals, /\.site-header nav a\s*\{[^}]*min-width:\s*44px/s);
+  assert.match(globals, /body \.header-inner\s*\{[^}]*flex-wrap:\s*wrap/s);
+});
+
+test("stacks About team captions by card width so bios align", async () => {
+  const about = await readBuiltPage("assets/about.css");
+  assert.match(about, /\.about-team-member figure\s*\{[^}]*container:\s*team-card \/ inline-size/s);
+  assert.match(
+    about,
+    /@container team-card \(max-width:\s*320px\)\s*\{\s*\.about-team-member figcaption\s*\{[^}]*flex-direction:\s*column/s,
+  );
+  assert.doesNotMatch(about, /@media[^{]*\{[^@]*\.about-team-member figcaption\s*\{[^}]*flex-direction:\s*row/s);
+});
+
+test("keeps the screenshot focus ring inside its clipping frame", async () => {
+  const products = await readBuiltPage("assets/products.css");
+  assert.match(products, /\.product-screenshot a:focus-visible\s*\{[^}]*outline-offset:\s*-3px/s);
+});
+
+test("sizes footer logos to their intrinsic ratio and ships a light footer lockup", async () => {
+  const [products, about] = await Promise.all([
+    readBuiltPage("assets/products.css"),
+    readBuiltPage("assets/about.css"),
+  ]);
+  assert.match(products, /\.products-footer-inner img\s*\{[^}]*width:\s*92px;[^}]*height:\s*auto/s);
+  assert.match(about, /\.about-footer-inner img\s*\{[^}]*width:\s*92px;[^}]*height:\s*auto/s);
+  for (const [file] of publicPages) {
+    const html = await readBuiltPage(file);
+    const footer = html.match(/<footer[\s\S]*?<\/footer>/)?.[0] ?? "";
+    assert.match(footer, /src="\/assets\/images\/site-lockup-on-dark\.svg"/, file);
+    assert.doesNotMatch(footer, /brand-assets\/lockup-primary-on-dark\.svg/, file);
+  }
+  const lockup = await stat(new URL("assets/images/site-lockup-on-dark.svg", dist));
+  assert.ok(lockup.size < 25_000, `footer lockup is ${lockup.size} bytes`);
+});
+
+test("keeps the logo visible when forced colors repaint the page", async () => {
+  const globals = await readBuiltPage("assets/globals.css");
+  const block = globals.match(/@media \(forced-colors: active\)\s*\{([\s\S]*?)\n\}/)?.[1] ?? "";
+  for (const selector of [".site-logo", ".products-logo", ".about-logo", ".site-footer img", ".products-footer img", ".about-footer img"]) {
+    assert.ok(block.includes(selector), `${selector} needs a forced-colors plate`);
+  }
+  assert.match(block, /forced-color-adjust:\s*none/);
+  assert.match(block, /background:\s*#0d1117/);
+});
+
+test("ships small, legible site icons and a complete web manifest", async () => {
+  const [svg, icon32, ico, touch, icon192, icon512, manifestSource] = await Promise.all([
+    stat(new URL("assets/images/site-icon.svg", dist)),
+    stat(new URL("assets/images/site-icon-32.png", dist)),
+    stat(new URL("assets/images/site-icon.ico", dist)),
+    readFile(new URL("assets/images/site-apple-touch-icon.png", dist)),
+    stat(new URL("assets/images/site-icon-192.png", dist)),
+    stat(new URL("assets/images/site-icon-512.png", dist)),
+    readBuiltPage("site.webmanifest"),
+  ]);
+  assert.ok(svg.size <= 5_000, `favicon SVG is ${svg.size} bytes`);
+  assert.ok(icon32.size <= 5_000, `32px favicon is ${icon32.size} bytes`);
+  assert.ok(ico.size <= 8_000, `favicon.ico is ${ico.size} bytes`);
+  assert.ok(icon192.size > 0 && icon512.size > 0);
+
+  const { default: sharp } = await import("sharp");
+  const meta = await sharp(touch).metadata();
+  assert.equal(meta.width, 180);
+  assert.equal(meta.height, 180);
+  const { channels } = await sharp(touch).stats();
+  assert.ok(channels[0].mean > 10 && channels[0].mean < 120, "touch icon is a dark plate with a bright mark");
+  assert.equal(meta.hasAlpha, false, "touch icon must be fully opaque (iOS fills transparency black)");
+
+  const manifest = JSON.parse(manifestSource);
+  assert.equal(manifest.id, "/");
+  assert.equal(manifest.start_url, "/");
+  assert.equal(manifest.scope, "/");
+  assert.equal(manifest.display, "standalone");
+  assert.ok(manifest.icons.some((icon) => icon.purpose === "maskable"));
+  for (const icon of manifest.icons) {
+    await access(new URL(icon.src.slice(1), dist));
+  }
+
+  for (const file of allPages) {
+    const html = await readBuiltPage(file);
+    assert.match(html, /<link rel="icon" href="\/assets\/images\/site-icon\.svg" type="image\/svg\+xml">/, file);
+    assert.match(html, /<link rel="icon" href="\/assets\/images\/site-icon-32\.png" type="image\/png" sizes="32x32">/, file);
+    assert.match(html, /<link rel="apple-touch-icon" href="\/assets\/images\/site-apple-touch-icon\.png">/, file);
+    assert.match(html, /<link rel="manifest" href="\/site\.webmanifest">/, file);
+    assert.doesNotMatch(html, /brand-assets\/favicon/, `${file} must not load the 178 KB brand favicon`);
+  }
+});
+
+test("declares complete social metadata on the public pages", async () => {
+  for (const [file] of publicPages) {
+    const html = await readBuiltPage(file);
+    assert.match(html, /<meta property="og:site_name" content="Flid">/, file);
+    assert.match(html, /<meta property="og:image:width" content="1200">/, file);
+    assert.match(html, /<meta property="og:image:height" content="630">/, file);
+    assert.match(html, /<meta property="og:image:alt" content="[^"]+">/, file);
+    assert.match(html, /<meta name="twitter:image" content="https:\/\/flid\.ai\/brand-assets\/social\/share-dark-1200x630\.png">/, file);
+    assert.match(html, /<meta name="twitter:card" content="summary_large_image">/, file);
+    assert.match(html, /<meta property="og:image" content="https:\/\/flid\.ai\//, file);
+    assert.match(html, /<meta name="theme-color" content="#0d1117">/, file);
+  }
+});
+
+test("builds a branded 404 page, robots.txt, and sitemap.xml", async () => {
+  const [notFound, robots, sitemap] = await Promise.all([
+    readBuiltPage("404.html"),
+    readBuiltPage("robots.txt"),
+    readBuiltPage("sitemap.xml"),
+  ]);
+  assert.match(notFound, /<title>Page not found — Flid<\/title>/);
+  assert.match(notFound, /<meta name="robots" content="noindex">/);
+  assert.doesNotMatch(notFound, /rel="canonical"/);
+  assert.match(notFound, /<h1>[^<]+<\/h1>/);
+  for (const href of ["/", "/products/", "/about/"]) {
+    assert.match(notFound, new RegExp(`class="product-link" href="${href}"`));
+  }
+  assert.match(notFound, /Flid AI ApS · CVR 43463217 · Odense, Denmark/);
+  assert.match(notFound, /class="products-logo-wordmark"[^>]+site-wordmark-on-dark\.svg/);
+
+  assert.match(robots, /^User-agent: \*\nAllow: \/$/m);
+  assert.match(robots, /^Sitemap: https:\/\/flid\.ai\/sitemap\.xml$/m);
+  const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+  assert.deepEqual(urls, [
+    "https://flid.ai/",
+    "https://flid.ai/products/",
+    "https://flid.ai/about/",
+    "https://flid.ai/brand/",
+    "https://flid.ai/showcase/",
+    "https://flid.ai/generator/",
+  ]);
 });

@@ -14,27 +14,38 @@
     <meta name="twitter:card" content="summary_large_image">
     <title>Logo Showcase — Flid</title>
     <link rel="canonical" href="https://flid.ai/showcase/">
-    <link rel="icon" href="/brand-assets/favicon.svg" type="image/svg+xml">
-    <link rel="icon" href="/brand-assets/favicon/favicon.ico" sizes="any">
-    <link rel="icon" href="/brand-assets/favicon/favicon-32.png" type="image/png" sizes="32x32">
-    <link rel="apple-touch-icon" href="/brand-assets/favicon/apple-touch-icon.png">
-    <link rel="manifest" href="/brand-assets/favicon/site.webmanifest">
+    <link rel="icon" href="/assets/images/site-icon.svg" type="image/svg+xml">
+    <link rel="icon" href="/assets/images/site-icon.ico" sizes="any">
+    <link rel="icon" href="/assets/images/site-icon-32.png" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/assets/images/site-apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="preload" href="/assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400..700&amp;family=Inter:wght@400..700&amp;family=Space+Grotesk:wght@400..700&amp;display=swap" rel="stylesheet">
+    <!-- Only the archived wordmark studies use these faces, so they must not block first paint. -->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400..700&amp;family=Inter:wght@400..700&amp;family=Space+Grotesk:wght@400..700&amp;display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400..700&amp;family=Inter:wght@400..700&amp;family=Space+Grotesk:wght@400..700&amp;display=swap" rel="stylesheet"></noscript>
     <link rel="stylesheet" href="/assets/globals.css">
+    <link rel="stylesheet" href="/assets/identity-header.css">
     <link rel="stylesheet" href="/assets/showcase.css">
-    <script type="module" src="/assets/showcase.js"></script>
   </head>
   <body>
-    <main class="showcase-page">
-      <header class="showcase-header">
-        <a href="/" aria-label="Back to Flid home">FLID / IDENTITY LAB</a>
-        <nav aria-label="Logo showcase navigation">
-          <a href="/brand/">Brand guide ↗</a>
-          <a href="/generator">Generator ↗</a>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <main class="showcase-page" id="main" tabindex="-1">
+      <header class="showcase-header tool-header">
+        <div class="tool-header-brand">
+          <a class="tool-logo" href="/" aria-label="Flid home">
+            <img class="tool-logo-wordmark" src="/assets/images/site-wordmark-on-dark.svg" width="232" height="100" alt="">
+            <img class="tool-logo-mark" src="/assets/images/site-mark-on-dark.webp" width="192" height="192" alt="" aria-hidden="true">
+          </a>
+          <span class="tool-label">Identity lab</span>
+        </div>
+        <nav class="tool-header-nav" aria-label="Logo showcase navigation">
+          <a href="/brand/">Brand guide&nbsp;↗</a>
+          <a href="/generator">Generator&nbsp;↗</a>
           <span>SHOWCASE · STATIC</span>
         </nav>
+        <a class="tool-site-link" href="/">Public site&nbsp;↗</a>
       </header>
 
       <section class="showcase-hero">
