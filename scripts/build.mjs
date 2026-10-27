@@ -44,7 +44,18 @@ const copiedFiles = [
   ["vendor/geist/LICENSE.txt", "licenses/geist-OFL-1.1.txt"],
 ];
 
-export const leapviewScreenshotWidths = [720, 1080, 1440, 2160];
+// Product views shown in the products page galleries. Each source in
+// product-screenshots/ becomes AVIF and WebP copies at every width that does not
+// upscale it, named assets/images/products/<name>-<width>.<format>.
+export const productScreenshots = [
+  { name: "leapview-dashboard", widths: [720, 1080, 1440, 2160] },
+  { name: "leapview-metrics", widths: [720, 1080, 1440, 2160] },
+  { name: "leapview-charts", widths: [720, 1080, 1440, 2160] },
+  { name: "alloy-search", widths: [720, 1080, 1440, 2080] },
+  { name: "alloy-ask", widths: [720, 1080, 1440, 2080] },
+  { name: "alloy-part", widths: [720, 1080, 1440, 2080] },
+  { name: "alloy-data-quality", widths: [720, 1080, 1440, 2080] },
+];
 
 function normalizeBasePath(basePath) {
   if (!basePath || basePath === "/") return "";
@@ -102,20 +113,22 @@ export async function buildSite({
     await copyFile(join(root, source), target);
   }
 
-  const screenshotDirectory = join(outputDirectory, "assets/images");
+  const screenshotDirectory = join(outputDirectory, "assets/images/products");
   await mkdir(screenshotDirectory, { recursive: true });
-  const screenshot = sharp(join(root, "LeapView dashboard.png"));
   await Promise.all(
-    leapviewScreenshotWidths.flatMap((width) => {
-      const resized = screenshot.clone().resize(width);
-      const name = join(screenshotDirectory, `leapview-dashboard-dark-${width}`);
-      return [
-        resized
-          .clone()
-          .avif({ quality: 56, chromaSubsampling: "4:4:4", effort: 6 })
-          .toFile(`${name}.avif`),
-        resized.clone().webp({ quality: 82, effort: 5 }).toFile(`${name}.webp`),
-      ];
+    productScreenshots.flatMap(({ name, widths }) => {
+      const screenshot = sharp(join(root, "product-screenshots", `${name}.png`));
+      return widths.flatMap((width) => {
+        const resized = screenshot.clone().resize(width);
+        const target = join(screenshotDirectory, `${name}-${width}`);
+        return [
+          resized
+            .clone()
+            .avif({ quality: 56, chromaSubsampling: "4:4:4", effort: 4 })
+            .toFile(`${target}.avif`),
+          resized.clone().webp({ quality: 82, effort: 5 }).toFile(`${target}.webp`),
+        ];
+      });
     }),
   );
 

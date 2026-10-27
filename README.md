@@ -36,9 +36,10 @@ no application framework or runtime dependency.
 - `site/index.html` is the public product-lab homepage. It presents the
   agent-native thesis and team.
 - `site/products/` is the public product index. It presents LeapView first and
-  Alloy Catalog second. LeapView includes its product screenshot; Alloy’s
-  screenshot is deferred until current demo data with image previews is ready.
-  Product links open `leapview.dev` and `alloycatalog.com` respectively.
+  Alloy Catalog second. Each product has status labels, three capabilities,
+  links to its site, docs or demo, and a gallery of product views that
+  `site/assets/products.js` turns into tabs. Alloy's views are the product
+  previews published on `alloycatalog.com`.
 - `site/about/` is the public company and team page. The homepage keeps its
   founder-led company introduction while the full team lives on this route.
 - `site/assets/home.js` progressively enhances the hero and thesis with a shared
@@ -46,8 +47,9 @@ no application framework or runtime dependency.
   drives the animation; reduced-motion users receive the static narrative.
 - `site/brand/` is the canonical brand guide and asset reference.
 - `site/showcase/` and `site/generator/` are supporting identity tools.
-- `LeapView dashboard.png` is the source LeapView screenshot for the products
-  page. The static build turns it into AVIF and WebP images at several widths.
+- `product-screenshots/*.png` are the source product views for the products
+  page galleries. The static build turns each into AVIF and WebP images at
+  several widths (`productScreenshots` in `scripts/build.mjs`).
 - `app/**/*.css` contains the page styles.
 - `Jacob Østergaard 1.png`, `Ganesh Kambli.png`, and `Anand Bora.png` are the
   source portraits used to generate optimized WebP images during the static

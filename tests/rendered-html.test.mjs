@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { access, readFile, stat } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 import test from "node:test";
-import { leapviewScreenshotWidths } from "../scripts/build.mjs";
+import { productScreenshots } from "../scripts/build.mjs";
 
 const root = new URL("../", import.meta.url);
 // FLID_DIST points the suite at a build in another directory (preview builds).
@@ -253,11 +253,12 @@ test("builds the products page as a standalone static route", async () => {
   assert.match(html, /Products where agents do real work/i);
   assert.match(html, /LeapView/i);
   assert.match(html, /href="https:\/\/leapview\.dev\/"[^>]*>Visit LeapView\s*</i);
-  assert.match(html, /class="product-screenshot"/i);
   assert.match(
     html,
-    /<source type="image\/avif" srcset="\/assets\/images\/leapview-dashboard-dark-720\.avif 720w,[^"]+2160\.avif 2160w" sizes="[^"]+">\s*<img src="\/assets\/images\/leapview-dashboard-dark-1440\.webp" srcset="[^"]+-2160\.webp 2160w" sizes="[^"]+" width="1440" height="900" alt="LeapView dashboard showing filters, governed KPIs, charts, and order data"/i,
+    /<source type="image\/avif" srcset="\/assets\/images\/products\/leapview-dashboard-720\.avif 720w,[^"]+2160\.avif 2160w" sizes="[^"]+">\s*<img src="\/assets\/images\/products\/leapview-dashboard-1440\.webp" srcset="[^"]+-2160\.webp 2160w" sizes="[^"]+" width="1440" height="900" alt="LeapView Visual Showcase dashboard[^"]*" decoding="async" fetchpriority="high">/i,
   );
+  assert.match(html, /<script type="module" src="\/assets\/products\.js"><\/script>/);
+  assert.match(html, /href="https:\/\/alloycatalog\.com\/"[^>]*>Visit Alloy Catalog\s*</i);
   assert.match(html, /href="mailto:jacob@flid\.ai"[^>]*>Contact\s*</i);
   assert.match(html, /href="\/about\/"[^>]*>About\s*</i);
   assert.match(html, /class="products-logo-wordmark"[^>]+site-wordmark-on-dark\.svg/);
@@ -396,20 +397,59 @@ test("ships an optimized standalone hero wave field", async () => {
   assert.ok(background.size < 300_000, "hero wave field should stay below 300 KB");
 });
 
-test("ships an optimized LeapView product screenshot", async () => {
-  for (const width of leapviewScreenshotWidths) {
-    for (const format of ["avif", "webp"]) {
-      const screenshot = await stat(
-        new URL(`assets/images/leapview-dashboard-dark-${width}.${format}`, dist),
-      );
-      const budget = width <= 1080 ? 60_000 : 150_000;
+test("ships every product view as size-budgeted responsive images", async () => {
+  const html = await readBuiltPage("products/index.html");
+  for (const { name, widths } of productScreenshots) {
+    assert.match(html, new RegExp(`/assets/images/products/${name}-${widths.at(-1)}\\.avif ${widths.at(-1)}w`), `${name} is on the page`);
+    for (const width of widths) {
+      for (const format of ["avif", "webp"]) {
+        const screenshot = await stat(
+          new URL(`assets/images/products/${name}-${width}.${format}`, dist),
+        );
+        const budget = width <= 1080 ? 60_000 : 150_000;
 
-      assert.ok(
-        screenshot.size < budget,
-        `LeapView screenshot ${width}.${format} should stay below ${budget / 1000} KB`,
-      );
+        assert.ok(
+          screenshot.size < budget,
+          `${name}-${width}.${format} should stay below ${budget / 1000} KB`,
+        );
+      }
     }
   }
+});
+
+test("gives both products the same card: status, capabilities, links, and a view gallery", async () => {
+  const html = await readBuiltPage("products/index.html");
+  for (const [id, views] of [["leapview", 3], ["alloy-catalog", 4]]) {
+    const card = html.match(new RegExp(`<article class="product-card" id="${id}"[\\s\\S]*?</article>`))?.[0] ?? "";
+    assert.ok(card, `${id} card exists`);
+    assert.match(card, /<ul class="product-status"[^>]*>[\s\S]*?In development<\/li>/);
+    assert.equal(card.match(/<li><strong>/g)?.length, 3, `${id} lists three capabilities`);
+    assert.ok((card.match(/class="product-link product-link-quiet"/g)?.length ?? 0) >= 3, `${id} has secondary links`);
+    assert.equal(card.match(/role="tab" /g)?.length, views, `${id} tab count`);
+    assert.equal(card.match(/role="tabpanel"/g)?.length, views, `${id} panel count`);
+    assert.equal(card.match(/aria-selected="true"/g)?.length, 1, `${id} selects one tab`);
+    assert.equal(card.match(/role="tabpanel"[^>]*hidden>/g)?.length, views - 1, `${id} hides all but the first view`);
+    for (const [, controls] of card.matchAll(/aria-controls="([^"]+)"/g)) {
+      assert.match(card, new RegExp(`id="${controls}"`), `${controls} panel exists`);
+    }
+  }
+  // Status labels must not look or behave like links.
+  assert.doesNotMatch(html, /<a[^>]*>\s*(?:Open source|In development)\s*</i);
+});
+
+test("switches product views with an accessible tab script", async () => {
+  const [script, styles] = await Promise.all([
+    readBuiltPage("assets/products.js"),
+    readBuiltPage("assets/products.css"),
+  ]);
+  assert.match(script, /setAttribute\("aria-selected"/);
+  assert.match(script, /ArrowRight[\s\S]*ArrowLeft[\s\S]*Home[\s\S]*End/);
+  assert.match(script, /\.hidden = !selected/);
+  // Views stack in one grid cell so switching tabs never shifts the page.
+  assert.match(styles, /\.product-view\s*\{[^}]*grid-area:\s*1 \/ 1/s);
+  assert.match(styles, /\.product-view\[hidden\]\s*\{[^}]*display:\s*block;[^}]*visibility:\s*hidden/s);
+  assert.match(styles, /\.product-tabs button\s*\{[^}]*min-height:\s*44px/s);
+  assert.match(styles, /\.product-tabs:has\(> :nth-child\(4\)\)\s*\{[^}]*repeat\(2,/s);
 });
 
 test("builds the interactive generator as plain HTML and JavaScript", async () => {
@@ -686,7 +726,7 @@ test("stacks About team captions by card width so bios align", async () => {
 
 test("keeps the screenshot focus ring inside its clipping frame", async () => {
   const products = await readBuiltPage("assets/products.css");
-  assert.match(products, /\.product-screenshot a:focus-visible\s*\{[^}]*outline-offset:\s*-3px/s);
+  assert.match(products, /\.product-view a:focus-visible\s*\{[^}]*outline-offset:\s*-3px/s);
 });
 
 test("sizes footer logos to their intrinsic ratio and ships a light footer lockup", async () => {
