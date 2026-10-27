@@ -44,6 +44,8 @@ const copiedFiles = [
   ["vendor/geist/LICENSE.txt", "licenses/geist-OFL-1.1.txt"],
 ];
 
+export const leapviewScreenshotWidths = [720, 1080, 1440, 2160];
+
 function normalizeBasePath(basePath) {
   if (!basePath || basePath === "/") return "";
   const normalized = `/${basePath}`.replace(/\/+/g, "/").replace(/\/$/, "");
@@ -99,6 +101,23 @@ export async function buildSite({
     await mkdir(dirname(target), { recursive: true });
     await copyFile(join(root, source), target);
   }
+
+  const screenshotDirectory = join(outputDirectory, "assets/images");
+  await mkdir(screenshotDirectory, { recursive: true });
+  const screenshot = sharp(join(root, "LeapView dashboard.png"));
+  await Promise.all(
+    leapviewScreenshotWidths.flatMap((width) => {
+      const resized = screenshot.clone().resize(width);
+      const name = join(screenshotDirectory, `leapview-dashboard-dark-${width}`);
+      return [
+        resized
+          .clone()
+          .avif({ quality: 56, chromaSubsampling: "4:4:4", effort: 6 })
+          .toFile(`${name}.avif`),
+        resized.clone().webp({ quality: 82, effort: 5 }).toFile(`${name}.webp`),
+      ];
+    }),
+  );
 
   const portraits = [
     ["Jacob Østergaard 1.png", "jacob-oestergaard.webp"],

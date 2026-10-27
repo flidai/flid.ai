@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { access, readFile, stat } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 import test from "node:test";
+import { leapviewScreenshotWidths } from "../scripts/build.mjs";
 
 const root = new URL("../", import.meta.url);
 // FLID_DIST points the suite at a build in another directory (preview builds).
@@ -255,7 +256,7 @@ test("builds the products page as a standalone static route", async () => {
   assert.match(html, /class="product-screenshot"/i);
   assert.match(
     html,
-    /<img[^>]+src="\/assets\/images\/leapview-dashboard-dark\.png"[^>]+width="1440"[^>]+height="900"[^>]+alt="LeapView dashboard showing filters, governed KPIs, charts, and order data"/i,
+    /<source type="image\/avif" srcset="\/assets\/images\/leapview-dashboard-dark-720\.avif 720w,[^"]+2160\.avif 2160w" sizes="[^"]+">\s*<img src="\/assets\/images\/leapview-dashboard-dark-1440\.webp" srcset="[^"]+-2160\.webp 2160w" sizes="[^"]+" width="1440" height="900" alt="LeapView dashboard showing filters, governed KPIs, charts, and order data"/i,
   );
   assert.match(html, /href="mailto:jacob@flid\.ai"[^>]*>Contact\s*</i);
   assert.match(html, /href="\/about\/"[^>]*>About\s*</i);
@@ -396,11 +397,19 @@ test("ships an optimized standalone hero wave field", async () => {
 });
 
 test("ships an optimized LeapView product screenshot", async () => {
-  const screenshot = await stat(
-    new URL("assets/images/leapview-dashboard-dark.png", dist),
-  );
+  for (const width of leapviewScreenshotWidths) {
+    for (const format of ["avif", "webp"]) {
+      const screenshot = await stat(
+        new URL(`assets/images/leapview-dashboard-dark-${width}.${format}`, dist),
+      );
+      const budget = width <= 1080 ? 60_000 : 150_000;
 
-  assert.ok(screenshot.size < 250_000, "LeapView screenshot should stay below 250 KB");
+      assert.ok(
+        screenshot.size < budget,
+        `LeapView screenshot ${width}.${format} should stay below ${budget / 1000} KB`,
+      );
+    }
+  }
 });
 
 test("builds the interactive generator as plain HTML and JavaScript", async () => {

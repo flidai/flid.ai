@@ -46,8 +46,8 @@ no application framework or runtime dependency.
   drives the animation; reduced-motion users receive the static narrative.
 - `site/brand/` is the canonical brand guide and asset reference.
 - `site/showcase/` and `site/generator/` are supporting identity tools.
-- `site/assets/images/leapview-dashboard-dark.png` is the committed LeapView
-  product proof shown on the products page.
+- `LeapView dashboard.png` is the source LeapView screenshot for the products
+  page. The static build turns it into AVIF and WebP images at several widths.
 - `app/**/*.css` contains the page styles.
 - `Jacob Østergaard 1.png`, `Ganesh Kambli.png`, and `Anand Bora.png` are the
   source portraits used to generate optimized WebP images during the static
