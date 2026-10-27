@@ -57,7 +57,12 @@
   transition: transform 720ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.about-logo:hover .about-logo-mark,
+@media (hover: hover) {
+  .about-logo:hover .about-logo-mark {
+    transform: rotate(360deg);
+  }
+}
+
 .about-logo:focus-visible .about-logo-mark {
   transform: rotate(360deg);
 }
@@ -70,11 +75,26 @@
   font-weight: 520;
 }
 
+.about-header nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.about-header nav a[aria-current="page"] {
+  color: var(--fgColor-default);
+}
+
 .about-page a {
   transition: color 180ms ease;
 }
 
-.about-page a:hover,
+@media (hover: hover) {
+  .about-page a:hover {
+    color: var(--fgColor-accent);
+  }
+}
+
 .about-page a:focus-visible {
   color: var(--fgColor-accent);
 }
@@ -266,6 +286,15 @@
   color: var(--fgColor-default);
 }
 
+/* Pad the 12px-tall name link to a 44px touch target without moving the caption. */
+.about-team-member figcaption h3 a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7em;
+  min-height: 44px;
+  margin-block: -16px;
+}
+
 .about-team-member > p {
   max-width: 570px;
   margin: 18px 0 0;
@@ -289,8 +318,9 @@
   display: inline-flex;
   align-items: center;
   gap: 28px;
-  margin-top: 42px;
-  padding-bottom: 9px;
+  min-height: 44px;
+  margin-top: 32px;
+  padding-block: 10px 9px;
   border-bottom: 1px solid currentColor;
   font-weight: 620;
 }
@@ -323,12 +353,35 @@
     gap: 56px;
   }
 
+  /* One column of photo + bio rows avoids an orphan card in a two-column grid. */
   .about-team-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
+    gap: 64px;
+  }
+
+  .about-team-member {
+    display: grid;
+    grid-template-columns: minmax(200px, 0.8fr) minmax(0, 1.2fr);
+    gap: 40px;
+    align-items: start;
+  }
+
+  .about-team-member > p {
+    margin-top: 0;
+  }
+
+  .about-team-member figcaption {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
   }
 }
 
 @media (max-width: 720px) {
+  .about-shell {
+    padding-inline: 20px;
+  }
+
   .about-header-inner {
     min-height: 70px;
   }
@@ -337,9 +390,16 @@
     width: 96px;
   }
 
+  /* Extend the 41px-tall logo link to a 44px touch target. */
+  .about-logo::after {
+    position: absolute;
+    inset: -2px 0;
+    content: "";
+  }
+
   .about-header nav {
-    gap: 14px;
-    font-size: 11px;
+    gap: 18px;
+    font-size: 13px;
   }
 
   .about-hero {
@@ -357,20 +417,28 @@
   }
 
   .about-team-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .about-team-grid {
     gap: 68px;
-  }
-
-  .about-team-member figcaption {
-    gap: 18px;
   }
 
   .about-footer-inner {
     align-items: flex-start;
     flex-direction: column;
+  }
+}
+
+@media (max-width: 560px) {
+  .about-team-member {
+    display: block;
+  }
+
+  .about-team-member figcaption {
+    align-items: baseline;
+    flex-direction: row;
+    gap: 18px;
+  }
+
+  .about-team-member > p {
+    margin-top: 18px;
   }
 }
 

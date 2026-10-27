@@ -78,6 +78,21 @@ func TestStaticHandlerSupportsHeadAndByteRanges(t *testing.T) {
 	}
 }
 
+func TestStaticHandlerServesWebManifestType(t *testing.T) {
+	root := fixtureSite(t)
+	writeFixture(t, filepath.Join(root, "favicon", "site.webmanifest"), "{}")
+	handler, err := newStaticHandler(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	response := httptest.NewRecorder()
+	handler.ServeHTTP(response, httptest.NewRequest(http.MethodGet, "/favicon/site.webmanifest", nil))
+	if response.Header().Get("Content-Type") != "application/manifest+json" {
+		t.Fatalf("Content-Type = %q", response.Header().Get("Content-Type"))
+	}
+}
+
 func TestStaticHandlerRejectsUnsupportedAndUnsafeRequests(t *testing.T) {
 	root := fixtureSite(t)
 	handler, err := newStaticHandler(root)

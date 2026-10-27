@@ -63,16 +63,34 @@ test("creates a monochrome signal pattern cut from a circular silhouette", () =>
     accent: "#44e3ff",
   });
 
-  assert.match(svg, /<mask id="flid-silhouette-8-60"/);
+  const maskId = svg.match(/<mask id="(flid-silhouette-8-60-[0-9a-f]{8})"/)?.[1];
+
+  assert.ok(maskId, "mask id carries a geometry hash");
   assert.match(svg, /<circle cx="50" cy="50" r="45\.5" fill="#fff"\/>/);
   assert.match(svg, /<circle cx="50" cy="50" r="[^"]+" fill="#000"\/>/);
-  assert.match(
-    svg,
-    /<circle cx="50" cy="50" r="45\.5" fill="#f0f1e9" mask="url\(#flid-silhouette-8-60\)"\/>/,
+  assert.ok(
+    svg.includes(`<circle cx="50" cy="50" r="45.5" fill="#f0f1e9" mask="url(#${maskId})"/>`),
   );
   assert.match(svg, /<path data-curve-outline="true"[^>]+fill="#000"/);
   assert.doesNotMatch(svg, /(?:\s|<)stroke=|(?:\s|<)stroke-width=|vector-effect=/);
   assert.doesNotMatch(svg, /#44e3ff/);
+});
+
+test("gives silhouettes with different geometry different mask ids", () => {
+  const maskId = (options) =>
+    generateLogoSvg({ mode: "silhouette", layers: 8, ...options }).match(
+      /<mask id="([^"]+)"/,
+    )[1];
+
+  // Same layer and mark counts, different cut geometry: ids must not collide in one document.
+  assert.notEqual(maskId({ strokeWidth: 0.7 }), maskId({ strokeWidth: 1.05 }));
+  assert.notEqual(maskId({ curl: 0.88 }), maskId({ curl: 1.2 }));
+  assert.notEqual(maskId({ twist: 0 }), maskId({ twist: 12 }));
+  // Identical geometry stays deterministic, and padding/colour never affect the mask.
+  assert.equal(
+    maskId({ strokeWidth: 0.7 }),
+    maskId({ strokeWidth: 0.7, padding: 12, foreground: "#123456" }),
+  );
 });
 
 test("scales the complete silhouette pattern inward without clipping marks", () => {

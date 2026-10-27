@@ -35,14 +35,15 @@ no application framework or runtime dependency.
 
 - `site/index.html` is the public product-lab homepage. It presents the
   agent-native thesis and team.
-- `site/products/` is the public product index. It presents LeapView with a
-  current product screenshot and links to the product site.
+- `site/products/` is the public product index. It presents LeapView first and
+  Alloy Catalog second. LeapView includes its product screenshot; Alloy’s
+  screenshot is deferred until current demo data with image previews is ready.
+  Product links open `leapview.dev` and `alloycatalog.com` respectively.
 - `site/about/` is the public company and team page. The homepage keeps its
   founder-led company introduction while the full team lives on this route.
-- `site/assets/home.js` progressively enhances the hero and desktop thesis
-  story with the canonical 12-layer signal model. The thesis morph is driven
-  by scroll position; tablets, phones, and reduced-motion users receive the
-  complete static narrative instead.
+- `site/assets/home.js` progressively enhances the hero and thesis with a shared
+  video-driven particle field on desktop, tablets, and phones. Scroll position
+  drives the animation; reduced-motion users receive the static narrative.
 - `site/brand/` is the canonical brand guide and asset reference.
 - `site/showcase/` and `site/generator/` are supporting identity tools.
 - `site/assets/images/leapview-dashboard-dark.png` is the committed LeapView

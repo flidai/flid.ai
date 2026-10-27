@@ -3,13 +3,17 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0d1117">
+    <meta name="color-scheme" content="dark">
     <meta name="description" content="The source of truth for the Flid identity, logo, naming, sizing, color, and generator.">
     <meta property="og:title" content="Flid brand guide">
     <meta property="og:description" content="The source of truth for the Flid identity.">
-    <meta property="og:image" content="/brand-assets/social/share-dark-1200x630.png">
+    <meta property="og:image" content="https://flid.ai/brand-assets/social/share-dark-1200x630.png">
     <meta property="og:type" content="website">
+    <meta property="og:url" content="https://flid.ai/brand/">
     <meta name="twitter:card" content="summary_large_image">
     <title>Brand Guide — Flid</title>
+    <link rel="canonical" href="https://flid.ai/brand/">
     <link rel="icon" href="/brand-assets/favicon.svg" type="image/svg+xml">
     <link rel="icon" href="/brand-assets/favicon/favicon.ico" sizes="any">
     <link rel="icon" href="/brand-assets/favicon/favicon-32.png" type="image/png" sizes="32x32">
@@ -26,9 +30,9 @@
           <img class="guide-lockup-asset guide-lockup-compact" src="/brand-assets/lockup-primary-on-dark.svg" alt="">
         </a>
         <nav aria-label="Brand guide navigation">
-          <a href="#foundation">Foundation</a><a href="#logo">Logo</a><a href="#scale">Scale</a><a href="#assets">Assets</a>
+          <a href="#foundation">Foundation</a><a href="#logo">Logo</a><a href="#scale">Scale</a><a class="guide-nav-more" href="#typography">Type</a><a class="guide-nav-more" href="#color">Color</a><a class="guide-nav-more" href="#usage">Rules</a><a href="#assets">Assets</a><a class="guide-nav-more" href="#generator">Source</a><a class="guide-nav-extra" href="/showcase">Explorations ↗</a><a class="guide-nav-extra" href="/generator">Generator ↗</a>
         </nav>
-        <div class="guide-header-actions"><a href="/">Public site ↗</a><a href="/showcase">Explorations ↗</a><a href="/generator">Live generator ↗</a></div>
+        <div class="guide-header-actions"><a href="/">Public site ↗</a><a class="guide-action-secondary" href="/showcase">Explorations ↗</a><a class="guide-action-secondary" href="/generator">Live generator ↗</a></div>
       </header>
 
       <section class="guide-hero">
@@ -129,7 +133,7 @@
         <div class="guide-section-heading"><span>08 / GENERATOR SOURCE</span><div><h2>The identity is reproducible.</h2><p>The approved parameters recreate the primary mark. The full source below is loaded from the exact module used by this site.</p></div></div>
         <div class="generator-layout">
           <div class="generator-intro"><span>APPROVED RECIPE</span><dl><div><dt>Mode</dt><dd>line</dd></div><div><dt>Layers</dt><dd>12</dd></div><div><dt>Curl</dt><dd>0.88</dd></div><div><dt>Stroke</dt><dd>0.58</dd></div><div><dt>Padding</dt><dd>10</dd></div><div><dt>Accents</dt><dd>0</dd></div></dl><a href="/generator">Open live generator ↗</a></div>
-          <pre class="guide-code guide-code-usage"><code>import { generateLogoSvg } from "./lib/logo-generator.mjs";
+          <pre class="guide-code guide-code-usage" tabindex="0" role="region" aria-label="Generator usage example"><code>import { generateLogoSvg } from "./lib/logo-generator.mjs";
 
 const primaryMark = generateLogoSvg({
   mode: "line",
@@ -142,7 +146,7 @@ const primaryMark = generateLogoSvg({
   foreground: "#f0f6fc",
 });</code></pre>
         </div>
-        <details class="guide-code guide-code-source"><summary>View full generator source</summary><pre><code data-generator-source>Loading source…</code></pre></details>
+        <details class="guide-code guide-code-source"><summary>View full generator source</summary><pre tabindex="0" role="region" aria-label="Generator source code"><code data-generator-source>Loading source…</code></pre></details>
       </section>
 
       <footer class="guide-footer">

@@ -105,7 +105,38 @@ export async function buildSite({
   );
 
   await generateBrandAssets(join(outputDirectory, "brand-assets"));
+  await buildHeaderLogoAssets(outputDirectory);
   await applyBasePath(outputDirectory, basePath);
+}
+
+// The canonical lockup and mark SVGs outline all 134 signal curves (~180 KB
+// each). The site header only needs the wordmark and a 48 px mark, so derive
+// lightweight copies from the generated brand assets instead of shipping the
+// full outlines on every first page load.
+export async function buildHeaderLogoAssets(outputDirectory) {
+  const brandDirectory = join(outputDirectory, "brand-assets");
+  const imageDirectory = join(outputDirectory, "assets/images");
+  await mkdir(imageDirectory, { recursive: true });
+
+  const lockup = await readFile(
+    join(brandDirectory, "lockup-primary-on-dark.svg"),
+    "utf8",
+  );
+  const viewBox = lockup.match(/^<svg[^>]*\sviewBox="([^"]+)"/)?.[1];
+  const wordmark = lockup.match(/<path data-wordmark-outline="flid"[^>]*\/>/)?.[0];
+  if (!viewBox || !wordmark) {
+    throw new Error("The primary lockup no longer contains an outlined wordmark.");
+  }
+  await writeFile(
+    join(imageDirectory, "site-wordmark-on-dark.svg"),
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" aria-hidden="true">${wordmark}</svg>\n`,
+    "utf8",
+  );
+
+  await sharp(join(brandDirectory, "mark-primary-on-dark.svg"), { density: 288 })
+    .resize(192, 192)
+    .webp({ quality: 90, alphaQuality: 100, effort: 6 })
+    .toFile(join(imageDirectory, "site-mark-on-dark.webp"));
 }
 
 if (

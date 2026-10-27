@@ -113,8 +113,18 @@ test("uses video depth, edge recovery, and point perspective without transition 
   assert.match(depthVertexShader, /sourceContentMask/);
   assert.match(
     depthVertexShader,
-    /1\.0\s*-\s*smoothstep\(0\.11,\s*0\.14,\s*uv\.y\)/,
+    /1\.0\s*-\s*smoothstep\(0\.11,\s*0\.30,\s*uv\.y\)/,
     "the source mask must cover the full embedded demo watermark",
+  );
+  assert.match(
+    depthVertexShader,
+    /smoothstep\(0\.48,\s*0\.64,\s*uv\.x\)/,
+    "the watermark mask must stay fully opaque from x = 0.64 and feather outward",
+  );
+  assert.match(
+    depthVertexShader,
+    /smoothstep\(0\.0,\s*0\.09,\s*edgeDistance\.y\)/,
+    "the bright top and bottom source rows must feather out instead of forming a seam",
   );
   assert.doesNotMatch(depthVertexShader, /uAvoidRect|rectangleInfluence/);
   assert.doesNotMatch(
@@ -198,4 +208,77 @@ test("paces video seeking instead of chasing every scroll event", () => {
     DepthVideoStory.prototype.seekRecord.toString(),
     /fastSeek/,
   );
+});
+
+test("displays a decoded frame before a continuing scroll starts the next seek", () => {
+  const record = {
+    width: 640, height: 360, seekInFlight: false,
+    needsTextureUpdate: true, uploadedTime: 0, decodedTime: 1,
+  };
+  const gl = new Proxy({}, { get: () => () => {} });
+  const renderer = {
+    disposed: false, vertexCount: 100, progress: 0.5, records: [record],
+    gl, uniforms: {}, canvas: { clientWidth: 390, clientHeight: 456 },
+    pointer: { x: 0, y: 0 }, color: "#f0f6fc", entrance: 1,
+    planeScale: () => [1, 1],
+    uploadRecord(frame) {
+      if (frame.needsTextureUpdate && !frame.seekInFlight) {
+        frame.uploadedTime = frame.decodedTime;
+        frame.needsTextureUpdate = false;
+      }
+    },
+    seekRecord(frame) { frame.seekInFlight = true; },
+  };
+  const originalDpr = globalThis.devicePixelRatio;
+  globalThis.devicePixelRatio = 1;
+  try {
+    DepthVideoStory.prototype.render.call(renderer, 100);
+    assert.equal(record.uploadedTime, 1, "the completed frame must reach the GPU");
+    assert.equal(record.seekInFlight, true, "scrubbing must continue to the next frame");
+  } finally {
+    if (originalDpr === undefined) delete globalThis.devicePixelRatio;
+    else globalThis.devicePixelRatio = originalDpr;
+  }
+});
+
+test("renders from the cached canvas size without forcing layout", () => {
+  const record = {
+    width: 640, height: 360, seekInFlight: false,
+    needsTextureUpdate: false, uploadedTime: 0, decodedTime: 0,
+  };
+  const viewport = [];
+  const gl = new Proxy({}, {
+    get: (_, name) => (...args) => {
+      if (name === "uniform2f" && args[0] === "uViewport") viewport.push(args.slice(1));
+    },
+  });
+  const canvas = {};
+  for (const name of ["clientWidth", "clientHeight"]) {
+    Object.defineProperty(canvas, name, {
+      get() { throw new Error(`render must not read canvas.${name}`); },
+    });
+  }
+  const renderer = {
+    disposed: false, contextLost: false, vertexCount: 100, progress: 0.5,
+    records: [record], gl, uniforms: { uViewport: "uViewport" }, canvas,
+    cssWidth: 390, cssHeight: 456,
+    pointer: { x: 0, y: 0 }, color: "#f0f6fc", entrance: 1,
+    planeScale: DepthVideoStory.prototype.planeScale,
+    uploadRecord() {},
+    seekRecord() {},
+  };
+  const originalDpr = globalThis.devicePixelRatio;
+  globalThis.devicePixelRatio = 3;
+  try {
+    DepthVideoStory.prototype.render.call(renderer, 100);
+    assert.deepEqual(viewport, [[390, 456]]);
+
+    viewport.length = 0;
+    renderer.contextLost = true;
+    assert.equal(DepthVideoStory.prototype.render.call(renderer, 116), undefined);
+    assert.deepEqual(viewport, [], "a lost WebGL context must not receive draws");
+  } finally {
+    if (originalDpr === undefined) delete globalThis.devicePixelRatio;
+    else globalThis.devicePixelRatio = originalDpr;
+  }
 });

@@ -5,6 +5,7 @@
   --showcase-muted: var(--fgColor-muted);
   --showcase-line: var(--borderColor-muted);
   --showcase-accent: var(--fgColor-accent);
+  --text-micro: 0.6875rem;
   --lockup-mark-size: clamp(104px, 8.5vw, 136px);
   --lockup-wordmark-size: clamp(3rem, 4.2vw, 4.75rem);
   --lockup-gap: clamp(18px, 2vw, 30px);
@@ -17,8 +18,10 @@
   min-height: 74px;
   padding-inline: clamp(20px, 3.5vw, 56px);
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
+  column-gap: 20px;
   border-bottom: 1px solid var(--showcase-line);
   color: var(--showcase-muted);
   font-family: var(--font-geist-mono), monospace;
@@ -33,12 +36,15 @@
 
 .showcase-header nav {
   display: flex;
-  gap: 28px;
+  flex-wrap: wrap;
+  gap: 0 28px;
 }
 
-.showcase-header a:hover,
-.showcase-footer a:hover {
-  color: var(--showcase-accent);
+@media (hover: hover) {
+  .showcase-header a:hover,
+  .showcase-footer a:hover {
+    color: var(--showcase-accent);
+  }
 }
 
 .showcase-page a:focus-visible {
@@ -71,8 +77,14 @@
   text-transform: uppercase;
 }
 
+.showcase-hero-copy,
+.showcase-hero-preview {
+  min-width: 0;
+}
+
 .showcase-hero-copy h1 {
   max-width: 800px;
+  overflow-wrap: anywhere;
   margin: 38px 0 34px;
   font-size: clamp(4.2rem, 7.6vw, 8.4rem);
   font-weight: 430;
@@ -444,7 +456,6 @@
   letter-spacing: 0.06em;
   text-align: right;
   text-transform: uppercase;
-  white-space: nowrap;
 }
 
 .application-grid {
@@ -691,11 +702,12 @@
   }
 
   .application-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .application-card {
-    min-height: 520px;
+    min-height: 0;
+    aspect-ratio: 3 / 1;
   }
 
   .application-card:first-child {
@@ -724,12 +736,9 @@
     min-height: 600px;
   }
 
-  .scale-board {
-    overflow-x: auto;
-  }
-
   .scale-sample {
-    min-width: 760px;
+    grid-template-columns: 130px minmax(0, 1fr) 130px;
+    gap: 24px;
   }
 }
 
@@ -814,8 +823,13 @@
   }
 
   .application-card {
-    min-height: 420px;
+    min-height: 0;
     padding: 48px 20px;
+    aspect-ratio: 16 / 10;
+  }
+
+  .application-card > span {
+    bottom: 16px;
   }
 
   .type-study-grid {
@@ -883,6 +897,124 @@
   .showcase-footer p {
     grid-column: 1 / -1;
     grid-row: 2;
+  }
+}
+
+/* Large text sizes wrap lockups and captions instead of widening the page. */
+.type-study-lockup,
+.lockup-sample-logo,
+.reverse-study-lockup,
+.application-lockup,
+.showcase-lockup-logo {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.type-study-card > header,
+.lockup-sample footer,
+.reverse-study-card footer,
+.hero-preview-meta {
+  flex-wrap: wrap;
+}
+
+.type-study-card > footer p,
+.showcase-footer p {
+  overflow-wrap: anywhere;
+}
+
+/* Touch-sized targets on tablets, phone landscape, and any coarse pointer. */
+@media (max-width: 1080px), (pointer: coarse) {
+  .showcase-header > a,
+  .showcase-header nav a,
+  .showcase-footer a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .showcase-header > a,
+  .showcase-header nav a {
+    white-space: nowrap;
+  }
+}
+
+/* 11px floor for labels. */
+@media (max-width: 1080px) {
+  .showcase-header,
+  .showcase-hero-copy > p,
+  .showcase-section-heading > span,
+  .hero-preview-meta,
+  .matrix-variation > span,
+  .matrix-variation p,
+  .lockup-sample footer,
+  .type-study-card > header,
+  .type-study-card > footer span,
+  .application-card > span,
+  .reverse-study-card footer,
+  .scale-sample header span,
+  .scale-sample > span,
+  .showcase-footer a {
+    font-size: var(--text-micro);
+  }
+}
+
+@media (max-width: 720px) {
+  .showcase-header {
+    min-height: 64px;
+  }
+
+  .showcase-header nav {
+    column-gap: 20px;
+  }
+
+  /* Scale ladder: restack each row instead of scrolling sideways. */
+  .scale-sample {
+    min-height: 0;
+    padding-block: 28px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
+  }
+
+  .scale-sample header {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .scale-sample > span {
+    text-align: left;
+  }
+
+  .lockup-sample footer,
+  .reverse-study-card footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .reverse-study-card footer span {
+    text-align: left;
+  }
+
+  /* 14px for body copy. */
+  .type-study-card > footer p,
+  .showcase-footer p {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 440px) {
+  .showcase-header {
+    padding-inline: 16px;
+    flex-wrap: wrap;
+    column-gap: 12px;
+    letter-spacing: 0.02em;
+  }
+
+  .showcase-header nav {
+    column-gap: 10px;
   }
 }
 

@@ -36,6 +36,8 @@
 html {
   scroll-behavior: smooth;
   background: var(--bgColor-default);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
@@ -55,6 +57,14 @@ button,
 a,
 summary {
   -webkit-tap-highlight-color: transparent;
+  /* Quick repeated taps on controls must not trigger double-tap zoom. */
+  touch-action: manipulation;
+}
+
+/* Pages that define their own :focus-visible rules override this by specificity. */
+:where(a, button, summary):focus-visible {
+  outline: 2px solid var(--fgColor-accent);
+  outline-offset: 3px;
 }
 
 ::selection {

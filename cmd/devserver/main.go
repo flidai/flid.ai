@@ -15,18 +15,19 @@ import (
 )
 
 var contentTypes = map[string]string{
-	".css":  "text/css; charset=utf-8",
-	".html": "text/html; charset=utf-8",
-	".ico":  "image/x-icon",
-	".js":   "text/javascript; charset=utf-8",
-	".jpeg": "image/jpeg",
-	".jpg":  "image/jpeg",
-	".mjs":  "text/javascript; charset=utf-8",
-	".mp4":  "video/mp4",
-	".png":  "image/png",
-	".svg":  "image/svg+xml",
-	".txt":  "text/plain; charset=utf-8",
-	".webp": "image/webp",
+	".css":         "text/css; charset=utf-8",
+	".html":        "text/html; charset=utf-8",
+	".ico":         "image/x-icon",
+	".js":          "text/javascript; charset=utf-8",
+	".jpeg":        "image/jpeg",
+	".jpg":         "image/jpeg",
+	".mjs":         "text/javascript; charset=utf-8",
+	".mp4":         "video/mp4",
+	".png":         "image/png",
+	".svg":         "image/svg+xml",
+	".txt":         "text/plain; charset=utf-8",
+	".webmanifest": "application/manifest+json",
+	".webp":        "image/webp",
 }
 
 type staticHandler struct {

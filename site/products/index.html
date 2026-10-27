@@ -3,10 +3,12 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0d1117">
+    <meta name="color-scheme" content="dark">
     <meta name="description" content="Products from Flid, an independent lab building agent-native software.">
     <meta property="og:title" content="Products — Flid">
     <meta property="og:description" content="Products where agents do real work.">
-    <meta property="og:image" content="/brand-assets/social/share-dark-1200x630.png">
+    <meta property="og:image" content="https://flid.ai/brand-assets/social/share-dark-1200x630.png">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://flid.ai/products/">
     <meta name="twitter:card" content="summary_large_image">
@@ -25,11 +27,11 @@
       <header class="products-header">
         <div class="products-shell products-header-inner">
           <a class="products-logo" href="/" aria-label="Flid home">
-            <img class="products-logo-wordmark" src="/brand-assets/lockup-primary-on-dark.svg" alt="">
-            <img class="products-logo-mark" src="/brand-assets/mark-primary-on-dark.svg" alt="" aria-hidden="true">
+            <img class="products-logo-wordmark" src="/assets/images/site-wordmark-on-dark.svg" width="232" height="100" alt="">
+            <img class="products-logo-mark" src="/assets/images/site-mark-on-dark.webp" width="192" height="192" alt="" aria-hidden="true">
           </a>
           <nav aria-label="Main navigation">
-            <a href="/products/">Products</a>
+            <a href="/products/" aria-current="page">Products</a>
             <a href="/about/">About</a>
             <a href="mailto:jacob@flid.ai">Contact</a>
           </nav>
@@ -47,7 +49,7 @@
 
       <section class="products-list" aria-label="Flid products">
         <div class="products-shell">
-          <article class="product-card">
+          <article class="product-card" id="leapview">
             <div class="product-card-index">01</div>
             <div class="product-card-body">
               <p class="products-kicker">OPEN SOURCE / IN DEVELOPMENT</p>
@@ -67,6 +69,20 @@
               </a>
             </figure>
           </article>
+          <article class="product-card" id="alloy-catalog">
+            <div class="product-card-index">02</div>
+            <div class="product-card-body">
+              <p class="products-kicker">ENGINEERING KNOWLEDGE / IN DEVELOPMENT</p>
+              <h2>Alloy Catalog</h2>
+              <p class="product-card-summary">Your parts, assemblies, and drawings. Connected. Find engineering files, trace where parts are used, and explore the relationships behind a design—from one searchable catalog built for people and agents.</p>
+              <div class="product-capabilities" aria-label="Alloy Catalog capabilities">
+                <span>Search engineering files</span>
+                <span>Assembly relationships</span>
+                <span>Agent-ready access</span>
+              </div>
+              <a class="product-link" href="https://alloycatalog.com/">Visit Alloy Catalog <span aria-hidden="true">↗</span></a>
+            </div>
+          </article>
         </div>
       </section>
 
@@ -80,7 +96,7 @@
 
       <footer class="products-footer">
         <div class="products-shell products-footer-inner">
-          <img src="/brand-assets/lockup-primary-on-dark.svg" alt="Flid">
+          <img src="/brand-assets/lockup-primary-on-dark.svg" width="232" height="100" alt="Flid" loading="lazy">
           <p>Flid AI ApS · CVR 43463217 · Odense, Denmark</p>
         </div>
       </footer>

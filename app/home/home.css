@@ -57,9 +57,14 @@ body {
   transition: transform 720ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.site-logo:hover .site-logo-mark,
 .site-logo:focus-visible .site-logo-mark {
   transform: rotate(360deg);
+}
+
+@media (hover: hover) {
+  .site-logo:hover .site-logo-mark {
+    transform: rotate(360deg);
+  }
 }
 
 .site-header nav {
@@ -72,16 +77,27 @@ body {
   font-weight: 520;
 }
 
+.site-header nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
 .site-header nav a,
 .site-footer a {
   transition: color 180ms ease;
 }
 
-.site-header nav a:hover,
 .site-header nav a:focus-visible,
-.site-footer a:hover,
 .site-footer a:focus-visible {
   color: var(--fgColor-default);
+}
+
+@media (hover: hover) {
+  .site-header nav a:hover,
+  .site-footer a:hover {
+    color: var(--fgColor-default);
+  }
 }
 
 .motion-sequence {
@@ -144,6 +160,10 @@ body {
   left: 0;
   height: clamp(120px, 16vw, 220px);
   background: linear-gradient(to bottom, transparent, var(--bgColor-default));
+  /* The fade only blends the wave field. It sits above the particle canvas, so
+     it must leave with the waves; otherwise its edge sweeps a straight seam
+     across the particles while the hero scrolls away. */
+  opacity: var(--hero-wave-opacity);
   pointer-events: none;
   content: "";
 }
@@ -155,7 +175,7 @@ body {
   align-items: center;
   justify-content: center;
   height: 100svh;
-  padding: calc(82px + clamp(46px, 5vw, 72px)) 0 clamp(46px, 5vw, 72px);
+  padding-block: calc(82px + clamp(46px, 5vw, 72px)) clamp(46px, 5vw, 72px);
 }
 
 .hero-wave-field {
@@ -249,16 +269,26 @@ body {
   transition: transform 180ms ease;
 }
 
-.button:hover,
 .button:focus-visible {
   border-color: var(--fgColor-accent);
   background: var(--bgColor-accent-emphasis);
   color: var(--fgColor-onEmphasis);
 }
 
-.button:hover span,
 .button:focus-visible span {
   transform: translateX(3px);
+}
+
+@media (hover: hover) {
+  .button:hover {
+    border-color: var(--fgColor-accent);
+    background: var(--bgColor-accent-emphasis);
+    color: var(--fgColor-onEmphasis);
+  }
+
+  .button:hover span {
+    transform: translateX(3px);
+  }
 }
 
 .button-hero {
@@ -269,6 +299,7 @@ body {
 
 .about h2 {
   margin: 0;
+  overflow-wrap: anywhere;
   font-size: clamp(2.75rem, 5.5vw, 5.7rem);
   font-weight: 480;
   letter-spacing: -0.065em;
@@ -286,12 +317,13 @@ body {
 }
 
 .signal-story[data-depth-demo="local"] .signal-story-grid {
-  opacity: 0.16;
+  display: none;
 }
 
 .signal-story-sticky {
   position: sticky;
   z-index: 2;
+  pointer-events: none;
   top: 0;
   height: 100svh;
   min-height: 640px;
@@ -307,6 +339,7 @@ body {
     linear-gradient(to right, color-mix(in srgb, var(--borderColor-muted) 24%, transparent) 1px, transparent 1px),
     linear-gradient(to bottom, color-mix(in srgb, var(--borderColor-muted) 20%, transparent) 1px, transparent 1px);
   background-size: 88px 88px;
+  -webkit-mask-image: radial-gradient(circle at center, black, transparent 84%);
   mask-image: radial-gradient(circle at center, black, transparent 84%);
   opacity: 0.34;
 }
@@ -429,6 +462,7 @@ body {
 .founder-portrait img {
   display: block;
   width: 100%;
+  height: auto;
   aspect-ratio: 1;
   object-fit: cover;
   object-position: center 27%;
@@ -440,7 +474,7 @@ body {
   justify-content: space-between;
   padding-top: 16px;
   color: var(--fgColor-muted);
-  font-size: 10px;
+  font-size: var(--font-size-caption);
 }
 
 .about-copy {
@@ -468,6 +502,8 @@ body {
 
 .about-copy > a {
   display: inline-flex;
+  align-items: flex-end;
+  min-height: 44px;
   gap: 30px;
   margin-top: 26px;
   padding-bottom: 8px;
@@ -478,7 +514,7 @@ body {
 .site-footer {
   padding-block: 36px;
   color: var(--fgColor-muted);
-  font-size: 10px;
+  font-size: var(--font-size-caption);
 }
 
 .footer-inner {
@@ -490,10 +526,21 @@ body {
 
 .footer-inner > img {
   width: 92px;
+  height: auto;
 }
 
 .footer-inner p {
   margin: 0;
+}
+
+/* Desktop captions sit beside the particle cloud and can cross it; a soft
+   halo keeps them legible. Phones stack the caption below the canvas. */
+@media (min-width: 901px) {
+  .signal-story-copy {
+    text-shadow:
+      0 0 18px var(--bgColor-default),
+      0 0 36px var(--bgColor-default);
+  }
 }
 
 @media (max-width: 980px) {
@@ -520,13 +567,26 @@ body {
 
 @media (max-width: 900px) {
   .motion-sequence {
-    --mobile-story-canvas-top: clamp(96px, 13svh, 124px);
-    --mobile-story-canvas-height: 30svh;
-    --motion-stage-height: var(--mobile-story-canvas-height);
+    --mobile-story-canvas-top: 9svh;
+    --mobile-story-canvas-height: 54svh;
+    --motion-stage-height: 100svh;
   }
 
   .motion-sequence-stage {
+    top: 0;
+  }
+
+  .motion-sequence-canvas {
     top: var(--mobile-story-canvas-top);
+    height: var(--mobile-story-canvas-height);
+    /* Particles fade into the page at the screen sides instead of being cut. */
+    -webkit-mask-image: linear-gradient(to right, transparent, black 7%, black 93%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 7%, black 93%, transparent);
+  }
+
+  .hero-wave-field {
+    -webkit-mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
   }
 
   .signal-story {
@@ -550,6 +610,7 @@ body {
     inset: var(--mobile-story-canvas-top) 0 auto;
     height: var(--mobile-story-canvas-height);
     background-size: 56px 56px;
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
     mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
     opacity: 0.22;
   }
@@ -627,8 +688,8 @@ body {
   }
 
   .site-header nav {
-    gap: 16px;
-    font-size: 12px;
+    gap: 18px;
+    font-size: 13px;
   }
 
   .hero {
@@ -637,7 +698,7 @@ body {
 
   .hero-grid {
     height: 100svh;
-    padding: calc(70px + 48px) 20px 64px;
+    padding-block: calc(70px + 48px) 64px;
   }
 
   .hero h1 {
@@ -655,7 +716,7 @@ body {
   }
 
   .about-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .signal-story-subtitle,
@@ -766,5 +827,37 @@ body {
 
   .signal-story-subtitle > span {
     opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) and (max-width: 720px) {
+  .hero {
+    margin-top: -70px;
+  }
+}
+
+/* Landscape phones: the pinned hero is only ~390px tall, so size the copy by
+   height or the CTAs are clipped below the fold where they cannot be reached. */
+@media (max-height: 520px) and (orientation: landscape) {
+  .hero-grid {
+    padding-block: 90px 12px;
+  }
+
+  .hero .eyebrow {
+    font-size: 11px;
+  }
+
+  .hero h1 {
+    margin-top: 10px;
+    font-size: clamp(2rem, 11.5vh, 3.4rem);
+    line-height: 0.95;
+  }
+
+  .hero-actions {
+    margin-top: 16px;
+  }
+
+  .button {
+    min-height: 44px;
   }
 }

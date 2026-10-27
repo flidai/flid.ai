@@ -34,7 +34,7 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.doesNotMatch(html, /id="contact"|05 \/ Contact|Building something\s*<br>agents should operate/i);
   assert.match(
     html,
-    /<img src="\/assets\/images\/jacob-oestergaard\.webp" alt="Jacob Østergaard, founder of Flid">/i,
+    /<img src="\/assets\/images\/jacob-oestergaard\.webp" width="960" height="960" alt="Jacob Østergaard, founder of Flid" loading="lazy" decoding="async">/i,
   );
   assert.doesNotMatch(html, /ganesh-kambli\.webp/i);
   assert.doesNotMatch(html, /leapview-dashboard-dark\.png/i);
@@ -56,8 +56,8 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.match(html, /href="\/products\/"[^>]*>Products\s*</i);
   assert.match(html, /href="\/about\/"[^>]*>About\s*</i);
   assert.match(html, /href="mailto:jacob@flid\.ai"[^>]*>Contact\s*</i);
-  assert.match(html, /class="site-logo-wordmark"[^>]+lockup-primary-on-dark\.svg/);
-  assert.match(html, /class="site-logo-mark"[^>]+mark-primary-on-dark\.svg/);
+  assert.match(html, /class="site-logo-wordmark"[^>]+site-wordmark-on-dark\.svg/);
+  assert.match(html, /class="site-logo-mark"[^>]+site-mark-on-dark\.webp/);
   assert.doesNotMatch(html, /data-signal-field|data-signal-canvas|hero-meta/i);
   assert.match(html, /data-signal-story/i);
   assert.doesNotMatch(html, /signal-story-static-mark/i);
@@ -122,7 +122,42 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.match(script, /createMotionSequenceState\(/);
   assert.match(
     script,
-    /if\s*\(!depthSequence\)\s*\{\s*if\s*\(!depthViewport\.matches\)\s*initMobileHeroTransition\(\);/,
+    /function startHeroFallback\(canvas\)\s*\{\s*if\s*\(!depthViewport\.matches\)\s*initMobileHeroTransition\(\);/,
+  );
+  assert.match(
+    script,
+    /if\s*\(depthSequence\)\s*fallbackStarters\.push\(startHeroFallback\);\s*else startHeroFallback\(sequenceCanvas\);/,
+    "a failed video load must hand the hero to the procedural fallback",
+  );
+  assert.match(
+    script,
+    /fallbackStarters\.push\(initProceduralStory\)/,
+    "a failed video load must hand the story to the procedural fallback",
+  );
+  assert.match(
+    script,
+    /sequence\.failed = true;[\s\S]*?startFallbackMotion\(\);/,
+  );
+  assert.doesNotMatch(
+    script,
+    /offsetHeight\s*-\s*innerHeight\)/,
+    "scroll ranges must not mix svh layout with the toolbar-dependent innerHeight",
+  );
+  assert.match(
+    script,
+    /\}\s*else\s*\{\s*hideStoryCopy\(\);\s*\}/,
+    "scrolling back above the story must hide its captions",
+  );
+  assert.match(script, /event\.pointerType === "touch"/);
+  assert.match(
+    script,
+    /if \(!sequence\.ready\) \{[\s\S]*?renderStoryCopy\(targetProgress\);[\s\S]*?return;\s*\}/,
+    "the hero and captions must follow the scroll while the video is loading",
+  );
+  assert.match(
+    script,
+    /afterPageLoad\(\)\.then\(\(\) => renderer\.load\(\)\)/,
+    "the depth video must not compete with first paint",
   );
   assert.match(script, /aria-label/);
   assert.match(script, /addEventListener\(["']scroll["']/);
@@ -130,6 +165,11 @@ test("builds the Flid public site at the root as plain HTML", async () => {
   assert.match(styles, /\.hero-sticky/);
   assert.match(styles, /--hero-copy-opacity/);
   assert.match(styles, /\.hero-sticky::after/);
+  assert.match(
+    styles,
+    /\.hero-sticky::after\s*\{[^}]*opacity:\s*var\(--hero-wave-opacity\);/s,
+    "the hero fade must leave with the waves so it cannot cut across the particles",
+  );
   assert.match(styles, /linear-gradient\(to bottom, transparent/);
   assert.match(styles, /\.hero-copy\s*\{[^}]*text-align:\s*center;/s);
   assert.doesNotMatch(styles, /\.signal-field-canvas|\.signal-static-mark/);
@@ -212,8 +252,8 @@ test("builds the products page as a standalone static route", async () => {
   );
   assert.match(html, /href="mailto:jacob@flid\.ai"[^>]*>Contact\s*</i);
   assert.match(html, /href="\/about\/"[^>]*>About\s*</i);
-  assert.match(html, /class="products-logo-wordmark"[^>]+lockup-primary-on-dark\.svg/);
-  assert.match(html, /class="products-logo-mark"[^>]+mark-primary-on-dark\.svg/);
+  assert.match(html, /class="products-logo-wordmark"[^>]+site-wordmark-on-dark\.svg/);
+  assert.match(html, /class="products-logo-mark"[^>]+site-mark-on-dark\.webp/);
   const productsFooter = html.match(/<footer class="products-footer">[\s\S]*?<\/footer>/i)?.[0] ?? "";
   assert.match(productsFooter, /Flid AI ApS · CVR 43463217 · Odense, Denmark/i);
   assert.doesNotMatch(productsFooter, /flid\.ai|© 2026/i);
@@ -287,7 +327,7 @@ test("builds the About page as a dedicated team route", async () => {
   assert.match(styles, /\.about-page/);
   assert.match(styles, /\.about-team-grid/);
   assert.match(styles, /grid-template-columns:\s*repeat\(3, minmax\(0, 1fr\)\)/);
-  assert.match(styles, /@media \(max-width: 900px\)[\s\S]*?\.about-team-grid\s*{[\s\S]*?grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/);
+  assert.match(styles, /@media \(max-width: 900px\)[\s\S]*?\.about-team-grid\s*{[\s\S]*?grid-template-columns:\s*1fr/);
   assert.doesNotMatch(html, /_next|react|__next|data-reactroot/i);
 });
 
@@ -466,11 +506,11 @@ test("retains responsive and reduced-motion styling", async () => {
   );
   assert.match(
     homeCss,
-    /@media\s*\(max-width:\s*900px\)[\s\S]*?\.motion-sequence\s*\{(?=[^}]*--motion-stage-height:\s*var\(--mobile-story-canvas-height\);)(?=[^}]*--mobile-story-canvas-top:)[^}]*\}/,
+    /@media\s*\(max-width:\s*900px\)[\s\S]*?\.motion-sequence\s*\{(?=[^}]*--motion-stage-height:\s*100svh;)(?=[^}]*--mobile-story-canvas-top:)[^}]*\}/,
   );
   assert.match(
     homeCss,
-    /@media\s*\(max-width:\s*900px\)[\s\S]*?\.motion-sequence-stage\s*\{(?=[^}]*top:\s*var\(--mobile-story-canvas-top\);)(?![^}]*margin-bottom:)[^}]*\}/,
+    /@media\s*\(max-width:\s*900px\)[\s\S]*?\.motion-sequence-stage\s*\{(?=[^}]*top:\s*0;)(?![^}]*margin-bottom:)[^}]*\}/,
   );
   assert.match(
     homeCss,
