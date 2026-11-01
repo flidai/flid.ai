@@ -109,7 +109,7 @@ test("builds the About page as a dedicated team route", async () => {
   );
   assert.match(
     html,
-    /Ganesh is a Platform Engineer at Flid\. His experience spans backend systems, cloud infrastructure, security, and applied AI\. He owns how software reaches production, from delivery pipelines and zero-downtime releases to AI-assisted engineering workflows, so the team can ship quickly and reliably\./i,
+    /Ganesh is a Platform Engineer at Flid\. His experience spans backend systems, cloud infrastructure, security, and applied AI\. He owns how software reaches production, from delivery pipelines and zero-downtime releases to AI-assisted engineering workflows, so the team can ship reliably\./i,
   );
   assert.match(html, /href="https:\/\/www\.linkedin\.com\/in\/ganeshkambli\/"/i);
   assert.match(html, /Anand Bora/i);
