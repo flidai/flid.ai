@@ -65,11 +65,11 @@ test("builds 404, robots, sitemap, manifest, and icons for a project Pages base 
       read("assets/globals.css"),
     ]);
 
-    assert.match(notFound, /<link rel="stylesheet" href="\/flid\/assets\/globals\.css">/);
-    assert.match(notFound, /class="product-link" href="\/flid\/products\/"/);
+    assert.match(notFound, /<link rel="stylesheet" href="\/flid\/assets\/site\.css">/);
+    assert.match(notFound, /class="btn" href="\/flid\/products\/"/);
     assert.match(notFound, /<link rel="icon" href="\/flid\/assets\/images\/site-icon\.svg"/);
     assert.match(notFound, /<link rel="preload" href="\/flid\/assets\/fonts\/Geist-Variable\.woff2"/);
-    assert.match(products, /<a class="skip-link" href="#main">/, "the skip link stays a fragment link");
+    assert.match(products, /<a class="skip" href="#main">/, "the skip link stays a fragment link");
 
     const parsed = JSON.parse(manifest);
     assert.equal(parsed.id, "/flid/");

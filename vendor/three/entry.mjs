@@ -1,0 +1,2 @@
+export { ACESFilmicToneMapping, AdditiveBlending, BoxGeometry, ExtrudeGeometry, ShapePath, BufferAttribute, BufferGeometry, CanvasTexture, Color, CylinderGeometry, DirectionalLight, DoubleSide, Group, HemisphereLight, Mesh, MeshBasicMaterial, MeshStandardMaterial, PerspectiveCamera, PlaneGeometry, PMREMGenerator, Points, Scene, ShaderMaterial, SphereGeometry, SRGBColorSpace, TorusGeometry, Vector2, Vector3, WebGLRenderer } from "three";
+export { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";

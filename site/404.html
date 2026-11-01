@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#0d1117">
+    <meta name="theme-color" content="#06080d">
     <meta name="color-scheme" content="dark">
     <meta name="robots" content="noindex">
     <meta name="description" content="This page could not be found. Head back to Flid's home, products, or about page.">
@@ -26,48 +26,44 @@
     <link rel="apple-touch-icon" href="/assets/images/site-apple-touch-icon.png">
     <link rel="manifest" href="/site.webmanifest">
     <link rel="preload" href="/assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="/assets/globals.css">
-    <link rel="stylesheet" href="/assets/products.css">
+    <link rel="stylesheet" href="/assets/site.css">
+    <script type="module" src="/assets/site.js"></script>
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to content</a>
-    <div class="products-page">
-      <header class="products-header">
-        <div class="products-shell products-header-inner">
-          <a class="products-logo" href="/" aria-label="Flid home">
-            <img class="products-logo-wordmark" src="/assets/images/site-wordmark-on-dark.svg" width="232" height="100" alt="">
-            <img class="products-logo-mark" src="/assets/images/site-mark-on-dark.webp" width="192" height="192" alt="" aria-hidden="true">
-          </a>
-          <nav aria-label="Main navigation">
-            <a href="/products/">Products</a>
-            <a href="/about/">About</a>
-            <a href="mailto:jacob@flid.ai">Contact</a>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="top">
+      <div class="top-bar">
+        <a class="top-logo" href="/" aria-label="Flid home"><img src="/assets/images/site-lockup-on-dark.svg" width="232" height="100" alt=""></a>
+        <nav class="top-nav" aria-label="Main navigation">
+          <a href="/products/">Products</a>
+          <a href="/about/">About</a>
+          <a class="btn btn-main" href="mailto:jacob@flid.ai">Contact</a>
+        </nav>
+      </div>
+    </header>
+    <main id="main" tabindex="-1" class="page">
+      <section class="lost">
+        <div class="bloom-local" data-bloom="page"></div>
+        <div class="shell">
+          <p class="kicker fade-in">404 / Not found</p>
+          <h1 class="display"><span class="line"><span style="--i:1">This page</span></span><span class="line"><span style="--i:2" class="glow">is not here.</span></span></h1>
+          <p class="lead fade-in" style="--i:4;max-width:560px">The link may be out of date, or the page may have moved. Start again from one of these.</p>
+          <nav class="lost-links fade-in" style="--i:5" aria-label="Where to go next">
+            <a class="btn btn-main" href="/">Home <span class="arrow" aria-hidden="true">→</span></a>
+            <a class="btn" href="/products/">Products <span class="arrow" aria-hidden="true">→</span></a>
+            <a class="btn" href="/about/">About <span class="arrow" aria-hidden="true">→</span></a>
           </nav>
         </div>
-      </header>
-
-      <main id="main" tabindex="-1">
-        <section class="products-hero not-found">
-          <div class="products-shell">
-            <p class="products-kicker">404 / NOT FOUND</p>
-            <h1>This page is not here.</h1>
-            <p class="products-intro">The link may be out of date, or the page may have moved. Start again from one of these.</p>
-            <nav class="not-found-links" aria-label="Where to go next">
-              <a class="product-link" href="/">Home <span aria-hidden="true">→</span></a>
-              <a class="product-link" href="/products/">Products <span aria-hidden="true">→</span></a>
-              <a class="product-link" href="/about/">About <span aria-hidden="true">→</span></a>
-            </nav>
-          </div>
-          <div class="products-signal" aria-hidden="true"></div>
-        </section>
-      </main>
-
-      <footer class="products-footer">
-        <div class="products-shell products-footer-inner">
-          <img src="/assets/images/site-lockup-on-dark.svg" width="232" height="100" alt="Flid" loading="lazy">
+      </section>
+    </main>
+    <footer class="site-footer foot">
+      <div class="shell">
+        <div class="foot-row">
+          <nav aria-label="Footer navigation"><a href="/products/">Products</a><a href="/about/">About</a></nav>
           <p>Flid AI ApS · CVR 43463217 · Odense, Denmark</p>
         </div>
-      </footer>
-    </div>
+        <div class="foot-word" aria-hidden="true"></div>
+      </div>
+    </footer>
   </body>
 </html>

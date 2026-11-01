@@ -29,7 +29,7 @@ test("ships lightweight header logos derived from the canonical lockup", async (
 test("does not load the full-outline brand SVGs in page headers", async () => {
   for (const page of ["index.html", "products/index.html", "about/index.html"]) {
     const html = await readFile(built(page), "utf8");
-    const header = html.match(/<header class="[^"]*header[^"]*">[\s\S]*?<\/header>/)?.[0] ?? "";
+    const header = html.match(/<header\b[\s\S]*?<\/header>/)?.[0] ?? "";
     assert.ok(header, `${page} must have a site header`);
     assert.doesNotMatch(header, /brand-assets\/(?:lockup|mark)-primary-on-dark\.svg/, page);
   }

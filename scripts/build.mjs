@@ -26,6 +26,7 @@ const prefixableExtensions = new Set([
 
 const copiedFiles = [
   ["app/globals.css", "assets/globals.css"],
+  ["app/site/site.css", "assets/site.css"],
   ["app/home/home.css", "assets/home.css"],
   ["app/products/products.css", "assets/products.css"],
   ["app/about/about.css", "assets/about.css"],
@@ -42,6 +43,8 @@ const copiedFiles = [
   ["lib/primer-colors.mjs", "lib/primer-colors.mjs"],
   ["lib/wordmark-generator.mjs", "lib/wordmark-generator.mjs"],
   ["vendor/geist/LICENSE.txt", "licenses/geist-OFL-1.1.txt"],
+  ["vendor/three/three.mjs", "assets/vendor/three.mjs"],
+  ["vendor/three/LICENSE", "licenses/three-MIT.txt"],
 ];
 
 // Product views shown in the products page galleries. Each source in

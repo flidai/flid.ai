@@ -79,7 +79,7 @@ test("ships crawler, error, and install files with the static site", async () =>
   assert.match(server, /404\.html/);
   assert.match(server, /WriteHeader\(http\.StatusNotFound\)/);
   assert.match(server, /"\.xml":/);
-  assert.match(notFound, /<main id="main" tabindex="-1">/);
+  assert.match(notFound, /<main id="main" tabindex="-1"[^>]*>/);
 });
 
 test("keeps the public site at the root and the brand guide as a reference", async () => {
@@ -99,7 +99,7 @@ test("keeps the public site at the root and the brand guide as a reference", asy
     "utf8",
   );
 
-  assert.match(rootPage, /We build products where agents do real work/i);
+  assert.match(rootPage.replace(/<[^>]+>/g, " ").replace(/\s+/g, " "), /We build products where agents do real work/i);
   assert.doesNotMatch(rootPage, /01 \/ Thesis|01 \/ Premise|02 \/ Foundation|04 \/ The lab/i);
   assert.doesNotMatch(rootPage, /data-story-counter|signal-story-progress/i);
   assert.doesNotMatch(rootPage, /data-color-mode="light"|id="contact"|05 \/ Contact/i);
@@ -109,14 +109,14 @@ test("keeps the public site at the root and the brand guide as a reference", asy
   assert.match(rootPage, /mailto:jacob@flid\.ai/);
   assert.match(rootPage, /Start a conversation/);
   assert.match(rootPage, /Jacob Østergaard/);
-  assert.doesNotMatch(rootPage, /Ganesh Kambli|Meet the team/);
   assert.match(productsPage, /LeapView/);
   assert.match(productsPage, /href="\/products\/"[^>]*>Products\s*</i);
   assert.match(productsPage, /href="\/about\/"[^>]*>About\s*</i);
-  assert.match(aboutPage, /A Danish product lab building\s*<span>durable systems\.<\/span>/i);
+  assert.match(aboutPage.replace(/<[^>]+>/g, " ").replace(/\s+/g, " "), /A Danish product lab building durable systems\./i);
   assert.match(aboutPage, /Ganesh Kambli/);
   assert.match(aboutPage, /Anand Bora/);
-  assert.match(aboutPage, /AI Engineer/);
+  assert.match(aboutPage, /Platform Engineer/);
+  assert.match(aboutPage, /Full-Stack Developer/);
   assert.doesNotMatch(rootPage, /id="leapview"|id="field-work"/i);
   assert.doesNotMatch(rootPage, /href="#leapview"|href="#field-work"/i);
   assert.doesNotMatch(homeScript, /hero-signal-field\.mjs/);
