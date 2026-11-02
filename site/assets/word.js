@@ -2,6 +2,7 @@
 // section scrolls in, stand on their own reflection, and a slow band of light crosses them.
 import * as THREE from "/assets/vendor/three.mjs";
 import { FLID_WORD } from "/assets/flid-word.js";
+import { createPointer } from "/assets/motion.js";
 import { clamp, createRenderer, runScene, smooth } from "/assets/stage.js";
 
 const DEPTH = 0.13;
@@ -104,7 +105,7 @@ export async function startWord(canvas, host, { still = false } = {}) {
   word.add(floor);
 
 
-  const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
+  const pointer = createPointer(still);
   const start = performance.now();
   let width = 1, height = 1, shown = still ? 1 : 0;
 
@@ -117,8 +118,7 @@ export async function startWord(canvas, host, { still = false } = {}) {
     const t = still ? 6 : (now - start) / 1000;
     time.value = t;
     sweep.value = still ? 0.45 : ((t * 0.11) % 1) * 1.8 - 0.3;
-    pointer.x += (pointer.tx - pointer.x) * 0.05;
-    pointer.y += (pointer.ty - pointer.y) * 0.05;
+    pointer.ease(delta);
 
     for (const { upright, mirrored, x, i } of letters) {
       // Each letter climbs out of the floor and turns to face the visitor.
@@ -158,9 +158,4 @@ export async function startWord(canvas, host, { still = false } = {}) {
       camera.updateProjectionMatrix();
     },
   });
-  if (!still) addEventListener("pointermove", (event) => {
-    if (event.pointerType === "touch") return;
-    pointer.tx = (event.clientX / innerWidth) * 2 - 1;
-    pointer.ty = (event.clientY / innerHeight) * 2 - 1;
-  }, { passive: true });
 }

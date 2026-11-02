@@ -45,7 +45,8 @@ test("provides an official artifact-based GitHub Pages workflow", async () => {
   assert.match(workflow, /actions\/upload-pages-artifact@v5/);
   assert.match(workflow, /actions\/deploy-pages@v4/);
   assert.doesNotMatch(workflow, /SITE_BASE_PATH/);
-  assert.match(workflow, /run:\s*npm run build/);
+  assert.match(workflow, /run:\s*npm test/);
+  assert.doesNotMatch(workflow, /run:\s*npm run build/, "npm test already builds dist");
   assert.match(workflow, /path:\s*dist/);
   assert.match(workflow, /pages:\s*write/);
   assert.match(workflow, /id-token:\s*write/);
@@ -54,7 +55,7 @@ test("provides an official artifact-based GitHub Pages workflow", async () => {
 test("builds 404, robots, sitemap, manifest, and icons for a project Pages base path", async () => {
   const directory = await mkdtemp(join(tmpdir(), "flid-pages-"));
   try {
-    await buildSite({ outputDirectory: directory, basePath: "/flid" });
+    await buildSite({ outputDirectory: directory, basePath: "/flid", productImages: false });
     const read = (path) => readFile(join(directory, path), "utf8");
     const [notFound, products, manifest, robots, sitemap, globals] = await Promise.all([
       read("404.html"),

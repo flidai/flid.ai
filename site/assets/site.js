@@ -60,16 +60,6 @@ const paintThesis = () => {
   });
 };
 
-// Product screens settle flat as they reach the middle of the screen.
-const tilted = [...document.querySelectorAll("[data-tilt]")];
-const paintTilt = () => {
-  for (const element of tilted) {
-    const box = element.getBoundingClientRect();
-    const middle = box.top + box.height / 2;
-    element.style.setProperty("--t", clamp((middle - innerHeight * 0.48) / (innerHeight * 0.6)).toFixed(3));
-  }
-};
-
 // Products: the screen turns toward the visitor and its real parts lift out as the section scrolls.
 const shows = [...document.querySelectorAll("[data-show]")];
 for (const show of shows) {
@@ -102,13 +92,13 @@ const paintShows = () => {
 };
 
 let queued = false;
-const bloomStage = document.querySelector("[data-bloom]");
+const bloomHost = document.querySelector("[data-bloom]");
 const paint = () => {
   queued = false;
   onHeader();
-  if (thesis && bloomStage) bloomStage.style.setProperty("--core", clamp((scrollY - thesis.offsetTop * 0.2) / (thesis.offsetTop * 0.7)).toFixed(3));
+  if (thesis && bloomHost) bloomHost.style.setProperty("--core", clamp((scrollY - thesis.offsetTop * 0.2) / (thesis.offsetTop * 0.7)).toFixed(3));
   paintThesis();
-  if (!still) { paintTilt(); paintShows(); }
+  if (!still) paintShows();
 };
 const request = () => {
   if (queued) return;
@@ -120,14 +110,18 @@ addEventListener("resize", request);
 paint();
 
 // Signal wave: one canvas per page, paused whenever its zone is off screen.
-const bloomHost = document.querySelector("[data-bloom]");
 if (bloomHost) {
-  const bloom = startBloom(bloomHost, {
-    getFade: () => (thesis ? 1 - clamp(scrollY / (thesis.offsetTop * 0.8)) : 1),
-  });
-  const zone = document.querySelector("[data-bloom-zone]") ?? bloomHost;
-  if (bloom && "IntersectionObserver" in window) {
-    new IntersectionObserver(([entry]) => bloom.setActive(entry.isIntersecting), { rootMargin: "120px" }).observe(zone);
+  try {
+    const bloom = startBloom(bloomHost, {
+      getFade: () => (thesis ? 1 - clamp(scrollY / (thesis.offsetTop * 0.8)) : 1),
+    });
+    const zone = document.querySelector("[data-bloom-zone]") ?? bloomHost;
+    if (bloom && "IntersectionObserver" in window) {
+      new IntersectionObserver(([entry]) => bloom.setActive(entry.isIntersecting), { rootMargin: "120px" }).observe(zone);
+    }
+  } catch (error) {
+    // The page works without the wave.
+    console.warn(error);
   }
 }
 
@@ -140,25 +134,25 @@ const idle = () => new Promise((done) => {
 const coreCanvas = document.querySelector("[data-core]");
 const sheetsCanvas = document.querySelector("[data-sheets]");
 const wordHost = document.querySelector("[data-word]");
-(async () => {
+const loadScene = async (path, start) => {
   try {
-    if (coreCanvas && thesis) {
-      const { startCore } = await import("/assets/core.js");
-      await startCore(coreCanvas, thesis, { still });
-    }
-    if (sheetsCanvas) {
-      await idle();
-      const { startSheets } = await import("/assets/sheets.js");
-      await startSheets(sheetsCanvas, document.querySelector(".layer-rows"), { still });
-    }
-    if (wordHost) {
-      await idle();
-      const { startWord } = await import("/assets/word.js");
-      await startWord(wordHost.querySelector("canvas"), wordHost, { still });
-    }
+    await start(await import(path));
   } catch (error) {
-    // The flat versions stay on the page.
+    // The flat version stays on the page, and the other scenes still load.
     console.warn(error);
+  }
+};
+(async () => {
+  if (coreCanvas && thesis) {
+    await loadScene("/assets/core.js", ({ startCore }) => startCore(coreCanvas, thesis, { still }));
+  }
+  if (sheetsCanvas) {
+    await idle();
+    await loadScene("/assets/sheets.js", ({ startSheets }) => startSheets(sheetsCanvas, document.querySelector(".layer-rows"), { still }));
+  }
+  if (wordHost) {
+    await idle();
+    await loadScene("/assets/word.js", ({ startWord }) => startWord(wordHost.querySelector("canvas"), wordHost, { still }));
   }
 })();
 

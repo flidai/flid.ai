@@ -143,10 +143,8 @@ body .home-page {
   min-width: 0;
 }
 
-/* The home header shares the Products/About behavior: nav targets are at least
-   44px wide, and at 200% text or 260-320px widths the nav wraps onto its own
-   row instead of overlapping the wordmark. Selectors are one step more
-   specific than home.css so the shared rule wins regardless of load order. */
+/* Nav targets are at least 44px wide, and at 200% text or 260-320px widths the
+   nav wraps onto its own row instead of overlapping the wordmark. */
 body .header-inner {
   display: flex;
   flex-wrap: wrap;

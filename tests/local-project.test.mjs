@@ -86,11 +86,9 @@ test("keeps the public site at the root and the brand guide as a reference", asy
   await access(new URL("site/brand/index.html", root));
   await access(new URL("site/products/index.html", root));
   await access(new URL("site/about/index.html", root));
-  await access(new URL("site/assets/home.js", root));
 
-  const [rootPage, homeScript, productsPage, aboutPage] = await Promise.all([
+  const [rootPage, productsPage, aboutPage] = await Promise.all([
     readFile(new URL("site/index.html", root), "utf8"),
-    readFile(new URL("site/assets/home.js", root), "utf8"),
     readFile(new URL("site/products/index.html", root), "utf8"),
     readFile(new URL("site/about/index.html", root), "utf8"),
   ]);
@@ -119,9 +117,5 @@ test("keeps the public site at the root and the brand guide as a reference", asy
   assert.match(aboutPage, /Full-Stack Developer/);
   assert.doesNotMatch(rootPage, /id="leapview"|id="field-work"/i);
   assert.doesNotMatch(rootPage, /href="#leapview"|href="#field-work"/i);
-  assert.doesNotMatch(homeScript, /hero-signal-field\.mjs/);
-  assert.match(homeScript, /hero-scroll-transition\.mjs/);
-  assert.match(homeScript, /signal-scroll-story\.mjs/);
-  assert.doesNotMatch(homeScript, /React|Next|jsx|tsx/);
   assert.match(brandPage, /The source of truth for the Flid identity/i);
 });

@@ -1,6 +1,7 @@
 // The three layers: real 3D sheets with their own objects, shown one at a time. As the visitor
 // scrolls, the current sheet lifts away and the next rises into its place, its objects growing out of it.
 import * as THREE from "/assets/vendor/three.mjs";
+import { createPointer } from "/assets/motion.js";
 import { clamp, createRenderer, runScene, smooth } from "/assets/stage.js";
 
 const hash = (n) => { const v = Math.sin(n * 127.1) * 43758.5453; return v - Math.floor(v); };
@@ -325,7 +326,7 @@ export async function startSheets(canvas, rows, { still = false } = {}) {
   });
 
 
-  const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
+  const pointer = createPointer(still);
   const start = performance.now();
   let width = 1, height = 1, at = 0;
 
@@ -342,8 +343,7 @@ export async function startSheets(canvas, rows, { still = false } = {}) {
     at = still ? goal : at + (goal - at) * (1 - Math.exp(-delta / 190));
     const t = still ? 8 : (now - start) / 1000;
     time.value = t;
-    pointer.x += (pointer.tx - pointer.x) * 0.05;
-    pointer.y += (pointer.ty - pointer.y) * 0.05;
+    pointer.ease(delta);
 
     const activeY = 0;
     sheets.forEach((sheet, i) => {
@@ -397,9 +397,4 @@ export async function startSheets(canvas, rows, { still = false } = {}) {
       camera.updateProjectionMatrix();
     },
   });
-  if (!still) addEventListener("pointermove", (event) => {
-    if (event.pointerType === "touch") return;
-    pointer.tx = (event.clientX / innerWidth) * 2 - 1;
-    pointer.ty = (event.clientY / innerHeight) * 2 - 1;
-  }, { passive: true });
 }

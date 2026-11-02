@@ -42,9 +42,10 @@ no application framework or runtime dependency.
   previews published on `alloycatalog.com`.
 - `site/about/` is the public company and team page. The homepage keeps its
   founder-led company introduction while the full team lives on this route.
-- `site/assets/home.js` progressively enhances the hero and thesis with a shared
-  video-driven particle field on desktop, tablets, and phones. Scroll position
-  drives the animation; reduced-motion users receive the static narrative.
+- `site/assets/site.js` runs the public pages: scroll reveals, the thesis, and the
+  signal wave (`bloom.js`). On the homepage it loads the 3D scenes one at a time
+  (`core.js`, `sheets.js`, `word.js`, on top of `stage.js` and the vendored
+  three.js). Reduced-motion users receive the static narrative.
 - `site/brand/` is the canonical brand guide and asset reference.
 - `site/showcase/` and `site/generator/` are supporting identity tools.
 - `product-screenshots/*.png` are the source product views for the products

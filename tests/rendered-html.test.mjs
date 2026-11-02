@@ -133,31 +133,6 @@ test("builds the About page as a dedicated team route", async () => {
   assert.doesNotMatch(html, /_next|react|__next|data-reactroot/i);
 });
 
-test("uses a restrained shared type scale across About and Products", async () => {
-  const [globals, about, products] = await Promise.all([
-    readBuiltPage("assets/globals.css"),
-    readBuiltPage("assets/about.css"),
-    readBuiltPage("assets/products.css"),
-  ]);
-
-  assert.match(globals, /--font-size-page-title:\s*clamp\(3\.75rem, 6\.2vw, 6\.5rem\)/);
-  assert.match(globals, /--font-size-section-title:\s*clamp\(2\.75rem, 4\.5vw, 4\.75rem\)/);
-  assert.match(globals, /--font-size-feature-title:\s*clamp\(3rem, 5\.2vw, 5\.5rem\)/);
-  assert.match(globals, /--font-size-lead:\s*clamp\(1\.25rem, 1\.6vw, 1\.625rem\)/);
-  assert.match(globals, /--font-size-caption:\s*11px/);
-
-  assert.match(about, /\.about-hero h1\s*{[\s\S]*?font-size:\s*var\(--font-size-page-title\)/);
-  assert.match(about, /\.about-story h2\s*{[\s\S]*?font-size:\s*var\(--font-size-section-title\)/);
-  assert.match(about, /\.about-story-copy \.about-story-lead\s*{[\s\S]*?font-size:\s*var\(--font-size-lead\)/);
-  assert.match(about, /@media \(max-width: 900px\)[\s\S]*?\.about-story-grid\s*{[\s\S]*?grid-template-columns:\s*1fr/);
-  assert.match(about, /@media \(max-width: 720px\)[\s\S]*?\.about-hero h1\s*{[\s\S]*?font-size:\s*clamp\(2\.8rem, 12vw, 4rem\)/);
-
-  assert.match(products, /\.products-hero h1\s*{[\s\S]*?font-size:\s*var\(--font-size-page-title\)/);
-  assert.match(products, /\.product-card-body h2\s*{[\s\S]*?font-size:\s*var\(--font-size-feature-title\)/);
-  assert.match(products, /\.product-card-summary\s*{[\s\S]*?font-size:\s*var\(--font-size-lead\)/);
-  assert.match(products, /@media \(max-width: 720px\)[\s\S]*?\.products-hero h1\s*{[\s\S]*?font-size:\s*clamp\(2\.8rem, 12vw, 4rem\)/);
-});
-
 test("optimizes the founder portrait for the public site", async () => {
   const portrait = await stat(
     new URL("assets/images/jacob-oestergaard.webp", dist),
@@ -180,14 +155,6 @@ test("optimizes Anand's portrait for the public site", async () => {
   );
 
   assert.ok(portrait.size < 250_000, "Anand's portrait should stay below 250 KB");
-});
-
-test("ships an optimized standalone hero wave field", async () => {
-  const background = await stat(
-    new URL("assets/images/hero-signal-waves.webp", dist),
-  );
-
-  assert.ok(background.size < 300_000, "hero wave field should stay below 300 KB");
 });
 
 test("ships every product view as size-budgeted responsive images", async () => {
@@ -229,18 +196,10 @@ test("gives both products the same chapter: status, links, and a view gallery", 
 });
 
 test("switches product views with an accessible tab script", async () => {
-  const [script, styles] = await Promise.all([
-    readBuiltPage("assets/products.js"),
-    readBuiltPage("assets/products.css"),
-  ]);
+  const script = await readBuiltPage("assets/products.js");
   assert.match(script, /setAttribute\("aria-selected"/);
   assert.match(script, /ArrowRight[\s\S]*ArrowLeft[\s\S]*Home[\s\S]*End/);
   assert.match(script, /\.hidden = !selected/);
-  // Views stack in one grid cell so switching tabs never shifts the page.
-  assert.match(styles, /\.product-view\s*\{[^}]*grid-area:\s*1 \/ 1/s);
-  assert.match(styles, /\.product-view\[hidden\]\s*\{[^}]*display:\s*block;[^}]*visibility:\s*hidden/s);
-  assert.match(styles, /\.product-tabs button\s*\{[^}]*min-height:\s*44px/s);
-  assert.match(styles, /\.product-tabs:has\(> :nth-child\(4\)\)\s*\{[^}]*repeat\(2,/s);
 });
 
 test("builds the interactive generator as plain HTML and JavaScript", async () => {
@@ -322,77 +281,17 @@ test("keeps the public site and brand reference as distinct routes", async () =>
 });
 
 test("retains responsive and reduced-motion styling", async () => {
-  const [globalCss, homeCss, showcaseCss, generatorCss, brandCss] = await Promise.all([
+  const [globalCss, siteCss, showcaseCss, generatorCss, brandCss] = await Promise.all([
     readBuiltPage("assets/globals.css"),
-    readBuiltPage("assets/home.css"),
+    readBuiltPage("assets/site.css"),
     readBuiltPage("assets/showcase.css"),
     readBuiltPage("assets/generator.css"),
     readBuiltPage("assets/brand.css"),
   ]);
 
-  for (const css of [globalCss, homeCss, showcaseCss, generatorCss, brandCss]) {
+  for (const css of [globalCss, siteCss, showcaseCss, generatorCss, brandCss]) {
     assert.match(css, /prefers-reduced-motion:\s*reduce/);
   }
-  assert.match(homeCss, /@media\s*\(max-width:\s*720px\)/);
-  assert.match(homeCss, /@media\s*\(max-width:\s*900px\)/);
-  assert.match(homeCss, /\.motion-sequence-stage/);
-  assert.match(homeCss, /\.site-logo-mark\s*\{[\s\S]*?transition:\s*transform/);
-  assert.match(homeCss, /\.site-logo:hover \.site-logo-mark[\s\S]*?transform:\s*rotate\(360deg\)/);
-  assert.match(homeCss, /\.button:hover[\s\S]*?background:\s*var\(--bgColor-accent-emphasis\)/);
-  assert.match(homeCss, /\.motion-sequence-canvas/);
-  assert.match(
-    homeCss,
-    /@media\s*\(max-width:\s*900px\)[\s\S]*?\.signal-story\s*\{[^}]*height:\s*340svh;[^}]*margin-top:\s*-100svh;/,
-  );
-  assert.match(
-    homeCss,
-    /@media\s*\(max-width:\s*900px\)[\s\S]*?\.signal-story\[data-depth-demo="local"\]\s*\{\s*height:\s*340svh;/,
-  );
-  assert.match(
-    homeCss,
-    /@media\s*\(max-width:\s*900px\)[\s\S]*?\.signal-story-sticky\s*\{[^}]*position:\s*sticky;[^}]*height:\s*100svh;/,
-  );
-  assert.match(
-    homeCss,
-    /@media\s*\(max-width:\s*900px\)[\s\S]*?\.motion-sequence\s*\{(?=[^}]*--motion-stage-height:\s*100svh;)(?=[^}]*--mobile-story-canvas-top:)[^}]*\}/,
-  );
-  assert.match(
-    homeCss,
-    /@media\s*\(max-width:\s*900px\)[\s\S]*?\.motion-sequence-stage\s*\{(?=[^}]*top:\s*0;)(?![^}]*margin-bottom:)[^}]*\}/,
-  );
-  assert.match(
-    homeCss,
-    /@media\s*\(max-width:\s*900px\)[\s\S]*?\.signal-story-step,\s*\.signal-story-step:first-child\s*\{[^}]*padding-top:\s*calc\([^}]*--mobile-story-canvas-height[^}]*24px[^}]*\);/,
-  );
-  assert.match(
-    homeCss,
-    /@media\s*\(max-width:\s*900px\)[\s\S]*?\.signal-story-copy,\s*\.signal-story-step-intro \.signal-story-copy\s*\{[^}]*width:\s*min\(calc\(100vw - 48px\), 420px\);/,
-  );
-  assert.match(
-    homeCss,
-    /@media\s*\(max-width:\s*900px\)[\s\S]*?\.signal-story\.is-depth-live \.signal-story-copy,[\s\S]*?width:\s*min\(calc\(100vw - 48px\), 420px\);/,
-  );
-  assert.match(
-    homeCss,
-    /\.signal-story\[data-depth-demo="local"\]\s*\{\s*height:\s*1000svh;/,
-  );
-  assert.match(
-    homeCss,
-    /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*?\.signal-story\[data-depth-demo="local"\]\s*\{\s*height:\s*auto;/,
-  );
-  assert.match(
-    homeCss,
-    /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*?\.motion-sequence-canvas\s*\{\s*display:\s*none;/,
-  );
-  assert.doesNotMatch(
-    homeCss,
-    /@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{[^@]*?\.motion-sequence-stage\s*\{[^}]*display:\s*none;/,
-    "reduced motion keeps the hero wave art as a still backdrop",
-  );
-  assert.match(
-    homeCss,
-    /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*?\.hero\s*\{(?=[^}]*height:\s*100svh;)(?=[^}]*margin-top:\s*-82px;)[^}]*\}/,
-  );
   assert.match(showcaseCss, /--lockup-mark-size:/);
   assert.match(generatorCss, /@media\s*\(max-width:\s*680px\)/);
 });
@@ -479,43 +378,18 @@ test("keeps headings balanced, body copy pretty, and compound words whole", asyn
 });
 
 test("does not force a 320px minimum width that scrolls sideways on narrow screens", async () => {
-  const [products, about, globals] = await Promise.all([
-    readBuiltPage("assets/products.css"),
-    readBuiltPage("assets/about.css"),
+  const [site, globals] = await Promise.all([
+    readBuiltPage("assets/site.css"),
     readBuiltPage("assets/globals.css"),
   ]);
-  assert.doesNotMatch(products, /min-width:\s*320px/);
-  assert.doesNotMatch(about, /min-width:\s*320px/);
+  assert.doesNotMatch(site, /min-width:\s*320px/);
   assert.match(globals, /body \.home-page\s*\{\s*min-width:\s*0/);
 });
 
 test("lets headers wrap and keeps nav targets at least 44px wide", async () => {
-  const [products, about, globals] = await Promise.all([
-    readBuiltPage("assets/products.css"),
-    readBuiltPage("assets/about.css"),
-    readBuiltPage("assets/globals.css"),
-  ]);
-  assert.match(products, /\.products-header-inner\s*\{[^}]*display:\s*flex;[^}]*flex-wrap:\s*wrap/s);
-  assert.match(about, /\.about-header-inner\s*\{[^}]*display:\s*flex;[^}]*flex-wrap:\s*wrap/s);
-  assert.match(products, /\.products-header nav a\s*\{[^}]*justify-content:\s*center;[^}]*min-width:\s*44px;[^}]*min-height:\s*44px/s);
-  assert.match(about, /\.about-header nav a\s*\{[^}]*justify-content:\s*center;[^}]*min-width:\s*44px;[^}]*min-height:\s*44px/s);
+  const globals = await readBuiltPage("assets/globals.css");
   assert.match(globals, /\.site-header nav a\s*\{[^}]*min-width:\s*44px/s);
   assert.match(globals, /body \.header-inner\s*\{[^}]*flex-wrap:\s*wrap/s);
-});
-
-test("stacks About team captions by card width so bios align", async () => {
-  const about = await readBuiltPage("assets/about.css");
-  assert.match(about, /\.about-team-member figure\s*\{[^}]*container:\s*team-card \/ inline-size/s);
-  assert.match(
-    about,
-    /@container team-card \(max-width:\s*320px\)\s*\{\s*\.about-team-member figcaption\s*\{[^}]*flex-direction:\s*column/s,
-  );
-  assert.doesNotMatch(about, /@media[^{]*\{[^@]*\.about-team-member figcaption\s*\{[^}]*flex-direction:\s*row/s);
-});
-
-test("keeps the screenshot focus ring inside its clipping frame", async () => {
-  const products = await readBuiltPage("assets/products.css");
-  assert.match(products, /\.product-view a:focus-visible\s*\{[^}]*outline-offset:\s*-3px/s);
 });
 
 test("keeps header logos light and footers free of the full brand lockup", async () => {
@@ -621,8 +495,5 @@ test("builds a branded 404 page, robots.txt, and sitemap.xml", async () => {
     "https://flid.ai/",
     "https://flid.ai/products/",
     "https://flid.ai/about/",
-    "https://flid.ai/brand/",
-    "https://flid.ai/showcase/",
-    "https://flid.ai/generator/",
   ]);
 });

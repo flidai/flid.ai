@@ -1,5 +1,7 @@
 // The signal wave: a calm, flowing field of points along the bottom of the hero.
-// It is deliberately slow and soft; the castle story takes over as you scroll.
+// It is deliberately slow and soft; the core takes over as you scroll.
+import { createResolution, worthResizing } from "/assets/motion.js";
+
 const vertex = `#version 300 es
 in vec2 a;
 uniform float uTime, uAspect, uPx, uFade, uHot;
@@ -67,8 +69,7 @@ export function startBloom(host, { getFade = () => 1 } = {}) {
   let uniforms, count, active = true, frame = 0, width = 0, height = 0;
   const target = { x: 2, y: 2, hot: 0 }, pointer = { x: 2, y: 2, hot: 0 };
   const start = performance.now();
-  let dpr = Math.min(devicePixelRatio || 1, 1.5);
-  let slow = 0, last = 0;
+  let last = 0, drawnFade = 1;
 
   const build = () => {
     const program = gl.createProgram();
@@ -91,13 +92,15 @@ export function startBloom(host, { getFade = () => 1 } = {}) {
     );
   };
 
-  const resize = () => {
+  const resize = (force = true) => {
     const box = host.getBoundingClientRect();
+    if (!force && !worthResizing(box.width, box.height, width, height)) return;
     width = box.width; height = box.height;
-    canvas.width = Math.max(1, Math.round(width * dpr));
-    canvas.height = Math.max(1, Math.round(height * dpr));
+    canvas.width = Math.max(1, Math.round(width * resolution.value));
+    canvas.height = Math.max(1, Math.round(height * resolution.value));
     gl.viewport(0, 0, canvas.width, canvas.height);
   };
+  const resolution = createResolution({ start: Math.min(devicePixelRatio || 1, 1.5), min: 1, onChange: () => resize() });
 
   const draw = (now) => {
     const time = still.matches ? 30 : (now - start) / 1000;
@@ -108,8 +111,9 @@ export function startBloom(host, { getFade = () => 1 } = {}) {
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.uniform1f(uniforms.uTime, time);
     gl.uniform1f(uniforms.uAspect, width / height);
-    gl.uniform1f(uniforms.uPx, Math.max(1.9, 1.4 * dpr));
-    gl.uniform1f(uniforms.uFade, getFade());
+    gl.uniform1f(uniforms.uPx, Math.max(1.9, 1.4 * resolution.value));
+    drawnFade = getFade();
+    gl.uniform1f(uniforms.uFade, drawnFade);
     gl.uniform1f(uniforms.uHot, pointer.hot);
     gl.uniform2f(uniforms.uPointer, pointer.x, pointer.y);
     gl.drawArrays(gl.POINTS, 0, count);
@@ -118,12 +122,13 @@ export function startBloom(host, { getFade = () => 1 } = {}) {
   const loop = (now) => {
     frame = 0;
     if (!active || document.hidden || gl.isContextLost()) return;
-    if (last && now - last > 45 && dpr > 1) {
-      slow += 1;
-      if (slow > 30) { dpr = 1; slow = 0; resize(); }
-    }
+    const delta = last ? Math.min(now - last, 100) : 16;
     last = now;
-    draw(now);
+    // Once faded out there is nothing to show, but one last frame has to clear the canvas.
+    if (getFade() > 0 || drawnFade > 0) {
+      resolution.frame(delta);
+      draw(now);
+    }
     if (!still.matches) frame = requestAnimationFrame(loop);
   };
   const wake = () => { if (!frame && active) frame = requestAnimationFrame(loop); };
@@ -134,7 +139,7 @@ export function startBloom(host, { getFade = () => 1 } = {}) {
   host.classList.add("is-live");
   wake();
 
-  addEventListener("resize", () => { resize(); if (still.matches) draw(performance.now()); });
+  addEventListener("resize", () => { resize(false); if (still.matches) draw(performance.now()); });
   document.addEventListener("visibilitychange", () => { last = 0; wake(); });
   addEventListener("scroll", () => { if (still.matches) draw(performance.now()); }, { passive: true });
   if (matchMedia("(hover: hover) and (pointer: fine)").matches) {

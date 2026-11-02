@@ -27,17 +27,10 @@ const prefixableExtensions = new Set([
 const copiedFiles = [
   ["app/globals.css", "assets/globals.css"],
   ["app/site/site.css", "assets/site.css"],
-  ["app/home/home.css", "assets/home.css"],
-  ["app/products/products.css", "assets/products.css"],
-  ["app/about/about.css", "assets/about.css"],
   ["app/showcase/showcase.css", "assets/showcase.css"],
   ["app/generator/generator.css", "assets/generator.css"],
   ["app/brand/brand.css", "assets/brand.css"],
   ["app/identity/identity-header.css", "assets/identity-header.css"],
-  ["lib/hero-signal-field.mjs", "lib/hero-signal-field.mjs"],
-  ["lib/hero-scroll-transition.mjs", "lib/hero-scroll-transition.mjs"],
-  ["lib/signal-scroll-story.mjs", "lib/signal-scroll-story.mjs"],
-  ["lib/depth-video-story.mjs", "lib/depth-video-story.mjs"],
   ["lib/logo-generator.mjs", "lib/logo-generator.mjs"],
   ["lib/brand-system.mjs", "lib/brand-system.mjs"],
   ["lib/primer-colors.mjs", "lib/primer-colors.mjs"],
@@ -102,20 +95,9 @@ async function applyBasePath(directory, basePath) {
   }
 }
 
-export async function buildSite({
-  outputDirectory = output,
-  basePath = "",
-} = {}) {
-  await rm(outputDirectory, { recursive: true, force: true });
-  await mkdir(outputDirectory, { recursive: true });
-  await cp(join(root, "site"), outputDirectory, { recursive: true });
-
-  for (const [source, destination] of copiedFiles) {
-    const target = join(outputDirectory, destination);
-    await mkdir(dirname(target), { recursive: true });
-    await copyFile(join(root, source), target);
-  }
-
+// Encoding these is by far the slowest part of a build, so a caller that does not
+// look at them can skip it.
+async function buildProductImages(outputDirectory) {
   const screenshotDirectory = join(outputDirectory, "assets/images/products");
   await mkdir(screenshotDirectory, { recursive: true });
   await Promise.all(
@@ -134,6 +116,24 @@ export async function buildSite({
       });
     }),
   );
+}
+
+export async function buildSite({
+  outputDirectory = output,
+  basePath = "",
+  productImages = true,
+} = {}) {
+  await rm(outputDirectory, { recursive: true, force: true });
+  await mkdir(outputDirectory, { recursive: true });
+  await cp(join(root, "site"), outputDirectory, { recursive: true });
+
+  for (const [source, destination] of copiedFiles) {
+    const target = join(outputDirectory, destination);
+    await mkdir(dirname(target), { recursive: true });
+    await copyFile(join(root, source), target);
+  }
+
+  if (productImages) await buildProductImages(outputDirectory);
 
   const portraits = [
     ["Jacob Østergaard 1.png", "jacob-oestergaard.webp"],
@@ -160,15 +160,7 @@ export async function buildSite({
   await applyBasePath(outputDirectory, basePath);
 }
 
-// The canonical lockup and mark SVGs outline all 134 signal curves (~180 KB
-// each). The site header only needs the wordmark and a 48 px mark, so derive
-// lightweight copies from the generated brand assets instead of shipping the
-// full outlines on every first page load.
-export async function buildHeaderLogoAssets(outputDirectory) {
-  const brandDirectory = join(outputDirectory, "brand-assets");
-  const imageDirectory = join(outputDirectory, "assets/images");
-  await mkdir(imageDirectory, { recursive: true });
-
+async function readPrimaryLockup(brandDirectory) {
   const lockup = await readFile(
     join(brandDirectory, "lockup-primary-on-dark.svg"),
     "utf8",
@@ -178,6 +170,19 @@ export async function buildHeaderLogoAssets(outputDirectory) {
   if (!viewBox || !wordmark) {
     throw new Error("The primary lockup no longer contains an outlined wordmark.");
   }
+  return { viewBox, wordmark };
+}
+
+// The canonical lockup and mark SVGs outline all 134 signal curves (~180 KB
+// each). The site header only needs the wordmark and a 48 px mark, so derive
+// lightweight copies from the generated brand assets instead of shipping the
+// full outlines on every first page load.
+export async function buildHeaderLogoAssets(outputDirectory) {
+  const brandDirectory = join(outputDirectory, "brand-assets");
+  const imageDirectory = join(outputDirectory, "assets/images");
+  await mkdir(imageDirectory, { recursive: true });
+
+  const { viewBox, wordmark } = await readPrimaryLockup(brandDirectory);
   await writeFile(
     join(imageDirectory, "site-wordmark-on-dark.svg"),
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" aria-hidden="true">${wordmark}</svg>\n`,
@@ -196,15 +201,7 @@ export async function buildHeaderLogoAssets(outputDirectory) {
 // stays one <img>, so pages keep their existing footer markup and alt text.
 export async function buildFooterLockup(outputDirectory) {
   const brandDirectory = join(outputDirectory, "brand-assets");
-  const lockup = await readFile(
-    join(brandDirectory, "lockup-primary-on-dark.svg"),
-    "utf8",
-  );
-  const viewBox = lockup.match(/^<svg[^>]*\sviewBox="([^"]+)"/)?.[1];
-  const wordmark = lockup.match(/<path data-wordmark-outline="flid"[^>]*\/>/)?.[0];
-  if (!viewBox || !wordmark) {
-    throw new Error("The primary lockup no longer contains an outlined wordmark.");
-  }
+  const { viewBox, wordmark } = await readPrimaryLockup(brandDirectory);
 
   const mark = await sharp(join(brandDirectory, "mark-primary-on-dark.svg"), {
     density: 288,

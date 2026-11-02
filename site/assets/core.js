@@ -2,6 +2,7 @@
 // the visitor scrolls, then rings close around it. Rendered with three.js.
 import * as THREE from "/assets/vendor/three.mjs";
 import { SHELL_AXIS, buildShell } from "/assets/core-geometry.js";
+import { createPointer } from "/assets/motion.js";
 import { clamp, createRenderer, runScene } from "/assets/stage.js";
 
 const RADIUS = 1.45; // The model, rings included, fits inside this.
@@ -222,7 +223,7 @@ export async function startCore(canvas, thesis, { still = false } = {}) {
     return ring;
   });
 
-  const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
+  const pointer = createPointer(still);
   const start = performance.now();
   let width = 1, height = 1, wide = true, build = 0;
   const shown = () => clamp((scrollY - thesis.offsetTop * 0.2) / (thesis.offsetTop * 0.7));
@@ -235,8 +236,7 @@ export async function startCore(canvas, thesis, { still = false } = {}) {
     build = still ? 1.2 : build + (target - build) * (1 - Math.exp(-delta / 170));
     if (Math.abs(target - build) < 0.0005) build = target;
     const time = still ? 12 : (now - start) / 1000;
-    pointer.x += (pointer.tx - pointer.x) * 0.05;
-    pointer.y += (pointer.ty - pointer.y) * 0.05;
+    pointer.ease(delta);
 
     uniforms.uTime.value = time;
     uniforms.uBuild.value = build;
@@ -281,9 +281,4 @@ export async function startCore(canvas, thesis, { still = false } = {}) {
     },
   });
   host.classList.add("core-ready");
-  if (!still) addEventListener("pointermove", (event) => {
-    if (event.pointerType === "touch") return;
-    pointer.tx = (event.clientX / innerWidth) * 2 - 1;
-    pointer.ty = (event.clientY / innerHeight) * 2 - 1;
-  }, { passive: true });
 }
