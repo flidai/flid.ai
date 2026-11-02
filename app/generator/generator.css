@@ -191,10 +191,9 @@
 }
 
 .generator-control input[type="range"] {
-  margin: 0;
+  margin: 5px 0 0;
   width: 100%;
-  height: 18px;
-  margin-top: 11px;
+  height: 24px;
   appearance: none;
   background: transparent;
   cursor: pointer;

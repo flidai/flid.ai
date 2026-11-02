@@ -113,22 +113,25 @@ addEventListener("resize", request);
 paint();
 
 // Signal wave: one canvas per page, paused whenever its zone is off screen.
+// It starts after the first paint, so the words never wait for a graphics context.
 if (bloomHost) {
-  try {
-    const bloom = startBloom(bloomHost, {
-      getFade: () => (thesis ? 1 - clamp(scrollY / (thesis.offsetTop * 0.8)) : 1),
-    });
-    const zone = document.querySelector("[data-bloom-zone]") ?? bloomHost;
-    if (bloom && "IntersectionObserver" in window) {
-      new IntersectionObserver(([entry]) => bloom.setActive(entry.isIntersecting), { rootMargin: "120px" }).observe(zone);
+  requestAnimationFrame(() => setTimeout(() => {
+    try {
+      const bloom = startBloom(bloomHost, {
+        getFade: () => (thesis ? 1 - clamp(scrollY / (thesis.offsetTop * 0.8)) : 1),
+      });
+      const zone = document.querySelector("[data-bloom-zone]") ?? bloomHost;
+      if (bloom && "IntersectionObserver" in window) {
+        new IntersectionObserver(([entry]) => bloom.setActive(entry.isIntersecting), { rootMargin: "120px" }).observe(zone);
+      }
+    } catch (error) {
+      // The page works without the wave.
+      console.warn(error);
     }
-  } catch (error) {
-    // The page works without the wave.
-    console.warn(error);
-  }
+  }));
 }
 
-// The 3D scenes load one at a time: the core at once, the others when the browser is idle,
+// The 3D scenes load one at a time, each when the browser is idle,
 // so none of them can freeze the page in the middle of a scroll.
 const idle = () => new Promise((done) => {
   if ("requestIdleCallback" in window) requestIdleCallback(done, { timeout: 1200 });
@@ -147,6 +150,7 @@ const loadScene = async (path, start) => {
 };
 (async () => {
   if (coreCanvas && thesis) {
+    await idle();
     await loadScene("/assets/core.js", ({ startCore }) => startCore(coreCanvas, thesis, { still }));
   }
   if (sheetsCanvas) {

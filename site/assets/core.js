@@ -3,7 +3,7 @@
 import * as THREE from "/assets/vendor/three.mjs";
 import { SHELL_AXIS, buildShell } from "/assets/core-geometry.js";
 import { createPointer } from "/assets/motion.js";
-import { clamp, createRenderer, runScene } from "/assets/stage.js";
+import { breathe, clamp, createRenderer, runScene } from "/assets/stage.js";
 
 const RADIUS = 1.45; // The model, rings included, fits inside this.
 
@@ -164,6 +164,7 @@ export async function startCore(canvas, thesis, { still = false } = {}) {
     canvas.remove();
     return;
   }
+  await breathe();
   const host = canvas.parentElement;
   const phone = Math.min(innerWidth, innerHeight) < 600;
   const uniforms = { uTime: { value: 0 }, uBuild: { value: 0 }, uHeart: { value: 0 }, uPx: { value: 2 } };
@@ -173,6 +174,7 @@ export async function startCore(canvas, thesis, { still = false } = {}) {
   scene.environment = pmrem.fromScene(new THREE.RoomEnvironment(), 0.04).texture;
   scene.environmentIntensity = 0.3;
   pmrem.dispose();
+  await breathe();
   const key = new THREE.DirectionalLight(0xbfd8ff, 2.2);
   key.position.set(2.5, 3, 4);
   const warm = new THREE.DirectionalLight(0xff9a55, 1.5);
@@ -203,6 +205,7 @@ export async function startCore(canvas, thesis, { still = false } = {}) {
   geometry.setAttribute("normal", buffer(3, 3));
   geometry.setAttribute("aCenter", buffer(6, 3));
   geometry.setAttribute("aInfo", buffer(9, 3));
+  await breathe();
   const shell = new THREE.Mesh(geometry, shellMaterial(uniforms));
   shell.frustumCulled = false;
   turning.add(shell);
@@ -267,6 +270,7 @@ export async function startCore(canvas, thesis, { still = false } = {}) {
   // Prepare the shaders without blocking the page, then start.
   camera.updateProjectionMatrix();
   await renderer.compileAsync(scene, camera);
+  await breathe();
   runScene({
     canvas, renderer, still, draw,
     watch: document.querySelector("[data-bloom-zone]") ?? thesis,

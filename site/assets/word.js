@@ -3,7 +3,7 @@
 import * as THREE from "/assets/vendor/three.mjs";
 import { FLID_WORD } from "/assets/flid-word.js";
 import { createPointer } from "/assets/motion.js";
-import { clamp, createRenderer, runScene, smooth } from "/assets/stage.js";
+import { breathe, clamp, createRenderer, runScene, smooth } from "/assets/stage.js";
 
 const DEPTH = 0.13;
 
@@ -60,6 +60,7 @@ export async function startWord(canvas, host, { still = false } = {}) {
     canvas.remove();
     return;
   }
+  await breathe();
 
   const scene = new THREE.Scene();
   scene.add(new THREE.HemisphereLight(0xcfdcff, 0x161c28, 1.8));
@@ -77,7 +78,8 @@ export async function startWord(canvas, host, { still = false } = {}) {
   model.add(word);
   const time = { value: 0 }, sweep = { value: 0 }, wordWidth = { value: FLID_WORD.width };
 
-  const letters = FLID_WORD.letters.map((letter, i) => {
+  const letters = [];
+  for (const [i, letter] of FLID_WORD.letters.entries()) {
     const geometry = letterGeometry(letter);
     const box = geometry.boundingBox;
     const middle = (box.min.x + box.max.x) / 2;
@@ -89,8 +91,9 @@ export async function startWord(canvas, host, { still = false } = {}) {
     upright.renderOrder = 2;
     mirrored.renderOrder = 1;
     word.add(mirrored, upright);
-    return { upright, mirrored, x: letter.x + middle - FLID_WORD.width / 2, i };
-  });
+    letters.push({ upright, mirrored, x: letter.x + middle - FLID_WORD.width / 2, i });
+    await breathe();
+  }
 
   // A pool of light on the floor under the word.
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2), new THREE.ShaderMaterial({

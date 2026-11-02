@@ -5,6 +5,12 @@ import { createResolution, worthResizing } from "/assets/motion.js";
 export const clamp = (value) => Math.min(1, Math.max(0, value));
 export const smooth = (a, b, value) => { const t = clamp((value - a) / (b - a)); return t * t * (3 - 2 * t); };
 
+// Hands the main thread back between the steps of building a scene, so no single step can freeze the page.
+export const breathe = () => new Promise((done) => {
+  if ("requestIdleCallback" in window) requestIdleCallback(done, { timeout: 150 });
+  else setTimeout(done);
+});
+
 export function createRenderer(canvas) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance", stencil: false });
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -22,8 +28,8 @@ export function runScene({ canvas, renderer, watch, still, draw, onResize, shoul
     const width = Math.max(1, box.width), height = Math.max(1, box.height);
     if (!force && !worthResizing(width, height, lastWidth, lastHeight)) return;
     lastWidth = width; lastHeight = height;
-    renderer.setPixelRatio(resolution.value);
-    renderer.setSize(width, height, false);
+    // One call, so the canvas is only reallocated once.
+    renderer.setDrawingBufferSize(width, height, resolution.value);
     onResize(width, height);
   };
   const resolution = createResolution({ start: Math.min(devicePixelRatio || 1, 1.5), min: 0.7, onChange: () => resize() });

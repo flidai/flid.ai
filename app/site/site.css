@@ -228,8 +228,9 @@ main:focus { outline: none; }
   .motion .thesis-stage { opacity: var(--leave, 1); }
 }
 .word { opacity: var(--w, 1); transition: opacity 0.18s linear; }
-/* Reduced motion: the sentence scrolls across the core on tall screens, so it gets a backing. */
-@media (prefers-reduced-motion: reduce) and (max-width: 720px), (prefers-reduced-motion: reduce) and (orientation: portrait) {
+/* The sentence gets a backing where it can sit on the core: in reduced motion it scrolls across it on tall
+   screens, and on small sideways phones or at high zoom there is no room to keep them apart. */
+@media (prefers-reduced-motion: reduce) and (max-width: 720px), (prefers-reduced-motion: reduce) and (orientation: portrait), (max-width: 720px) and (max-height: 500px) {
   .thesis p { padding: 16px 18px; border-radius: 16px; background: rgb(6 8 13 / 0.8); }
 }
 

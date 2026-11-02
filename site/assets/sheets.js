@@ -2,7 +2,7 @@
 // scrolls, the current sheet lifts away and the next rises into its place, its objects growing out of it.
 import * as THREE from "/assets/vendor/three.mjs";
 import { createPointer } from "/assets/motion.js";
-import { clamp, createRenderer, runScene, smooth } from "/assets/stage.js";
+import { breathe, clamp, createRenderer, runScene, smooth } from "/assets/stage.js";
 
 const hash = (n) => { const v = Math.sin(n * 127.1) * 43758.5453; return v - Math.floor(v); };
 
@@ -279,6 +279,7 @@ export async function startSheets(canvas, rows, { still = false } = {}) {
     canvas.remove();
     return;
   }
+  await breathe();
   const host = canvas.parentElement;
 
   const scene = new THREE.Scene();
@@ -297,7 +298,8 @@ export async function startSheets(canvas, rows, { still = false } = {}) {
   const glowPlane = new THREE.PlaneGeometry(4, 4).rotateX(-Math.PI / 2).scale(1, 1, 1);
 
   const makers = [() => dataObjects(0x4493f8), actionObjects, evidenceObjects];
-  const sheets = SHEETS.map(({ label, tint }, i) => {
+  const sheets = [];
+  for (const [i, { label, tint }] of SHEETS.entries()) {
     const group = new THREE.Group();
     model.add(group);
     const uniforms = { uTime: time, uOn: { value: 0 }, uFade: { value: 1 }, uKind: { value: i }, uTint: { value: new THREE.Color(tint) }, uHit: { value: hits } };
@@ -313,8 +315,9 @@ export async function startSheets(canvas, rows, { still = false } = {}) {
     group.add(name);
     const objects = makers[i]();
     group.add(objects.group);
-    return { group, uniforms, name, objects };
-  });
+    sheets.push({ group, uniforms, name, objects });
+    await breathe();
+  }
 
   // The agents: lights that come down on a beam and land on the active sheet.
   const agents = [[-0.42, -0.2], [0.34, 0.26], [0.1, -0.56]].map(([x, z], i) => {

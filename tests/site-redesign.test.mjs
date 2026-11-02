@@ -236,7 +236,7 @@ test("the thesis sentence leaves before it can cross the core on tall screens", 
   const css = await readFile(new URL("../app/site/site.css", import.meta.url), "utf8");
   assert.match(site, /setProperty\("--leave"/);
   assert.match(css, /\.motion \.thesis-stage \{ opacity: var\(--leave, 1\); \}/);
-  assert.match(css, /prefers-reduced-motion: reduce\) and \(orientation: portrait\)[^}]*\.thesis p \{[^}]*background/);
+  assert.match(css, /prefers-reduced-motion: reduce\) and \(orientation: portrait\), \(max-width: 720px\) and \(max-height: 500px\)[^}]*\.thesis p \{[^}]*background/);
 });
 
 test("product panels use a role their element allows", async () => {
@@ -253,4 +253,26 @@ test("high contrast mode drops the canvases", async () => {
 test("reloading inside a pinned section keeps the scroll position", async () => {
   const css = await readFile(new URL("../app/site/site.css", import.meta.url), "utf8");
   assert.match(css, /\* \{ overflow-anchor: none; \}/);
+});
+
+test("scenes hand back the main thread while they build and allocate the canvas once", async () => {
+  for (const scene of ["core", "sheets", "word"]) {
+    assert.match(await read(`assets/${scene}.js`), /await breathe\(\)/, scene);
+  }
+  const stage = await read("assets/stage.js");
+  assert.match(stage, /setDrawingBufferSize\(width, height, resolution\.value\)/);
+  assert.doesNotMatch(stage, /setPixelRatio|setSize\(/);
+});
+
+test("the wave waits for the first paint", async () => {
+  assert.match(await read("assets/site.js"), /requestAnimationFrame\(\(\) => setTimeout\(\(\) => \{\s*try \{\s*const bloom = startBloom/);
+});
+
+test("the internal tool pages stay out of search results", async () => {
+  for (const page of ["brand/index.html", "generator/index.html", "showcase/index.html"]) {
+    assert.match(await read(page), /<meta name="robots" content="noindex">/, page);
+  }
+  for (const page of ["index.html", "products/index.html", "about/index.html"]) {
+    assert.doesNotMatch(await read(page), /noindex/, page);
+  }
 });
