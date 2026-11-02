@@ -217,14 +217,21 @@ main:focus { outline: none; }
 .motion .thesis-stage {
   position: sticky; top: 0; display: grid; gap: 0; height: 100svh; padding-block: 0; align-items: center;
 }
+/* Reload and Back restore the scroll position against an anchor; on a pinned element that jumps thousands of pixels. */
+* { overflow-anchor: none; }
 .motion .thesis-stage p { grid-area: 1 / 1; transition: opacity 0.35s; }
 .motion .thesis-stage p[data-off] { opacity: 0; }
 /* The first line sits to the right of the core as it forms. */
 .motion .thesis-stage p:first-child { justify-self: end; text-align: right; }
 @media (max-width: 720px), (orientation: portrait) {
   .motion .thesis-stage p, .motion .thesis-stage p:first-child { align-self: end; justify-self: center; padding-bottom: 12vh; text-align: center; }
+  .motion .thesis-stage { opacity: var(--leave, 1); }
 }
 .word { opacity: var(--w, 1); transition: opacity 0.18s linear; }
+/* Reduced motion: the sentence scrolls across the core on tall screens, so it gets a backing. */
+@media (prefers-reduced-motion: reduce) and (max-width: 720px), (prefers-reduced-motion: reduce) and (orientation: portrait) {
+  .thesis p { padding: 16px 18px; border-radius: 16px; background: rgb(6 8 13 / 0.8); }
+}
 
 /* Foundations */
 .solid { position: relative; background: var(--ink); overflow-x: clip; }
@@ -463,7 +470,7 @@ main:focus { outline: none; }
 .view:not([hidden]) .frame { animation: view-in 0.6s var(--ease) both; }
 @keyframes view-in { from { opacity: 0; transform: translateY(10px) scale(0.992); } to { opacity: 1; transform: none; } }
 .view a { display: block; text-decoration: none; }
-.view figcaption { margin-top: 14px; color: var(--muted); font-size: 0.97rem; }
+.view > p { margin-top: 14px; color: var(--muted); font-size: 0.97rem; }
 
 .features { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: clamp(24px, 4vh, 40px); }
 .features li { display: grid; align-content: start; gap: 8px; padding: 24px; border: 1px solid var(--line); border-radius: 18px; background: var(--ink-2); }
@@ -541,6 +548,12 @@ main:focus { outline: none; }
 @media (orientation: landscape) and (max-height: 500px) {
   .motion .panel { height: auto; }
   .motion .show-stage { position: relative; height: auto; padding-block: 72px 40px; }
+}
+
+/* High contrast: the page's colors are replaced, and a dark canvas would be left as a black shape. */
+@media (forced-colors: active) {
+  canvas { display: none !important; }
+  .top-logo img { forced-color-adjust: none; background: #06080d; border-radius: 8px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -46,6 +46,9 @@ const thesisProgress = () => {
 
 const paintThesis = () => {
   if (!sentences.length) return;
+  // On tall screens the sentence would slide up across the core as the section leaves, so it fades first.
+  const past = scrollY - (thesis.offsetTop + thesis.offsetHeight - innerHeight);
+  thesis.style.setProperty("--leave", (1 - clamp(past / (innerHeight * 0.14))).toFixed(3));
   const progress = thesisProgress();
   const slice = 1 / sentences.length;
   sentences.forEach(({ sentence, words }, index) => {
