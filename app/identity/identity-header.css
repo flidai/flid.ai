@@ -1,0 +1,233 @@
+/*
+ * Header chrome shared by /brand/, /showcase/, and /generator/. It reuses the public
+ * site's logo treatment and height so the tools read as the same site; each tool keeps
+ * its own navigation and layout rules in its own stylesheet.
+ */
+.skip-link {
+  position: absolute;
+  z-index: 100;
+  top: 8px;
+  left: 8px;
+  padding: 12px 16px;
+  transform: translateY(-200%);
+  color: var(--bgColor-default);
+  background: var(--fgColor-accent);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.skip-link:focus-visible {
+  transform: none;
+  outline: 2px solid var(--fgColor-default);
+  outline-offset: 2px;
+}
+
+[id="main"]:focus {
+  outline: none;
+}
+
+.tool-header {
+  --tool-header-height: 82px;
+  position: relative;
+  z-index: 2;
+  /* Matches the public site header: its row height plus the bottom border. */
+  min-height: calc(var(--tool-header-height) + 1px);
+  border-bottom: 1px solid var(--borderColor-default);
+  background: color-mix(in srgb, var(--bgColor-default) 90%, transparent);
+}
+
+.tool-header {
+  /* The public site's side gutter, so the logo sits where it does on every other page. */
+  --tool-header-pad: clamp(24px, 4.25vw, 72px);
+  padding-inline: var(--tool-header-pad);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 24px;
+}
+
+/* The tool's own links; the site link follows at the far edge. */
+.tool-header-nav {
+  margin-left: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 28px;
+  color: var(--fgColor-muted);
+}
+
+/* The static-page status line is decoration: only wide headers have room for it. */
+.tool-header-nav > span {
+  display: none;
+}
+
+@media (min-width: 1081px) {
+  .tool-header-nav > span {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+}
+
+.tool-header-nav a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--fgColor-default);
+  white-space: nowrap;
+  transition: color 160ms ease;
+}
+
+@media (hover: hover) {
+  .tool-header-nav a:hover {
+    color: var(--fgColor-accent);
+  }
+}
+
+.tool-header-brand {
+  display: flex;
+  align-items: center;
+  flex: none;
+  min-width: 0;
+}
+
+.tool-logo {
+  position: relative;
+  flex: none;
+  display: block;
+  width: 112px;
+  aspect-ratio: 232 / 100;
+  isolation: isolate;
+}
+
+.tool-logo img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.tool-logo .tool-logo-wordmark {
+  clip-path: inset(0 0 0 43.1035%);
+}
+
+.tool-logo .tool-logo-mark {
+  width: 43.1035%;
+  transform-origin: center;
+  transition: transform 720ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) {
+  .tool-logo:hover .tool-logo-mark {
+    transform: rotate(360deg);
+  }
+}
+
+.tool-logo:focus-visible .tool-logo-mark {
+  transform: rotate(360deg);
+}
+
+/* Which tool this is, beside the logo. */
+.tool-label {
+  margin-left: 18px;
+  padding-left: 18px;
+  border-left: 1px solid var(--borderColor-default);
+  color: var(--fgColor-muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: var(--text-micro);
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tool-header nav,
+.tool-site-link {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: var(--text-micro);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.tool-site-link {
+  flex: none;
+  color: var(--fgColor-default);
+  white-space: nowrap;
+}
+
+@media (hover: hover) {
+  .tool-site-link:hover {
+    color: var(--fgColor-accent);
+  }
+}
+
+.tool-site-link {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  transition: color 160ms ease;
+}
+
+@media (max-width: 720px) {
+  .tool-header {
+    --tool-header-height: 70px;
+    --tool-header-pad: 20px;
+  }
+
+  /* Brand and site link share the top row; the tool's links sit in a row of their own. */
+  .tool-header:not(.guide-header) {
+    flex-wrap: wrap;
+    column-gap: 12px;
+  }
+
+  .tool-header:not(.guide-header) .tool-header-brand {
+    min-height: var(--tool-header-height);
+  }
+
+  .tool-header:not(.guide-header) .tool-site-link {
+    margin-left: auto;
+  }
+
+  .tool-header:not(.guide-header) .tool-header-nav {
+    order: 3;
+    flex: 0 0 calc(100% + var(--tool-header-pad) * 2);
+    margin-inline: calc(var(--tool-header-pad) * -1);
+    padding-inline: 8px;
+    gap: 0;
+    border-top: 1px solid var(--borderColor-muted);
+  }
+
+  .tool-header:not(.guide-header) .tool-header-nav a {
+    padding-inline: 12px;
+  }
+
+  .tool-logo {
+    width: 96px;
+  }
+
+  /* The 41px-tall logo link reaches a 44px touch target. */
+  .tool-logo::after {
+    position: absolute;
+    inset: -2px 0;
+    content: "";
+  }
+
+  .tool-label {
+    margin-left: 14px;
+    padding-left: 14px;
+  }
+}
+
+/* Too narrow for the logo, label, and site link in one row. */
+@media (max-width: 379px) {
+  .tool-label {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tool-logo-mark {
+    transition-duration: 0.01ms;
+  }
+}

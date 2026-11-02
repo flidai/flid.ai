@@ -31,7 +31,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Test
+      # npm test builds dist first, so this is also the build that gets deployed.
+      - name: Build and test
         run: npm test
 
       - name: Configure GitHub Pages
@@ -39,9 +40,6 @@ jobs:
         uses: actions/configure-pages@v5
         with:
           enablement: true
-
-      - name: Build Pages artifact
-        run: npm run build
 
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v5

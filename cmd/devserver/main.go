@@ -10,23 +10,26 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 )
 
 var contentTypes = map[string]string{
-	".css":  "text/css; charset=utf-8",
-	".html": "text/html; charset=utf-8",
-	".ico":  "image/x-icon",
-	".js":   "text/javascript; charset=utf-8",
-	".jpeg": "image/jpeg",
-	".jpg":  "image/jpeg",
-	".mjs":  "text/javascript; charset=utf-8",
-	".mp4":  "video/mp4",
-	".png":  "image/png",
-	".svg":  "image/svg+xml",
-	".txt":  "text/plain; charset=utf-8",
-	".webp": "image/webp",
+	".css":         "text/css; charset=utf-8",
+	".html":        "text/html; charset=utf-8",
+	".ico":         "image/x-icon",
+	".js":          "text/javascript; charset=utf-8",
+	".jpeg":        "image/jpeg",
+	".jpg":         "image/jpeg",
+	".mjs":         "text/javascript; charset=utf-8",
+	".mp4":         "video/mp4",
+	".png":         "image/png",
+	".svg":         "image/svg+xml",
+	".txt":         "text/plain; charset=utf-8",
+	".webmanifest": "application/manifest+json",
+	".webp":        "image/webp",
+	".xml":         "application/xml; charset=utf-8",
 }
 
 type staticHandler struct {
@@ -99,7 +102,7 @@ func (handler staticHandler) ServeHTTP(response http.ResponseWriter, request *ht
 	target := filepath.Join(handler.root, filepath.FromSlash(cleanPath))
 	target, info, err := resolveTarget(target)
 	if err != nil {
-		http.Error(response, "Not found", http.StatusNotFound)
+		handler.serveNotFound(response, request)
 		return
 	}
 
@@ -111,7 +114,7 @@ func (handler staticHandler) ServeHTTP(response http.ResponseWriter, request *ht
 
 	file, err := os.Open(target)
 	if err != nil {
-		http.Error(response, "Not found", http.StatusNotFound)
+		handler.serveNotFound(response, request)
 		return
 	}
 	defer file.Close()
@@ -126,6 +129,24 @@ func (handler staticHandler) ServeHTTP(response http.ResponseWriter, request *ht
 	}
 
 	http.ServeContent(response, request, info.Name(), info.ModTime(), file)
+}
+
+// serveNotFound mirrors GitHub Pages: when the site ships a 404.html, every
+// unknown path answers 404 with that page. Without one it falls back to a
+// plain-text 404.
+func (handler staticHandler) serveNotFound(response http.ResponseWriter, request *http.Request) {
+	page, err := os.ReadFile(filepath.Join(handler.root, "404.html"))
+	if err != nil {
+		http.Error(response, "Not found", http.StatusNotFound)
+		return
+	}
+
+	response.Header().Set("Content-Type", contentTypes[".html"])
+	response.Header().Set("Content-Length", strconv.Itoa(len(page)))
+	response.WriteHeader(http.StatusNotFound)
+	if request.Method != http.MethodHead {
+		_, _ = response.Write(page)
+	}
 }
 
 func resolveTarget(target string) (string, os.FileInfo, error) {

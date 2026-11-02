@@ -5,31 +5,24 @@
   --guide-muted: var(--fgColor-muted);
   --guide-accent: var(--fgColor-accent);
   --guide-line: var(--borderColor-muted);
+  --text-micro: clamp(0.6875rem, 0.45rem + 0.25vw, 0.9375rem);
   min-height: 100vh;
   background: var(--guide-ink);
   color: var(--guide-paper);
 }
 
+/* The logo, label, and site link come from identity-header.css. */
 .guide-header {
-  min-height: 72px;
-  padding-inline: clamp(20px, 3.5vw, 56px);
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  gap: 32px;
-  align-items: center;
-  border-bottom: 1px solid var(--guide-line);
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0 32px;
+  border-bottom-color: var(--guide-line);
 }
 
-.guide-header-brand,
-.guide-header nav,
 .guide-header-actions,
 .reference-lockup {
   display: flex;
   align-items: center;
-}
-
-.guide-header-brand {
-  width: fit-content;
 }
 
 .guide-lockup-asset {
@@ -42,33 +35,75 @@
 }
 
 .guide-header nav {
-  gap: 26px;
+  align-self: stretch;
+  justify-self: center;
+  display: flex;
+  align-items: stretch;
+  gap: 22px;
   color: var(--guide-muted);
 }
 
+.guide-header nav a,
+.guide-header-actions a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
 .guide-header-actions {
+  min-width: 0;
+  flex-wrap: wrap;
   justify-content: flex-end;
-  gap: 24px;
+  gap: 0 24px;
 }
 
 .guide-header nav,
 .guide-header-actions {
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.56rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.guide-header a:hover,
-.guide-header a:focus-visible,
-.guide-footer a:hover {
+.guide-header nav .guide-nav-extra,
+.guide-header nav .guide-nav-more {
+  display: none;
+}
+
+/* Wide enough for every section in the header; narrower desktops keep the core four. */
+@media (min-width: 1280px) {
+  .guide-header nav .guide-nav-more {
+    display: inline-flex;
+  }
+}
+
+.guide-header a:focus-visible {
   color: var(--guide-accent);
+}
+
+@media (hover: hover) {
+  .guide-header nav a:hover,
+  .guide-header-actions a:hover,
+  .guide-footer a:hover {
+    color: var(--guide-accent);
+  }
+}
+
+/* The section being read; set from brand.js. */
+.guide-header nav a[aria-current="location"] {
+  color: var(--guide-paper);
+  box-shadow: inset 0 -2px var(--guide-accent);
 }
 
 .brand-guide a:focus-visible,
 .brand-guide summary:focus-visible {
   outline: 2px solid var(--guide-accent);
   outline-offset: 4px;
+}
+
+.brand-guide pre:focus-visible {
+  outline: 2px solid var(--guide-accent);
+  outline-offset: -2px;
 }
 
 .guide-hero {
@@ -95,13 +130,14 @@
   margin: 0;
   color: var(--guide-accent);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.58rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.11em;
   text-transform: uppercase;
 }
 
 .guide-hero-copy h1 {
   max-width: 760px;
+  overflow-wrap: anywhere;
   margin: 36px 0 30px;
   font-size: clamp(4rem, 7vw, 8rem);
   font-weight: 440;
@@ -143,13 +179,20 @@
   gap: 24px;
   color: var(--guide-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.54rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.08em;
 }
 
 .guide-section {
   border-bottom: 1px solid var(--guide-line);
   scroll-margin-top: 24px;
+}
+
+.guide-section-heading > div,
+.guide-hero-copy,
+.minimum-card,
+.type-status-grid article {
+  min-width: 0;
 }
 
 .guide-section-heading {
@@ -163,6 +206,7 @@
 
 .guide-section-heading h2 {
   max-width: 760px;
+  overflow-wrap: anywhere;
   margin: 0 0 20px;
   font-size: clamp(2.5rem, 4.5vw, 5.2rem);
   font-weight: 440;
@@ -194,6 +238,7 @@
 
 .naming-primary strong {
   margin: 34px 0 20px;
+  overflow-wrap: anywhere;
   font-size: clamp(7rem, 16vw, 18rem);
   font-weight: 640;
   letter-spacing: -0.08em;
@@ -203,7 +248,7 @@
 .naming-primary p {
   margin: 0;
   color: var(--guide-muted);
-  font-size: 0.78rem;
+  font-size: max(0.78rem, var(--text-micro));
 }
 
 .naming-table {
@@ -230,7 +275,7 @@
 .generator-intro dt {
   color: var(--guide-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.56rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.07em;
   text-transform: uppercase;
 }
@@ -277,7 +322,7 @@
   border-top: 1px solid var(--guide-line);
   color: var(--guide-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.52rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.07em;
 }
 
@@ -326,7 +371,7 @@
   justify-content: space-between;
   border-bottom: 1px solid var(--guide-line);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.58rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.08em;
 }
 
@@ -360,7 +405,7 @@
   padding: 22px 28px;
   border-top: 1px solid var(--guide-line);
   color: var(--guide-muted);
-  font-size: 0.72rem;
+  font-size: max(0.72rem, var(--text-micro));
   line-height: 1.6;
 }
 
@@ -375,11 +420,12 @@
   margin-bottom: 44px;
   color: var(--guide-accent);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.58rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.1em;
 }
 
 .minimum-card strong {
+  overflow-wrap: anywhere;
   font-size: clamp(4rem, 7vw, 8rem);
   font-weight: 440;
   letter-spacing: -0.07em;
@@ -389,7 +435,7 @@
 .minimum-card p {
   margin: 12px 0 42px;
   color: var(--guide-muted);
-  font-size: 0.72rem;
+  font-size: max(0.72rem, var(--text-micro));
 }
 
 .reference-scale-list {
@@ -417,9 +463,10 @@
 
 .reference-scale-row header span,
 .reference-scale-row > span {
+  overflow-wrap: anywhere;
   color: var(--guide-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.54rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -443,6 +490,7 @@
 
 .reference-asset.is-lockup {
   width: calc(var(--reference-size) * 2.32);
+  aspect-ratio: 297 / 128;
 }
 
 .type-status-grid {
@@ -464,6 +512,7 @@
 
 .type-status-word strong {
   margin-top: 38px;
+  overflow-wrap: anywhere;
   font-size: clamp(8rem, 18vw, 20rem);
   font-weight: 640;
   letter-spacing: -0.08em;
@@ -472,6 +521,7 @@
 
 .type-status-note strong {
   margin: 34px 0 22px;
+  overflow-wrap: anywhere;
   font-size: clamp(2.5rem, 5vw, 5.5rem);
   font-weight: 440;
   letter-spacing: -0.06em;
@@ -493,7 +543,7 @@
   border-bottom: 1px solid var(--guide-accent);
   color: var(--guide-accent);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.58rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.07em;
   text-transform: uppercase;
 }
@@ -527,14 +577,14 @@
 }
 
 .color-card footer strong {
-  font-size: 0.75rem;
+  font-size: max(0.75rem, var(--text-micro));
   font-weight: 520;
 }
 
 .color-card footer span {
   color: var(--guide-muted);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.58rem;
+  font-size: var(--text-micro);
 }
 
 .rules-grid {
@@ -611,6 +661,8 @@
 
 .asset-preview img {
   display: block;
+  width: auto;
+  height: auto;
   max-width: 78%;
   max-height: 150px;
 }
@@ -622,7 +674,7 @@
   justify-content: space-between;
   gap: 20px;
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.54rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -648,11 +700,31 @@
   color: var(--guide-muted);
 }
 
-.asset-downloads a:hover,
+.asset-downloads a {
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+}
+
 .asset-downloads a:focus-visible,
-.asset-card:focus-within footer,
+.asset-card:has(a:focus-visible) footer,
 .asset-manifest-link a {
   color: var(--guide-accent);
+}
+
+.type-status-note a,
+.generator-intro a,
+.asset-manifest-link a {
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Touch has no hover: an unguarded :hover would keep a tapped link blue. */
+@media (hover: hover) {
+  .asset-downloads a:hover {
+    color: var(--guide-accent);
+  }
 }
 
 .asset-manifest-link {
@@ -688,7 +760,7 @@
   background: var(--bgColor-inset);
   color: var(--fgColor-default);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.7rem;
+  font-size: max(0.7rem, var(--text-micro));
   line-height: 1.7;
 }
 
@@ -706,7 +778,7 @@
   border-bottom: 1px solid transparent;
   color: var(--guide-paper);
   cursor: pointer;
-  font-size: 0.6rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -716,7 +788,10 @@
 }
 
 .guide-code-source pre {
-  max-height: 720px;
+  /* Never taller than most of a landscape phone, so the page stays scrollable beside it. */
+  max-height: min(720px, 70svh);
+  /* Sideways swipes must not trigger back navigation; vertical scroll chains to the page at the end. */
+  overscroll-behavior-x: contain;
   padding: 32px clamp(20px, 3.5vw, 56px);
   overflow: auto;
 }
@@ -738,22 +813,111 @@
 .guide-footer > span {
   margin: 0;
   color: var(--guide-muted);
-  font-size: 0.7rem;
+  font-size: max(0.7rem, var(--text-micro));
 }
 
 .guide-footer > span {
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.56rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.08em;
 }
 
+/* Touch-sized download links and link hit areas on tablets, phone landscape, and any coarse pointer. */
+@media (max-width: 1080px), (pointer: coarse) {
+  .asset-card footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .asset-downloads {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(136px, 1fr));
+    gap: 8px;
+    font-size: max(0.75rem, var(--text-micro));
+  }
+
+  .asset-downloads a {
+    min-height: 44px;
+    padding-inline: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--guide-line);
+    white-space: nowrap;
+  }
+
+  /* Text links are the target themselves, not just a pseudo-element hit area. */
+  .type-status-note a,
+  .generator-intro a,
+  .asset-manifest-link a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
 @media (max-width: 1080px) {
+  .brand-guide {
+    /* Brand row (82px), the 45px chip row, and the header's bottom border. */
+    --guide-header-height: 128px;
+  }
+
+  /* Sticky two-row header: brand + actions, then section links as a scrollable chip row. */
   .guide-header {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    min-height: 0;
     grid-template-columns: 1fr auto;
+    gap: 0 32px;
+    background: color-mix(in srgb, var(--bgColor-default) 88%, transparent);
+    backdrop-filter: blur(18px);
+  }
+
+  .guide-header-brand {
+    min-height: var(--tool-header-height);
+  }
+
+  .guide-header-actions a {
+    white-space: nowrap;
   }
 
   .guide-header nav {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    align-self: auto;
+    justify-self: stretch;
+    margin-inline: calc(var(--tool-header-pad) * -1);
+    padding-inline: calc(var(--tool-header-pad) - 12px);
+    gap: 0;
+    overflow-x: auto;
+    border-top: 1px solid var(--guide-line);
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 12px, #000 calc(100% - 28px), transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 12px, #000 calc(100% - 28px), transparent);
+  }
+
+  .guide-header nav::-webkit-scrollbar {
     display: none;
+  }
+
+  .guide-header nav a {
+    min-height: 44px;
+    padding-inline: 12px;
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .guide-header nav .guide-nav-more {
+    display: inline-flex;
+  }
+
+  .guide-section {
+    scroll-margin-top: calc(var(--guide-header-height) + 8px);
   }
 
   .guide-hero {
@@ -782,18 +946,39 @@
     border-bottom: 1px solid var(--guide-line);
   }
 
-  .reference-scale-list {
-    overflow-x: auto;
+  .reference-scale-row {
+    grid-template-columns: 140px minmax(0, 1fr) 140px;
+    gap: 24px;
   }
 
-  .reference-scale-row {
-    min-width: 760px;
+  .reference-asset.is-lockup {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .color-card {
+    min-width: 0;
+  }
+
+  .color-card footer {
+    padding-inline: 16px;
+    flex-direction: column;
+    gap: 8px;
+    overflow-wrap: anywhere;
   }
 }
 
 @media (max-width: 720px) {
-  .guide-header-actions a:first-child {
+  .brand-guide {
+    --guide-header-height: 116px;
+  }
+
+  .guide-header-actions .guide-action-secondary {
     display: none;
+  }
+
+  .guide-header nav .guide-nav-extra {
+    display: inline-flex;
   }
 
   .guide-hero-copy {
@@ -904,18 +1089,28 @@
     font-size: 8rem;
   }
 
+  /* Two swatches per row keeps the palette to a couple of screens; the odd one spans. */
   .color-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .color-card {
-    min-height: 300px;
-    border-right: 0;
+    min-height: 200px;
+    border-right: 1px solid var(--guide-line);
     border-bottom: 1px solid var(--guide-line);
+  }
+
+  .color-card:nth-child(2n) {
+    border-right: 0;
   }
 
   .color-card:last-child {
     border-bottom: 0;
+  }
+
+  .color-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    border-right: 0;
   }
 
   .rule-card {
@@ -953,6 +1148,59 @@
   .guide-footer p {
     grid-column: 1 / -1;
     grid-row: 2;
+  }
+
+  /* Reference scale: restack each row instead of scrolling sideways. */
+  .reference-scale-row {
+    min-height: 0;
+    padding-block: 28px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
+  }
+
+  .reference-scale-row header {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .reference-scale-row > span {
+    text-align: left;
+  }
+
+  /* 14px for body copy. */
+  .naming-primary p,
+  .clearspace-card > p,
+  .minimum-card p,
+  .type-status-note p,
+  .rule-card li,
+  .guide-footer p {
+    font-size: 0.875rem;
+  }
+
+  .color-card footer strong,
+  .guide-code {
+    font-size: max(0.75rem, var(--text-micro));
+  }
+}
+
+/* Phone landscape: a pinned header would take over a quarter of the viewport. */
+@media (max-width: 1080px) and (max-height: 500px) {
+  .brand-guide {
+    --guide-header-height: 0px;
+  }
+
+  .guide-header {
+    position: static;
+  }
+}
+
+@media (max-width: 400px) {
+  .guide-header nav,
+  .guide-header-actions {
+    letter-spacing: 0.04em;
   }
 }
 
