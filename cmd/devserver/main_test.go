@@ -108,6 +108,44 @@ func TestStaticHandlerRejectsUnsupportedAndUnsafeRequests(t *testing.T) {
 	}
 }
 
+func TestStaticHandlerServesTheSiteNotFoundPage(t *testing.T) {
+	root := fixtureSite(t)
+	writeFixture(t, filepath.Join(root, "404.html"), "not found page")
+	handler, err := newStaticHandler(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	response := httptest.NewRecorder()
+	handler.ServeHTTP(response, httptest.NewRequest(http.MethodGet, "/missing/", nil))
+
+	if response.Code != http.StatusNotFound {
+		t.Fatalf("status = %d, want %d", response.Code, http.StatusNotFound)
+	}
+	if response.Body.String() != "not found page" {
+		t.Fatalf("body = %q, want the site 404 page", response.Body.String())
+	}
+	if response.Header().Get("Content-Type") != "text/html; charset=utf-8" {
+		t.Fatalf("Content-Type = %q", response.Header().Get("Content-Type"))
+	}
+}
+
+func TestStaticHandlerServesAvifImages(t *testing.T) {
+	root := fixtureSite(t)
+	writeFixture(t, filepath.Join(root, "shot.avif"), "avif")
+	handler, err := newStaticHandler(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	response := httptest.NewRecorder()
+	handler.ServeHTTP(response, httptest.NewRequest(http.MethodGet, "/shot.avif", nil))
+
+	if response.Header().Get("Content-Type") != "image/avif" {
+		t.Fatalf("Content-Type = %q, want image/avif", response.Header().Get("Content-Type"))
+	}
+}
+
 func TestNewStaticHandlerRequiresDirectory(t *testing.T) {
 	_, err := newStaticHandler(filepath.Join(t.TempDir(), "missing"))
 	if err == nil {

@@ -99,7 +99,7 @@ func (handler staticHandler) ServeHTTP(response http.ResponseWriter, request *ht
 	target := filepath.Join(handler.root, filepath.FromSlash(cleanPath))
 	target, info, err := resolveTarget(target)
 	if err != nil {
-		http.Error(response, "Not found", http.StatusNotFound)
+		handler.notFound(response)
 		return
 	}
 
@@ -126,6 +126,18 @@ func (handler staticHandler) ServeHTTP(response http.ResponseWriter, request *ht
 	}
 
 	http.ServeContent(response, request, info.Name(), info.ModTime(), file)
+}
+
+// notFound mirrors GitHub Pages: the site's 404.html with a 404 status.
+func (handler staticHandler) notFound(response http.ResponseWriter) {
+	page, err := os.ReadFile(filepath.Join(handler.root, "404.html"))
+	if err != nil {
+		http.Error(response, "Not found", http.StatusNotFound)
+		return
+	}
+	response.Header().Set("Content-Type", contentTypes[".html"])
+	response.WriteHeader(http.StatusNotFound)
+	_, _ = response.Write(page)
 }
 
 func resolveTarget(target string) (string, os.FileInfo, error) {
