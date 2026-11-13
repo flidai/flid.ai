@@ -134,11 +134,18 @@ export async function buildSite({
   const portraitDirectory = join(outputDirectory, "assets/images");
   await mkdir(portraitDirectory, { recursive: true });
   await Promise.all(
-    portraits.map(([source, destination]) =>
-      sharp(join(root, source))
-        .resize(960, 960, { fit: "cover", position: "center" })
-        .webp({ quality: 82, effort: 4 })
-        .toFile(join(portraitDirectory, destination)),
+    portraits.flatMap(([source, destination]) =>
+      [960, 480].map((size) =>
+        sharp(join(root, source))
+          .resize(size, size, { fit: "cover", position: "center" })
+          .webp({ quality: 82, effort: 4 })
+          .toFile(
+            join(
+              portraitDirectory,
+              size === 960 ? destination : destination.replace(".webp", `-${size}.webp`),
+            ),
+          ),
+      ),
     ),
   );
 
