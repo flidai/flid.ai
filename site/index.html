@@ -3,104 +3,156 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Flid is an independent product lab building agent-native software where AI agents do real work.">
-    <meta property="og:title" content="Flid — Agent-native product lab">
-    <meta property="og:description" content="We build products where agents do real work.">
-    <meta property="og:image" content="/brand-assets/social/share-dark-1200x630.png">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://flid.ai/">
-    <meta name="twitter:card" content="summary_large_image">
-    <title>Flid — Agent-native product lab</title>
+    <title>Flid — products and consulting for engineering and analytics data</title>
+    <meta name="description" content="Flid makes Alloy Catalog for engineering master data and LeapView, open-source business intelligence, and consults on the data systems behind them.">
     <link rel="canonical" href="https://flid.ai/">
-    <link rel="icon" href="/brand-assets/favicon.svg" type="image/svg+xml">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Flid">
+    <meta property="og:title" content="Flid — products and consulting for engineering and analytics data">
+    <meta property="og:description" content="Flid makes Alloy Catalog for engineering master data and LeapView, open-source business intelligence, and consults on the data systems behind them.">
+    <meta property="og:url" content="https://flid.ai/">
+    <meta property="og:image" content="https://flid.ai/brand-assets/social/share-light-1200x630.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="The Flid logo">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Flid — products and consulting for engineering and analytics data">
+    <meta name="twitter:description" content="Flid makes Alloy Catalog for engineering master data and LeapView, open-source business intelligence, and consults on the data systems behind them.">
+    <meta name="twitter:image" content="https://flid.ai/brand-assets/social/share-light-1200x630.png">
+    <meta name="color-scheme" content="light dark">
     <link rel="icon" href="/brand-assets/favicon/favicon.ico" sizes="any">
     <link rel="icon" href="/brand-assets/favicon/favicon-32.png" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="/brand-assets/favicon/apple-touch-icon.png">
     <link rel="manifest" href="/brand-assets/favicon/site.webmanifest">
-    <link rel="stylesheet" href="/assets/globals.css">
-    <link rel="stylesheet" href="/assets/home.css">
+    <link rel="preload" href="/assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/assets/site.css">
   </head>
   <body>
-    <main class="home-page">
-      <header class="site-header">
-        <div class="site-shell header-inner">
-          <a class="site-logo" href="/" aria-label="Flid home">
-            <img class="site-logo-wordmark" src="/brand-assets/lockup-primary-on-dark.svg" alt="">
-            <img class="site-logo-mark" src="/brand-assets/mark-primary-on-dark.svg" alt="" aria-hidden="true">
-          </a>
-          <nav aria-label="Main navigation">
-            <a href="/products/">Products</a>
-            <a href="/about/">About</a>
-            <a href="mailto:jacob@flid.ai">Contact</a>
-          </nav>
-        </div>
-      </header>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="container">
+        <a class="site-logo" href="/">
+          <picture>
+            <source media="(prefers-color-scheme: dark)" srcset="/assets/images/flid-lockup-dark.webp">
+            <img src="/assets/images/flid-lockup-light.webp" width="297" height="128" alt="Flid home">
+          </picture>
+        </a>
+        <nav class="site-nav" aria-label="Main">
+          <ul>
+            <li><a href="/products/">Products</a></li>
+            <li><a href="/services/">Services</a></li>
+            <li><a href="/cases/">Cases</a></li>
+            <li><a href="/about/">About</a></li>
+            <li><a href="/contact/">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
 
-      <div class="motion-sequence" data-motion-sequence>
-        <div class="motion-sequence-stage" aria-hidden="true">
-          <img class="hero-wave-field" src="/assets/images/hero-signal-waves.webp" width="1672" height="941" alt="" fetchpriority="high">
-          <canvas class="motion-sequence-canvas" data-motion-sequence-canvas></canvas>
-        </div>
-
-        <section class="hero" data-hero-transition>
-          <div class="hero-sticky">
-            <div class="site-shell hero-grid">
-              <div class="hero-copy">
-                <p class="eyebrow">Independent agent-native product lab</p>
-                <h1>We build products<br>where agents<br><span>do real work.</span></h1>
-                <div class="hero-actions">
-                  <a class="button button-hero" href="mailto:jacob@flid.ai">Get in touch</a>
-                  <a class="button" href="/products/">See our products <span aria-hidden="true">→</span></a>
-                </div>
-              </div>
+    <main id="main">
+      <div class="container">
+        <header class="hero">
+          <div class="hero__text">
+            <h1>Flid builds products for engineering and analytics data, and consults on the systems behind them.</h1>
+            <p class="lead">We make Alloy Catalog, for engineering master data, and LeapView, open-source business intelligence. Alloy Catalog starts with a four-week pilot on your data; LeapView is free, with support from us.</p>
+            <div class="actions">
+              <a class="button button--primary" href="mailto:hello@flid.ai">Write to hello@flid.ai</a>
+              <a class="button button--secondary" href="/services/">See our services</a>
             </div>
           </div>
+        </header>
+
+        <section class="section" aria-labelledby="products">
+          <h2 id="products" class="section-title">Products</h2>
+          <article class="product-row">
+            <div class="stack">
+              <h3><a href="/products/alloy-catalog/">Alloy Catalog</a></h3>
+              <p class="status">Available as a pilot.</p>
+              <p>Engineering master data from your CAD files and ERP: one page per part, and an assistant that cites the files and records it used.</p>
+            </div>
+            <ul class="fact-list">
+              <li>Reads your vault database or Inventor files read-only</li>
+              <li>Matches parts to the ERP item master</li>
+              <li>Bill of materials, where-used, drawings and stock per part</li>
+              <li>Lists conflicts between CAD and ERP</li>
+            </ul>
+          </article>
+          <article class="product-row">
+            <div class="stack">
+              <h3><a href="/products/leapview/">LeapView</a></h3>
+              <p class="status">Open source, Apache-2.0. Alpha, v0.4.0-alpha.1.</p>
+              <p>Business intelligence where each metric is defined once in code, kept in Git, and used in dashboards, queries and AI tools.</p>
+            </div>
+            <div class="screenshot">
+              <picture>
+                <source media="(prefers-color-scheme: dark)" type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-dark-640.avif 640w, /assets/screenshots/leapview-executive-sales-dark-1280.avif 1280w" sizes="(min-width: 76rem) 584px, (min-width: 48rem) 46vw, 100vw">
+                <source media="(prefers-color-scheme: dark)" type="image/webp" srcset="/assets/screenshots/leapview-executive-sales-dark-640.webp 640w, /assets/screenshots/leapview-executive-sales-dark-1280.webp 1280w" sizes="(min-width: 76rem) 584px, (min-width: 48rem) 46vw, 100vw">
+                <source type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-light-640.avif 640w, /assets/screenshots/leapview-executive-sales-light-1280.avif 1280w" sizes="(min-width: 76rem) 584px, (min-width: 48rem) 46vw, 100vw">
+                <img src="/assets/screenshots/leapview-executive-sales-light-1280.webp" srcset="/assets/screenshots/leapview-executive-sales-light-640.webp 640w, /assets/screenshots/leapview-executive-sales-light-1280.webp 1280w" sizes="(min-width: 76rem) 584px, (min-width: 48rem) 46vw, 100vw" width="1296" height="704" fetchpriority="high" decoding="async" alt="A LeapView dashboard with date, state and category filters, cards for total orders, revenue and average order value, and a revenue-by-month chart.">
+              </picture>
+            </div>
+          </article>
         </section>
 
-        <section class="signal-story" id="thesis" data-signal-story data-depth-demo="local" aria-label="Flid agent-native thesis">
-          <div class="signal-story-sticky">
-            <div class="signal-story-grid" aria-hidden="true"></div>
-            <div class="site-shell signal-story-shell">
-              <div class="signal-story-steps">
-                <article class="signal-story-step" data-story-step>
-                  <div class="signal-story-copy">
-                    <p class="signal-story-subtitle" data-story-reveal>An agent is only as reliable as the system beneath it.</p>
-                  </div>
-                </article>
-                <article class="signal-story-step" data-story-step>
-                  <div class="signal-story-copy">
-                    <p class="signal-story-subtitle" data-story-reveal>Build for agents from the ground up—with governed data, explicit actions, and evidence.</p>
-                  </div>
-                </article>
-              </div>
-            </div>
+        <section class="section" aria-labelledby="services">
+          <div class="section-header">
+            <h2 id="services">Consulting and engineering</h2>
+            <p>The work behind our products, done for clients.</p>
+          </div>
+          <ul class="grid grid--2 plain-list">
+            <li class="stack"><h3>Data platforms and analytics engineering</h3><p>Semantic models, metrics as code, and the dashboards and pipelines on top.</p></li>
+            <li class="stack"><h3>CAD extraction and engineering master data</h3><p>CAD files and vault databases read without changes and matched to the ERP item master.</p></li>
+            <li class="stack"><h3>AI agents with governed access</h3><p>Assistants that answer from your data with each person’s own permissions and cite their sources.</p></li>
+            <li class="stack"><h3>Product engineering</h3><p>Software taken from first version to a product other teams run.</p></li>
+          </ul>
+          <p class="section-link"><a href="/services/">Read about our services</a></p>
+        </section>
+
+        <section class="section" aria-labelledby="case">
+          <h2 id="case" class="section-title">Use case</h2>
+          <div class="prose">
+          <article class="case-card">
+            <h3>Engineering master data from CAD and ERP</h3>
+            <dl class="dl">
+              <dt>Situation</dt>
+              <dd>A manufacturer with CAD and ERP data. Parts, drawings and assemblies live in the vault; item numbers, stock and transactions live in the ERP. Answering “where is this part used, and does the drawing match the ERP?” means opening several systems.</dd>
+              <dt>What Flid does</dt>
+              <dd>A four-week Alloy Catalog pilot reads the vault database read-only, matches files to the ERP item master, and publishes one page per part with bill of materials, where-used, drawings, stock and data quality checks.</dd>
+              <dt>What changes</dt>
+              <dd>Engineering, purchasing and service search one catalog and ask the assistant, which cites the files and records it used. Conflicts between CAD and ERP are listed for clean-up.</dd>
+              <dt>Runs on</dt>
+              <dd>Alloy Catalog, the vault database (read-only), the existing ERP.</dd>
+            </dl>
+          </article>
+          </div>
+          <p class="section-link"><a href="/cases/">Read both use cases</a></p>
+        </section>
+
+        <section class="section" aria-labelledby="contact">
+          <div class="contact-block">
+            <h2 id="contact">Contact</h2>
+            <p>Write with what you have and what you want to change.</p>
+            <a class="contact-block__address" href="mailto:hello@flid.ai">hello@flid.ai</a>
+            <p class="muted">Odense, Denmark</p>
           </div>
         </section>
       </div>
-
-      <section class="about" id="about">
-        <div class="site-shell about-grid">
-          <figure class="founder-portrait">
-            <img src="/assets/images/jacob-oestergaard.webp" alt="Jacob Østergaard, founder of Flid">
-            <figcaption><span>Jacob Østergaard</span><span>Founder · Flid</span></figcaption>
-          </figure>
-          <div class="about-copy">
-            <h2>Independent by design.</h2>
-            <p class="about-lead">Flid is an agent-native product lab founded by Jacob Østergaard in Odense, Denmark.</p>
-            <p>We build ambitious, durable products at the intersection of data systems, software, and AI agents—then test those ideas against real operational work.</p>
-            <p>Flid is Danish for diligence—the care, persistence, and attention behind work made to last.</p>
-            <a href="mailto:jacob@flid.ai">Start a conversation <span aria-hidden="true">↗</span></a>
-          </div>
-        </div>
-      </section>
-
-      <footer class="site-footer">
-        <div class="site-shell footer-inner">
-          <img src="/brand-assets/lockup-primary-on-dark.svg" alt="Flid">
-          <p>Flid AI ApS · CVR 43463217 · Odense, Denmark</p>
-        </div>
-      </footer>
     </main>
-    <script type="module" src="/assets/home.js"></script>
+
+    <footer class="site-footer">
+      <div class="container">
+        <nav aria-label="Footer">
+          <ul>
+            <li><a href="/products/alloy-catalog/">Alloy Catalog</a></li>
+            <li><a href="/products/leapview/">LeapView</a></li>
+            <li><a href="/services/">Services</a></li>
+            <li><a href="/cases/">Cases</a></li>
+            <li><a href="/about/">About</a></li>
+            <li><a href="/contact/">Contact</a></li>
+          </ul>
+        </nav>
+        <p>Flid AI ApS · CVR 43463217 · Odense, Denmark</p>
+      </div>
+    </footer>
   </body>
 </html>

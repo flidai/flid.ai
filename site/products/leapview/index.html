@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LeapView — Flid</title>
+    <meta name="description" content="LeapView is open-source business intelligence: define each metric once in code, then use it in dashboards, queries and AI tools. Alpha, v0.4.0-alpha.1.">
+    <link rel="canonical" href="https://flid.ai/products/leapview/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Flid">
+    <meta property="og:title" content="LeapView — Flid">
+    <meta property="og:description" content="LeapView is open-source business intelligence: define each metric once in code, then use it in dashboards, queries and AI tools. Alpha, v0.4.0-alpha.1.">
+    <meta property="og:url" content="https://flid.ai/products/leapview/">
+    <meta property="og:image" content="https://flid.ai/brand-assets/social/share-light-1200x630.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="The Flid logo">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="LeapView — Flid">
+    <meta name="twitter:description" content="LeapView is open-source business intelligence: define each metric once in code, then use it in dashboards, queries and AI tools. Alpha, v0.4.0-alpha.1.">
+    <meta name="twitter:image" content="https://flid.ai/brand-assets/social/share-light-1200x630.png">
+    <meta name="color-scheme" content="light dark">
+    <link rel="icon" href="/brand-assets/favicon/favicon.ico" sizes="any">
+    <link rel="icon" href="/brand-assets/favicon/favicon-32.png" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/brand-assets/favicon/apple-touch-icon.png">
+    <link rel="manifest" href="/brand-assets/favicon/site.webmanifest">
+    <link rel="preload" href="/assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/assets/site.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="container">
+        <a class="site-logo" href="/">
+          <picture>
+            <source media="(prefers-color-scheme: dark)" srcset="/assets/images/flid-lockup-dark.webp">
+            <img src="/assets/images/flid-lockup-light.webp" width="297" height="128" alt="Flid home">
+          </picture>
+        </a>
+        <nav class="site-nav" aria-label="Main">
+          <ul>
+            <li><a href="/products/" aria-current="page">Products</a></li>
+            <li><a href="/services/">Services</a></li>
+            <li><a href="/cases/">Cases</a></li>
+            <li><a href="/about/">About</a></li>
+            <li><a href="/contact/">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <div class="container">
+        <header class="page-header">
+          <h1>LeapView</h1>
+          <p class="lead">Open-source business intelligence. Define each metric once in code, then use it in dashboards, queries and AI tools.</p>
+          <p class="status">Open source, Apache-2.0. Alpha, v0.4.0-alpha.1, for controlled evaluation.</p>
+          <div class="actions">
+            <a class="button button--primary" href="https://leapview.dev/docs">Read the documentation</a>
+            <a class="button button--secondary" href="https://github.com/flidai/leapview">View the code on GitHub</a>
+          </div>
+        </header>
+
+        <figure class="figure">
+          <div class="screenshot">
+            <picture>
+              <source media="(prefers-color-scheme: dark)" type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-dark-640.avif 640w, /assets/screenshots/leapview-executive-sales-dark-1280.avif 1280w" sizes="(min-width: 76rem) 1200px, 100vw">
+              <source media="(prefers-color-scheme: dark)" type="image/webp" srcset="/assets/screenshots/leapview-executive-sales-dark-640.webp 640w, /assets/screenshots/leapview-executive-sales-dark-1280.webp 1280w" sizes="(min-width: 76rem) 1200px, 100vw">
+              <source type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-light-640.avif 640w, /assets/screenshots/leapview-executive-sales-light-1280.avif 1280w" sizes="(min-width: 76rem) 1200px, 100vw">
+              <img src="/assets/screenshots/leapview-executive-sales-light-1280.webp" srcset="/assets/screenshots/leapview-executive-sales-light-640.webp 640w, /assets/screenshots/leapview-executive-sales-light-1280.webp 1280w" sizes="(min-width: 76rem) 1200px, 100vw" width="1296" height="704" fetchpriority="high" decoding="async" alt="A LeapView dashboard with date, state and category filters, cards for total orders, revenue and average order value, and a revenue-by-month chart.">
+            </picture>
+          </div>
+          <figcaption>Executive Sales, LeapView’s showcase dashboard on the public Olist e-commerce dataset.</figcaption>
+        </figure>
+
+        <section class="section" aria-labelledby="features">
+          <h2 id="features" class="section-title">What it does</h2>
+          <dl class="dl dl--columns">
+            <dt>Analytics in Git</dt>
+            <dd>Connections, transformations, semantic models, refresh pipelines and dashboards are YAML files in Git. LeapView validates the whole resource graph before it publishes.</dd>
+            <dt>One definition per metric</dt>
+            <dd>A metric defined once is used by every dashboard, headless query and AI tool.</dd>
+            <dt>26 visual types</dt>
+            <dd>Charts, maps, KPI cards, tables, matrices and pivots. A browser builder drafts and previews dashboards and exports YAML.</dd>
+            <dt>Access control</dt>
+            <dd>Roles, resource grants, row filters and column masks apply in the query layer. Sign-in with OIDC; user provisioning with SCIM.</dd>
+            <dt>AI tools</dt>
+            <dd>An optional built-in assistant, and an OAuth-protected MCP endpoint for external AI clients.</dd>
+            <dt>Self-hosted</dt>
+            <dd>Go, DuckDB, DuckLake and PostgreSQL on your infrastructure. Command-line tools for Linux and macOS.</dd>
+          </dl>
+        </section>
+
+        <section class="section" aria-labelledby="example">
+          <div class="section-header">
+            <h2 id="example">A metric in code</h2>
+            <p>Revenue, defined once in a semantic model. Dashboards, queries and AI tools refer to it by name.</p>
+          </div>
+          <pre class="code" tabindex="0" aria-label="YAML for a revenue metric"><code>- name: revenue
+  type: simple
+  empty: zero
+  label: Revenue
+  format: currency
+  agg: sum
+  field: amount</code></pre>
+        </section>
+
+        <section class="section" aria-labelledby="support">
+          <div class="stack prose">
+            <h2 id="support">Support from Flid</h2>
+            <p>LeapView is free to use. Flid helps teams evaluate it, model their metrics and connect their data. Product news and releases are on <a href="https://leapview.dev">leapview.dev</a>.</p>
+            <p><a href="/contact/">Ask about support</a></p>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <nav aria-label="Footer">
+          <ul>
+            <li><a href="/products/alloy-catalog/">Alloy Catalog</a></li>
+            <li><a href="/products/leapview/">LeapView</a></li>
+            <li><a href="/services/">Services</a></li>
+            <li><a href="/cases/">Cases</a></li>
+            <li><a href="/about/">About</a></li>
+            <li><a href="/contact/">Contact</a></li>
+          </ul>
+        </nav>
+        <p>Flid AI ApS · CVR 43463217 · Odense, Denmark</p>
+      </div>
+    </footer>
+  </body>
+</html>

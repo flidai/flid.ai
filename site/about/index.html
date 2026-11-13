@@ -3,112 +3,114 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="About Flid, an independent Danish product lab building durable agent-native systems.">
-    <meta property="og:title" content="About — Flid">
-    <meta property="og:description" content="An independent Danish product lab building durable agent-native systems.">
-    <meta property="og:image" content="/brand-assets/social/share-dark-1200x630.png">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://flid.ai/about/">
-    <meta name="twitter:card" content="summary_large_image">
     <title>About — Flid</title>
+    <meta name="description" content="Flid is a product and consulting company for engineering and analytics data in Odense, Denmark. Flid is Danish for diligence.">
     <link rel="canonical" href="https://flid.ai/about/">
-    <link rel="icon" href="/brand-assets/favicon.svg" type="image/svg+xml">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Flid">
+    <meta property="og:title" content="About — Flid">
+    <meta property="og:description" content="Flid is a product and consulting company for engineering and analytics data in Odense, Denmark. Flid is Danish for diligence.">
+    <meta property="og:url" content="https://flid.ai/about/">
+    <meta property="og:image" content="https://flid.ai/brand-assets/social/share-light-1200x630.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="The Flid logo">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="About — Flid">
+    <meta name="twitter:description" content="Flid is a product and consulting company for engineering and analytics data in Odense, Denmark. Flid is Danish for diligence.">
+    <meta name="twitter:image" content="https://flid.ai/brand-assets/social/share-light-1200x630.png">
+    <meta name="color-scheme" content="light dark">
     <link rel="icon" href="/brand-assets/favicon/favicon.ico" sizes="any">
     <link rel="icon" href="/brand-assets/favicon/favicon-32.png" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="/brand-assets/favicon/apple-touch-icon.png">
     <link rel="manifest" href="/brand-assets/favicon/site.webmanifest">
-    <link rel="stylesheet" href="/assets/globals.css">
-    <link rel="stylesheet" href="/assets/about.css">
+    <link rel="preload" href="/assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/assets/site.css">
   </head>
   <body>
-    <main class="about-page">
-      <header class="about-header">
-        <div class="about-shell about-header-inner">
-          <a class="about-logo" href="/" aria-label="Flid home">
-            <img class="about-logo-wordmark" src="/brand-assets/lockup-primary-on-dark.svg" alt="">
-            <img class="about-logo-mark" src="/brand-assets/mark-primary-on-dark.svg" alt="" aria-hidden="true">
-          </a>
-          <nav aria-label="Main navigation">
-            <a href="/products/">Products</a>
-            <a href="/about/">About</a>
-            <a href="mailto:jacob@flid.ai">Contact</a>
-          </nav>
-        </div>
-      </header>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="container">
+        <a class="site-logo" href="/">
+          <picture>
+            <source media="(prefers-color-scheme: dark)" srcset="/assets/images/flid-lockup-dark.webp">
+            <img src="/assets/images/flid-lockup-light.webp" width="297" height="128" alt="Flid home">
+          </picture>
+        </a>
+        <nav class="site-nav" aria-label="Main">
+          <ul>
+            <li><a href="/products/">Products</a></li>
+            <li><a href="/services/">Services</a></li>
+            <li><a href="/cases/">Cases</a></li>
+            <li><a href="/about/" aria-current="page">About</a></li>
+            <li><a href="/contact/">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
 
-      <section class="about-hero">
-        <div class="about-shell">
-          <p class="about-kicker">FLID / ABOUT</p>
-          <h1>A Danish product lab building <span>durable systems.</span></h1>
-          <p class="about-hero-intro">Founded in Odense, Flid builds software where people and agents work through the same governed data, capabilities, and evidence.</p>
-        </div>
-        <div class="about-hero-signal" aria-hidden="true"></div>
-      </section>
+    <main id="main">
+      <div class="container">
+        <header class="page-header">
+          <h1>About Flid</h1>
+          <p class="lead">Flid is a product and consulting company for engineering and analytics data, based in Odense, Denmark. Flid is Danish for diligence.</p>
+        </header>
 
-      <section class="about-story">
-        <div class="about-shell about-story-grid">
-          <div>
-            <p class="about-kicker">01 / THE NAME</p>
-            <h2>Diligence is the operating system.</h2>
-          </div>
-          <div class="about-story-copy">
-            <p class="about-story-lead">Independent by design, Flid stays close to the products, the technical decisions, and the people using them.</p>
-            <p>Flid is Danish for diligence—the care, persistence, and attention behind work made to last.</p>
-            <p>We apply that standard to agent-native software: governed foundations, explicit actions, and evidence that people can inspect.</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="about-team" aria-labelledby="team-heading">
-        <div class="about-shell">
-          <div class="about-team-heading">
-            <p class="about-kicker">02 / TEAM</p>
-            <h2 id="team-heading">The people building Flid.</h2>
-            <p>Product direction and engineering stay closely connected—from first principles to production.</p>
-          </div>
-
-          <div class="about-team-grid">
-            <article class="about-team-member">
-              <figure>
-                <img src="/assets/images/jacob-oestergaard.webp" width="960" height="960" alt="Jacob Østergaard, founder of Flid" loading="lazy" decoding="async">
-                <figcaption><h3><a href="https://www.linkedin.com/in/jacob-%C3%B8stergaard-nielsen-b39415183/">Jacob Østergaard <span aria-hidden="true">↗</span></a></h3><p>Founder · Odense</p></figcaption>
-              </figure>
-              <p>Jacob is the founder of Flid and product lead for LeapView. Drawing on years of experience architecting enterprise data platforms and leading engineering teams, he designs the systems, interfaces, and governance that enable agents to participate reliably in real operational work.</p>
+        <section class="section" aria-labelledby="team">
+          <h2 id="team" class="section-title">Team</h2>
+          <div class="grid grid--3">
+            <article class="person">
+              <img src="/assets/images/jacob-oestergaard.webp" width="960" height="960" loading="lazy" decoding="async" alt="Portrait of Jacob Østergaard">
+              <h3>Jacob Østergaard</h3>
+              <p class="status">Founder, Odense</p>
+              <p>Founded Flid and leads product. Years of experience architecting enterprise data platforms and leading engineering teams.</p>
+              <p><a href="https://www.linkedin.com/in/jacob-%C3%B8stergaard-nielsen-b39415183/">Jacob on LinkedIn</a></p>
             </article>
-
-            <article class="about-team-member">
-              <figure>
-                <img src="/assets/images/ganesh-kambli.webp" width="960" height="960" alt="Ganesh Kambli, AI Engineer at Flid" loading="lazy" decoding="async">
-                <figcaption><h3><a href="https://www.linkedin.com/in/ganeshkambli/">Ganesh Kambli <span aria-hidden="true">↗</span></a></h3><p>AI Engineer · Mumbai</p></figcaption>
-              </figure>
-              <p>Ganesh is an AI Engineer at Flid working on LeapView. He builds product capabilities and the engineering foundations behind them, drawing on experience across backend systems, applied AI, cloud infrastructure, and security to create simple, reliable software for production.</p>
+            <article class="person">
+              <img src="/assets/images/ganesh-kambli.webp" width="960" height="960" loading="lazy" decoding="async" alt="Portrait of Ganesh Kambli">
+              <h3>Ganesh Kambli</h3>
+              <p class="status">Platform Engineer, Mumbai</p>
+              <p>Experience across backend systems, cloud infrastructure, security and applied AI. Owns how software reaches production, from delivery pipelines to zero-downtime releases.</p>
+              <p><a href="https://www.linkedin.com/in/ganeshkambli/">Ganesh on LinkedIn</a></p>
             </article>
-
-            <article class="about-team-member">
-              <figure>
-                <img src="/assets/images/anand-bora.webp" width="960" height="960" alt="Anand Bora, AI Engineer at Flid" loading="lazy" decoding="async">
-                <figcaption><h3><a href="https://www.linkedin.com/in/anand-bora/">Anand Bora <span aria-hidden="true">↗</span></a></h3><p>AI Engineer · Pune</p></figcaption>
-              </figure>
-              <p>Anand is an AI Engineer at Flid building LeapView. He works at the intersection of applied AI and frontend architecture, designing intuitive, scalable interfaces that make powerful technology accessible and practical for real-world workflows.</p>
+            <article class="person">
+              <img src="/assets/images/anand-bora.webp" width="960" height="960" loading="lazy" decoding="async" alt="Portrait of Anand Bora">
+              <h3>Anand Bora</h3>
+              <p class="status">Full-Stack Developer, Pune</p>
+              <p>Experience across product interfaces, frontend architecture, backend systems and applied AI. Takes features from first idea to production.</p>
+              <p><a href="https://www.linkedin.com/in/anand-bora/">Anand on LinkedIn</a></p>
             </article>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section class="about-invitation">
-        <div class="about-shell">
-          <p class="about-kicker">WORK WITH US</p>
-          <h2>Working on a hard agent-native problem?</h2>
-          <a class="about-link" href="mailto:jacob@flid.ai">Start a conversation <span aria-hidden="true">↗</span></a>
-        </div>
-      </section>
-
-      <footer class="about-footer">
-        <div class="about-shell about-footer-inner">
-          <img src="/brand-assets/lockup-primary-on-dark.svg" alt="Flid">
-          <p>Flid AI ApS · CVR 43463217 · Odense, Denmark</p>
-        </div>
-      </footer>
+        <section class="section" aria-labelledby="company">
+          <h2 id="company" class="section-title">Company</h2>
+          <dl class="dl dl--columns">
+            <dt>Legal name</dt>
+            <dd>Flid AI ApS</dd>
+            <dt>CVR</dt>
+            <dd>43463217</dd>
+            <dt>City</dt>
+            <dd>Odense, Denmark</dd>
+          </dl>
+        </section>
+      </div>
     </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <nav aria-label="Footer">
+          <ul>
+            <li><a href="/products/alloy-catalog/">Alloy Catalog</a></li>
+            <li><a href="/products/leapview/">LeapView</a></li>
+            <li><a href="/services/">Services</a></li>
+            <li><a href="/cases/">Cases</a></li>
+            <li><a href="/about/">About</a></li>
+            <li><a href="/contact/">Contact</a></li>
+          </ul>
+        </nav>
+        <p>Flid AI ApS · CVR 43463217 · Odense, Denmark</p>
+      </div>
+    </footer>
   </body>
 </html>

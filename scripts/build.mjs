@@ -26,16 +26,9 @@ const prefixableExtensions = new Set([
 const copiedFiles = [
   ["app/site.css", "assets/site.css"],
   ["app/globals.css", "assets/globals.css"],
-  ["app/home/home.css", "assets/home.css"],
-  ["app/products/products.css", "assets/products.css"],
-  ["app/about/about.css", "assets/about.css"],
   ["app/showcase/showcase.css", "assets/showcase.css"],
   ["app/generator/generator.css", "assets/generator.css"],
   ["app/brand/brand.css", "assets/brand.css"],
-  ["lib/hero-signal-field.mjs", "lib/hero-signal-field.mjs"],
-  ["lib/hero-scroll-transition.mjs", "lib/hero-scroll-transition.mjs"],
-  ["lib/signal-scroll-story.mjs", "lib/signal-scroll-story.mjs"],
-  ["lib/depth-video-story.mjs", "lib/depth-video-story.mjs"],
   ["lib/logo-generator.mjs", "lib/logo-generator.mjs"],
   ["lib/brand-system.mjs", "lib/brand-system.mjs"],
   ["lib/primer-colors.mjs", "lib/primer-colors.mjs"],
@@ -75,9 +68,10 @@ async function applyBasePath(directory, basePath) {
   }
 }
 
-// Header lockups: the approved primary lockup, rasterised small so the header
+// Header lockups: the approved primary lockup at the 64 px minimum mark size
+// (2x pixels), rasterised so the header
 // does not carry the 180 KB vector master on every page.
-export const headerLockupHeight = 64;
+export const headerLockupHeight = 128;
 
 async function buildHeaderLockups(directory) {
   await mkdir(directory, { recursive: true });
