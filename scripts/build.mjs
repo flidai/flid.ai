@@ -24,6 +24,7 @@ const prefixableExtensions = new Set([
 ]);
 
 const copiedFiles = [
+  ["app/site.css", "assets/site.css"],
   ["app/globals.css", "assets/globals.css"],
   ["app/home/home.css", "assets/home.css"],
   ["app/products/products.css", "assets/products.css"],
@@ -74,6 +75,49 @@ async function applyBasePath(directory, basePath) {
   }
 }
 
+// Header lockups: the approved primary lockup, rasterised small so the header
+// does not carry the 180 KB vector master on every page.
+export const headerLockupHeight = 64;
+
+async function buildHeaderLockups(directory) {
+  await mkdir(directory, { recursive: true });
+  await Promise.all(
+    ["light", "dark"].map((mode) =>
+      sharp(join(root, `brand-assets/png/lockup-primary-on-${mode}@4x.png`))
+        .resize({ height: headerLockupHeight })
+        .webp({ quality: 90, effort: 6 })
+        .toFile(join(directory, `flid-lockup-${mode}.webp`)),
+    ),
+  );
+}
+
+// Product screenshots: PNG masters in product-screenshots/ become AVIF and
+// WebP at two widths. Pages reference <name>-<width>.<format>.
+export const screenshotWidths = [640, 1280];
+
+async function buildScreenshots(directory) {
+  await mkdir(directory, { recursive: true });
+  const sources = (await readdir(join(root, "product-screenshots"))).filter(
+    (name) => name.endsWith(".png"),
+  );
+  await Promise.all(
+    sources.flatMap((name) =>
+      screenshotWidths.flatMap((width) => {
+        const base = join(directory, `${name.slice(0, -4)}-${width}`);
+        const image = () =>
+          sharp(join(root, "product-screenshots", name)).resize({
+            width,
+            withoutEnlargement: true,
+          });
+        return [
+          image().avif({ quality: 60, effort: 6 }).toFile(`${base}.avif`),
+          image().webp({ quality: 82, effort: 6 }).toFile(`${base}.webp`),
+        ];
+      }),
+    ),
+  );
+}
+
 export async function buildSite({
   outputDirectory = output,
   basePath = "",
@@ -104,6 +148,8 @@ export async function buildSite({
     ),
   );
 
+  await buildHeaderLockups(join(outputDirectory, "assets/images"));
+  await buildScreenshots(join(outputDirectory, "assets/screenshots"));
   await generateBrandAssets(join(outputDirectory, "brand-assets"));
   await applyBasePath(outputDirectory, basePath);
 }

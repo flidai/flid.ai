@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="description" content="The tokens and components that build flid.ai.">
+    <title>Design system — Flid</title>
+    <link rel="canonical" href="https://flid.ai/design-system/">
+    <link rel="icon" href="/brand-assets/favicon/favicon.ico" sizes="any">
+    <link rel="icon" href="/brand-assets/favicon/favicon-32.png" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/brand-assets/favicon/apple-touch-icon.png">
+    <link rel="manifest" href="/brand-assets/favicon/site.webmanifest">
+    <link rel="preload" href="/assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/assets/site.css">
+    <style>
+      .ds-modes { display: grid; gap: var(--space-5); }
+      @media (min-width: 48rem) { .ds-modes { grid-template-columns: 1fr 1fr; } }
+      .ds-mode { display: grid; gap: var(--space-3); padding: var(--space-5); border: var(--border); border-radius: var(--radius); }
+      .ds-swatches { display: grid; gap: var(--space-2); padding: 0; list-style: none; }
+      .ds-swatches li { display: grid; grid-template-columns: 2.5rem 1fr; gap: var(--space-3); align-items: center; font-size: var(--text-sm); }
+      .ds-chip { width: 2.5rem; height: 2.5rem; border: var(--border); border-radius: var(--radius); }
+      .ds-space { display: grid; gap: var(--space-2); padding: 0; list-style: none; font-size: var(--text-sm); }
+      .ds-space li { display: grid; grid-template-columns: 6rem 1fr; align-items: center; gap: var(--space-3); }
+      .ds-space span:last-child { height: 0.75rem; background: var(--fgColor-muted); }
+      .ds-frame { padding: var(--space-5); border: 1px dashed var(--borderColor-default); border-radius: var(--radius); }
+      .ds-frame > .site-header, .ds-frame > .site-footer { margin: 0; }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="container">
+        <a class="site-logo" href="/">
+          <picture>
+            <source media="(prefers-color-scheme: dark)" srcset="/assets/images/flid-lockup-dark.webp">
+            <img src="/assets/images/flid-lockup-light.webp" width="149" height="64" alt="Flid home">
+          </picture>
+        </a>
+        <nav class="site-nav" aria-label="Main">
+          <ul>
+            <li><a href="/products/">Products</a></li>
+            <li><a href="/services/">Services</a></li>
+            <li><a href="/cases/">Cases</a></li>
+            <li><a href="/about/">About</a></li>
+            <li><a href="/contact/">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <div class="container">
+        <header class="page-header">
+          <h1>Design system</h1>
+          <p class="lead">The tokens and components that build flid.ai. Every page uses one stylesheet, <code>/assets/site.css</code>, and nothing on this page is used elsewhere.</p>
+        </header>
+
+        <section class="section" aria-labelledby="colour">
+          <div class="section-header">
+            <h2 id="colour">Colour</h2>
+            <p>The functional subset of Primer 11.9.0, as in the brand assets. Light is the default; dark follows the reader's system setting. Blue is reserved for links, focus and the one primary action on a page.</p>
+          </div>
+          <div class="ds-modes">
+            <div class="ds-mode" data-color-mode="light">
+              <h3>Light</h3>
+              <ul class="ds-swatches">
+                <li><span class="ds-chip" style="background:var(--bgColor-default)"></span><span><code>--bgColor-default</code> #ffffff, page</span></li>
+                <li><span class="ds-chip" style="background:var(--bgColor-muted)"></span><span><code>--bgColor-muted</code> #f6f8fa, footer</span></li>
+                <li><span class="ds-chip" style="background:var(--fgColor-default)"></span><span><code>--fgColor-default</code> #1f2328, text</span></li>
+                <li><span class="ds-chip" style="background:var(--fgColor-muted)"></span><span><code>--fgColor-muted</code> #59636e, secondary text</span></li>
+                <li><span class="ds-chip" style="background:var(--borderColor-default)"></span><span><code>--borderColor-default</code> #d1d9e0, rules</span></li>
+                <li><span class="ds-chip" style="background:var(--fgColor-accent)"></span><span><code>--fgColor-accent</code> #0969da, links, focus, primary button</span></li>
+              </ul>
+            </div>
+            <div class="ds-mode" data-color-mode="dark">
+              <h3>Dark</h3>
+              <ul class="ds-swatches">
+                <li><span class="ds-chip" style="background:var(--bgColor-default)"></span><span><code>--bgColor-default</code> #0d1117, page</span></li>
+                <li><span class="ds-chip" style="background:var(--bgColor-muted)"></span><span><code>--bgColor-muted</code> #151b23, footer</span></li>
+                <li><span class="ds-chip" style="background:var(--fgColor-default)"></span><span><code>--fgColor-default</code> #f0f6fc, text</span></li>
+                <li><span class="ds-chip" style="background:var(--fgColor-muted)"></span><span><code>--fgColor-muted</code> #9198a1, secondary text</span></li>
+                <li><span class="ds-chip" style="background:var(--borderColor-default)"></span><span><code>--borderColor-default</code> #3d444d, rules</span></li>
+                <li><span class="ds-chip" style="background:var(--fgColor-accent)"></span><span><code>--fgColor-accent</code> #4493f8, links; #1f6feb, focus and primary button</span></li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="type">
+          <div class="section-header">
+            <h2 id="type">Type</h2>
+            <p>Geist, the typeface in the lockup, at two weights: 400 for text, 600 for headings and buttons. Five sizes. Sentence case everywhere.</p>
+          </div>
+          <div class="table-wrap" role="region" aria-labelledby="type" tabindex="0">
+            <table class="table">
+              <thead>
+                <tr><th scope="col">Token</th><th scope="col">Size</th><th scope="col">Use</th><th scope="col">Sample</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>--text-2xl</code></td><td>32–48 px</td><td>Page title, one per page</td><td style="font-size:var(--text-2xl);font-weight:600;line-height:1.2">Engineering data</td></tr>
+                <tr><td><code>--text-xl</code></td><td>24–32 px</td><td>Section heading</td><td style="font-size:var(--text-xl);font-weight:600;line-height:1.2">What we sell</td></tr>
+                <tr><td><code>--text-lg</code></td><td>20 px</td><td>Card heading, lead</td><td style="font-size:var(--text-lg);font-weight:600">Alloy Catalog</td></tr>
+                <tr><td><code>--text-base</code></td><td>17 px</td><td>Body text</td><td>One page per part number.</td></tr>
+                <tr><td><code>--text-sm</code></td><td>14 px</td><td>Captions, status, footer</td><td style="font-size:var(--text-sm)">Alpha, v0.4.0-alpha.1</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="space">
+          <div class="section-header">
+            <h2 id="space">Space, shape and width</h2>
+            <p>A 4 px spacing scale. One radius and one border width. Prose stops at 72 characters; the layout at 1200 px.</p>
+          </div>
+          <div class="grid grid--2">
+            <ul class="ds-space">
+              <li><code>--space-1</code><span style="width:0.25rem"></span></li>
+              <li><code>--space-2</code><span style="width:0.5rem"></span></li>
+              <li><code>--space-3</code><span style="width:0.75rem"></span></li>
+              <li><code>--space-4</code><span style="width:1rem"></span></li>
+              <li><code>--space-5</code><span style="width:1.5rem"></span></li>
+              <li><code>--space-6</code><span style="width:2rem"></span></li>
+              <li><code>--space-7</code><span style="width:3rem"></span></li>
+              <li><code>--space-8</code><span style="width:4rem"></span></li>
+              <li><code>--space-9</code><span style="width:6rem"></span></li>
+            </ul>
+            <dl class="dl">
+              <dt>Radius</dt><dd><code>--radius</code> 6 px</dd>
+              <dt>Border</dt><dd><code>--border</code> 1 px, <code>--borderColor-default</code></dd>
+              <dt>Focus ring</dt><dd>2 px solid accent, offset 2 px, on every focusable element</dd>
+              <dt>Target</dt><dd>44 px minimum height for links in navigation and buttons</dd>
+              <dt>Widths</dt><dd><code>--measure</code> 72ch, <code>--layout</code> 1200 px, <code>--gutter</code> 16–32 px</dd>
+            </dl>
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="actions">
+          <div class="section-header">
+            <h2 id="actions">Buttons and links</h2>
+            <p>One primary button per page, for the main next step. Secondary buttons for the rest. Links in text are blue and underlined.</p>
+          </div>
+          <div class="stack">
+            <div class="actions">
+              <a class="button button--primary" href="/contact/">Write to us</a>
+              <a class="button button--secondary" href="/products/">See the products</a>
+            </div>
+            <p>A link in text: <a href="https://leapview.dev/docs">read the LeapView documentation</a>.</p>
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="prose">
+          <div class="section-header">
+            <h2 id="prose">Prose</h2>
+          </div>
+          <div class="prose">
+            <p>Prose is set at 17 px with a line height of 1.6 and stops at 72 characters. Paragraphs are separated by one line of space.</p>
+            <h3>A third-level heading</h3>
+            <ul>
+              <li>Lists keep the same measure.</li>
+              <li>Each item is one fact.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="products">
+          <div class="section-header">
+            <h2 id="products">Product card, 2-column grid</h2>
+          </div>
+          <div class="grid grid--2">
+            <article class="card">
+              <figure class="screenshot">
+                <picture>
+                  <source media="(prefers-color-scheme: dark)" type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-dark-640.avif 640w, /assets/screenshots/leapview-executive-sales-dark-1280.avif 1280w" sizes="(min-width: 48rem) 600px, 100vw">
+                  <source media="(prefers-color-scheme: dark)" type="image/webp" srcset="/assets/screenshots/leapview-executive-sales-dark-640.webp 640w, /assets/screenshots/leapview-executive-sales-dark-1280.webp 1280w" sizes="(min-width: 48rem) 600px, 100vw">
+                  <source type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-light-640.avif 640w, /assets/screenshots/leapview-executive-sales-light-1280.avif 1280w" sizes="(min-width: 48rem) 600px, 100vw">
+                  <img src="/assets/screenshots/leapview-executive-sales-light-1280.webp" srcset="/assets/screenshots/leapview-executive-sales-light-640.webp 640w, /assets/screenshots/leapview-executive-sales-light-1280.webp 1280w" sizes="(min-width: 48rem) 600px, 100vw" width="1296" height="704" loading="lazy" decoding="async" alt="A LeapView dashboard with date, state and category filters, total orders, revenue and average order value, and a monthly revenue chart.">
+                </picture>
+              </figure>
+              <h3><a href="/products/leapview/">LeapView</a></h3>
+              <p class="status">Open source. Alpha, v0.4.0-alpha.1.</p>
+              <p>Business intelligence where metrics are defined once in code and used in dashboards, queries and AI tools.</p>
+            </article>
+            <article class="card">
+              <div class="screenshot" style="aspect-ratio:1296/704;display:grid;place-items:center">
+                <p class="small muted">Alloy Catalog screenshot not captured yet</p>
+              </div>
+              <h3><a href="/products/alloy-catalog/">Alloy Catalog</a></h3>
+              <p class="status">Available as a pilot.</p>
+              <p>Engineering master data from your CAD files and ERP, one page per part, with an assistant that cites its sources.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="three">
+          <div class="section-header">
+            <h2 id="three">3-column grid</h2>
+          </div>
+          <div class="grid grid--3">
+            <div class="stack">
+              <h3>Data platforms</h3>
+              <p>Semantic models, metrics as code and governed dashboards.</p>
+            </div>
+            <div class="stack">
+              <h3>Engineering master data</h3>
+              <p>CAD files and vaults read and matched to the ERP item master.</p>
+            </div>
+            <div class="stack">
+              <h3>AI agents with governed access</h3>
+              <p>Assistants that answer from your data with each user's own permissions.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="cases">
+          <div class="section-header">
+            <h2 id="cases">Case card and definition list</h2>
+          </div>
+          <div class="grid grid--2">
+            <article class="case-card">
+              <h3>Engineering master data from CAD and ERP</h3>
+              <dl class="dl">
+                <dt>Situation</dt>
+                <dd>A manufacturer with CAD and ERP data in separate systems.</dd>
+                <dt>What Flid does</dt>
+                <dd>A four-week Alloy Catalog pilot reads the vault database read-only.</dd>
+                <dt>What changes</dt>
+                <dd>One catalog for engineering, purchasing and service.</dd>
+                <dt>Runs on</dt>
+                <dd>Alloy Catalog</dd>
+              </dl>
+            </article>
+            <dl class="dl dl--columns">
+              <dt>Company</dt><dd>Flid AI ApS</dd>
+              <dt>CVR</dt><dd>43463217</dd>
+              <dt>City</dt><dd>Odense, Denmark</dd>
+            </dl>
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="figure">
+          <div class="section-header">
+            <h2 id="figure">Figure with caption</h2>
+          </div>
+          <figure class="figure">
+            <div class="screenshot">
+              <picture>
+                <source media="(prefers-color-scheme: dark)" type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-dark-1280.avif">
+                <source type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-light-1280.avif">
+                <img src="/assets/screenshots/leapview-executive-sales-light-1280.webp" width="1296" height="704" loading="lazy" decoding="async" alt="The LeapView Executive Sales dashboard with filters, three KPI cards and a revenue-by-month area chart.">
+              </picture>
+            </div>
+            <figcaption>Executive Sales, LeapView's showcase dashboard on the public Olist e-commerce dataset.</figcaption>
+          </figure>
+        </section>
+
+        <section class="section" aria-labelledby="contact">
+          <div class="section-header">
+            <h2 id="contact">Contact block</h2>
+          </div>
+          <div class="contact-block">
+            <a class="contact-block__address" href="mailto:hello@flid.ai">hello@flid.ai</a>
+            <p class="muted">Odense, Denmark</p>
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="template">
+          <div class="section-header">
+            <h2 id="template">Page template</h2>
+            <p>Every page: skip link, header, one <code>main</code> with one <code>h1</code> in a page header, sections separated by a rule, footer. This page uses the template.</p>
+          </div>
+          <div class="ds-frame">
+            <pre class="small"><code>&lt;a class="skip-link" href="#main"&gt;
+&lt;header class="site-header"&gt;   logo, Products, Services, Cases, About, Contact
+&lt;main id="main"&gt;
+  &lt;div class="container"&gt;
+    &lt;header class="page-header"&gt;  h1, lead, actions
+    &lt;section class="section"&gt;     h2, content
+    …
+&lt;footer class="site-footer"&gt;   links, legal line</code></pre>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <nav aria-label="Footer">
+          <ul>
+            <li><a href="/products/leapview/">LeapView</a></li>
+            <li><a href="/products/alloy-catalog/">Alloy Catalog</a></li>
+            <li><a href="/services/">Services</a></li>
+            <li><a href="/cases/">Cases</a></li>
+            <li><a href="/about/">About</a></li>
+            <li><a href="/contact/">Contact</a></li>
+          </ul>
+        </nav>
+        <p>Flid AI ApS · CVR 43463217 · Odense, Denmark</p>
+      </div>
+    </footer>
+  </body>
+</html>
