@@ -28,6 +28,7 @@
     <link rel="preload" href="/assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="/assets/site.css">
     <script type="module" src="/assets/theme.js"></script>
+    <script type="module" src="/assets/tabs.js"></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -36,7 +37,8 @@
         <a class="site-logo" href="/"><picture><source data-theme-source="dark" media="(prefers-color-scheme: dark)" srcset="/assets/images/flid-lockup-dark.webp"><img src="/assets/images/flid-lockup-light.webp" width="297" height="128" alt="Flid home"></picture></a>
         <nav class="site-nav" aria-label="Main">
           <ul>
-            <li><a href="/products/" aria-current="page">Products</a></li>
+            <li><a href="/products/leapview/">LeapView</a></li>
+            <li><a href="/products/alloy-catalog/" aria-current="page">Alloy Catalog</a></li>
             <li><a href="/services/">Services</a></li>
             <li><a href="/cases/">Cases</a></li>
             <li><a href="/about/">About</a></li>
@@ -65,7 +67,13 @@
         </div>
       </section>
 
-      <section class="section section--tight" aria-labelledby="problem">
+      <section class="section section--tight" aria-label="Screenshot">
+        <div class="container">
+          <figure class="window"><div class="window-bar" aria-hidden="true"><i></i><i></i><i></i><span>Alloy Catalog · Part page</span></div><picture><source data-theme-source="dark" media="(prefers-color-scheme: dark)" type="image/avif" srcset="/assets/screenshots/alloy-catalog-part-dark-640.avif 640w, /assets/screenshots/alloy-catalog-part-dark-1280.avif 1280w" sizes="(min-width: 70rem) 1088px, 100vw"><source data-theme-source="dark" media="(prefers-color-scheme: dark)" type="image/webp" srcset="/assets/screenshots/alloy-catalog-part-dark-640.webp 640w, /assets/screenshots/alloy-catalog-part-dark-1280.webp 1280w" sizes="(min-width: 70rem) 1088px, 100vw"><source type="image/avif" srcset="/assets/screenshots/alloy-catalog-part-light-640.avif 640w, /assets/screenshots/alloy-catalog-part-light-1280.avif 1280w" sizes="(min-width: 70rem) 1088px, 100vw"><img src="/assets/screenshots/alloy-catalog-part-light-1280.webp" srcset="/assets/screenshots/alloy-catalog-part-light-640.webp 640w, /assets/screenshots/alloy-catalog-part-light-1280.webp 1280w" sizes="(min-width: 70rem) 1088px, 100vw" width="1440" height="900" fetchpriority="high" decoding="async" alt="An Alloy Catalog part page for a linear actuator assembly: its components with thumbnails and quantities beside a card with a product image, revision, state, material, mass and where-used count."></picture><figcaption>Alloy Catalog on a made-up demo catalog.</figcaption></figure>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="problem">
         <div class="container">
           <div class="section-head">
             <div><span class="label">The problem</span><h2 id="problem">Product knowledge is spread everywhere.</h2></div>
@@ -92,6 +100,21 @@
             <li class="feature"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg><h3>Data quality</h3><p>An overview score, ERP consistency checks, and lists of conflicts between CAD and ERP, so gaps are shown rather than hidden.</p></li>
             <li class="feature"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><path d="M8 16h.01"/><path d="M16 16h.01"/></svg><h3>Built-in AI agent</h3><p>Answers questions about parts and assemblies and cites every document it names. A read-only MCP endpoint lets other AI assistants read the catalog with each person’s own access.</p></li>
           </ul>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="screens">
+        <div class="container">
+          <div class="section-head">
+            <div><span class="label">Screens</span><h2 id="screens">Search, check, ask.</h2></div>
+            <p>Alloy Catalog on a made-up demo catalog.</p>
+          </div>
+          <div class="product-tabs" data-tabs>
+            <div class="tab-list" data-tab-list data-requires-js hidden aria-label="Alloy Catalog screens"><button class="tab" type="button" id="tab-search" data-tab="panel-search">Search</button><button class="tab" type="button" id="tab-quality" data-tab="panel-quality">Data quality</button><button class="tab" type="button" id="tab-assistant" data-tab="panel-assistant">AI agent</button></div>
+            <div class="tab-panel" id="panel-search"><figure class="window"><div class="window-bar" aria-hidden="true"><i></i><i></i><i></i><span>Alloy Catalog · Search</span></div><picture><source data-theme-source="dark" media="(prefers-color-scheme: dark)" type="image/avif" srcset="/assets/screenshots/alloy-catalog-search-dark-640.avif 640w, /assets/screenshots/alloy-catalog-search-dark-1280.avif 1280w" sizes="(min-width: 70rem) 1088px, 100vw"><source data-theme-source="dark" media="(prefers-color-scheme: dark)" type="image/webp" srcset="/assets/screenshots/alloy-catalog-search-dark-640.webp 640w, /assets/screenshots/alloy-catalog-search-dark-1280.webp 1280w" sizes="(min-width: 70rem) 1088px, 100vw"><source type="image/avif" srcset="/assets/screenshots/alloy-catalog-search-light-640.avif 640w, /assets/screenshots/alloy-catalog-search-light-1280.avif 1280w" sizes="(min-width: 70rem) 1088px, 100vw"><img src="/assets/screenshots/alloy-catalog-search-light-1280.webp" srcset="/assets/screenshots/alloy-catalog-search-light-640.webp 640w, /assets/screenshots/alloy-catalog-search-light-1280.webp 1280w" sizes="(min-width: 70rem) 1088px, 100vw" width="1440" height="900" loading="lazy" decoding="async" alt="Alloy Catalog search filtered to one stainless steel grade, 41 items found: a list of fields to filter on at the left and a results table with thumbnails, part numbers, names, class and product line."></picture></figure></div>
+            <div class="tab-panel" id="panel-quality"><figure class="window"><div class="window-bar" aria-hidden="true"><i></i><i></i><i></i><span>Alloy Catalog · Data quality</span></div><picture><source data-theme-source="dark" media="(prefers-color-scheme: dark)" type="image/avif" srcset="/assets/screenshots/alloy-catalog-quality-dark-640.avif 640w, /assets/screenshots/alloy-catalog-quality-dark-1280.avif 1280w" sizes="(min-width: 70rem) 1088px, 100vw"><source data-theme-source="dark" media="(prefers-color-scheme: dark)" type="image/webp" srcset="/assets/screenshots/alloy-catalog-quality-dark-640.webp 640w, /assets/screenshots/alloy-catalog-quality-dark-1280.webp 1280w" sizes="(min-width: 70rem) 1088px, 100vw"><source type="image/avif" srcset="/assets/screenshots/alloy-catalog-quality-light-640.avif 640w, /assets/screenshots/alloy-catalog-quality-light-1280.avif 1280w" sizes="(min-width: 70rem) 1088px, 100vw"><img src="/assets/screenshots/alloy-catalog-quality-light-1280.webp" srcset="/assets/screenshots/alloy-catalog-quality-light-640.webp 640w, /assets/screenshots/alloy-catalog-quality-light-1280.webp 1280w" sizes="(min-width: 70rem) 1088px, 100vw" width="1440" height="900" loading="lazy" decoding="async" alt="The Alloy Catalog data quality overview: a 79% score, five measures for consistency, ERP agreement, links, completeness and uniqueness, and the largest gaps to fix."></picture></figure></div>
+            <div class="tab-panel" id="panel-assistant"><figure class="window"><div class="window-bar" aria-hidden="true"><i></i><i></i><i></i><span>Alloy Catalog · AI agent</span></div><picture><source data-theme-source="dark" media="(prefers-color-scheme: dark)" type="image/avif" srcset="/assets/screenshots/alloy-catalog-assistant-dark-640.avif 640w, /assets/screenshots/alloy-catalog-assistant-dark-1280.avif 1280w" sizes="(min-width: 70rem) 1088px, 100vw"><source data-theme-source="dark" media="(prefers-color-scheme: dark)" type="image/webp" srcset="/assets/screenshots/alloy-catalog-assistant-dark-640.webp 640w, /assets/screenshots/alloy-catalog-assistant-dark-1280.webp 1280w" sizes="(min-width: 70rem) 1088px, 100vw"><source type="image/avif" srcset="/assets/screenshots/alloy-catalog-assistant-light-640.avif 640w, /assets/screenshots/alloy-catalog-assistant-light-1280.avif 1280w" sizes="(min-width: 70rem) 1088px, 100vw"><img src="/assets/screenshots/alloy-catalog-assistant-light-1280.webp" srcset="/assets/screenshots/alloy-catalog-assistant-light-640.webp 640w, /assets/screenshots/alloy-catalog-assistant-light-1280.webp 1280w" sizes="(min-width: 70rem) 1088px, 100vw" width="1440" height="900" loading="lazy" decoding="async" alt="The Alloy Catalog AI agent answering which linear actuators have a drawing, citing each model and drawing file, with a card listing the three assemblies."></picture></figure></div>
+          </div>
         </div>
       </section>
 

@@ -28,6 +28,7 @@
     <link rel="preload" href="/assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="/assets/site.css">
     <script type="module" src="/assets/theme.js"></script>
+    <script type="module" src="/assets/tabs.js"></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -36,7 +37,8 @@
         <a class="site-logo" href="/"><picture><source data-theme-source="dark" media="(prefers-color-scheme: dark)" srcset="/assets/images/flid-lockup-dark.webp"><img src="/assets/images/flid-lockup-light.webp" width="297" height="128" alt="Flid home"></picture></a>
         <nav class="site-nav" aria-label="Main">
           <ul>
-            <li><a href="/products/">Products</a></li>
+            <li><a href="/products/leapview/">LeapView</a></li>
+            <li><a href="/products/alloy-catalog/">Alloy Catalog</a></li>
             <li><a href="/services/">Services</a></li>
             <li><a href="/cases/">Cases</a></li>
             <li><a href="/about/">About</a></li>
@@ -55,14 +57,18 @@
     <main id="main">
       <section class="hero hero--home">
         <div class="container">
-          <span class="pill"><strong>LeapView</strong> open source · Apache-2.0</span>
+          <span class="pill"><strong>LeapView</strong> open source · <strong>Alloy Catalog</strong> pilots open</span>
           <h1>We build LeapView <span>and Alloy Catalog.</span></h1>
-          <p class="hero-sub">LeapView is open-source business intelligence: define each metric once in code, then use it in dashboards, APIs and AI assistants with the same access rules. Alloy Catalog turns CAD files and ERP data into one catalog of parts. Flid builds both, and consults on the systems behind them.</p>
+          <p class="hero-sub">LeapView is open-source business intelligence: define each metric once in code, then use it in dashboards, APIs and AI assistants with the same access rules. Alloy Catalog turns CAD files and ERP data into one catalog of parts, with an AI agent that cites its sources. Flid builds both, and consults on the systems behind them.</p>
           <div class="actions">
             <a class="button button--primary button--large" href="/products/leapview/">See LeapView</a>
-            <a class="button button--secondary button--large" href="mailto:hello@flid.ai">Write to hello@flid.ai</a>
+            <a class="button button--secondary button--large" href="/products/alloy-catalog/">See Alloy Catalog</a>
           </div>
-          <figure class="window"><div class="window-bar" aria-hidden="true"><i></i><i></i><i></i><span>LeapView · Executive Sales</span></div><picture><source data-theme-source="dark" media="(prefers-color-scheme: dark)" type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-dark-640.avif 640w, /assets/screenshots/leapview-executive-sales-dark-1280.avif 1280w" sizes="(min-width: 70rem) 1088px, 100vw"><source data-theme-source="dark" media="(prefers-color-scheme: dark)" type="image/webp" srcset="/assets/screenshots/leapview-executive-sales-dark-640.webp 640w, /assets/screenshots/leapview-executive-sales-dark-1280.webp 1280w" sizes="(min-width: 70rem) 1088px, 100vw"><source type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-light-640.avif 640w, /assets/screenshots/leapview-executive-sales-light-1280.avif 1280w" sizes="(min-width: 70rem) 1088px, 100vw"><img src="/assets/screenshots/leapview-executive-sales-light-1280.webp" srcset="/assets/screenshots/leapview-executive-sales-light-640.webp 640w, /assets/screenshots/leapview-executive-sales-light-1280.webp 1280w" sizes="(min-width: 70rem) 1088px, 100vw" width="1296" height="704" fetchpriority="high" decoding="async" alt="A LeapView dashboard with date, state and category filters, cards for total orders, revenue and average order value, and a revenue-by-month chart."></picture></figure>
+          <div class="product-tabs" data-tabs>
+            <div class="tab-list" data-tab-list data-requires-js hidden aria-label="Product screenshots"><button class="tab" type="button" id="tab-leapview" data-tab="panel-leapview">LeapView</button><button class="tab" type="button" id="tab-alloy" data-tab="panel-alloy">Alloy Catalog</button></div>
+            <div class="tab-panel" id="panel-leapview"><figure class="window"><div class="window-bar" aria-hidden="true"><i></i><i></i><i></i><span>LeapView · Executive Sales</span></div><picture><source data-theme-source="dark" media="(prefers-color-scheme: dark)" type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-dark-640.avif 640w, /assets/screenshots/leapview-executive-sales-dark-1280.avif 1280w" sizes="(min-width: 70rem) 1088px, 100vw"><source data-theme-source="dark" media="(prefers-color-scheme: dark)" type="image/webp" srcset="/assets/screenshots/leapview-executive-sales-dark-640.webp 640w, /assets/screenshots/leapview-executive-sales-dark-1280.webp 1280w" sizes="(min-width: 70rem) 1088px, 100vw"><source type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-light-640.avif 640w, /assets/screenshots/leapview-executive-sales-light-1280.avif 1280w" sizes="(min-width: 70rem) 1088px, 100vw"><img src="/assets/screenshots/leapview-executive-sales-light-1280.webp" srcset="/assets/screenshots/leapview-executive-sales-light-640.webp 640w, /assets/screenshots/leapview-executive-sales-light-1280.webp 1280w" sizes="(min-width: 70rem) 1088px, 100vw" width="1296" height="704" fetchpriority="high" decoding="async" alt="A LeapView dashboard with date, state and category filters, cards for total orders, revenue and average order value, and a revenue-by-month chart."></picture></figure></div>
+            <div class="tab-panel" id="panel-alloy"><figure class="window"><div class="window-bar" aria-hidden="true"><i></i><i></i><i></i><span>Alloy Catalog · Part page</span></div><picture><source data-theme-source="dark" media="(prefers-color-scheme: dark)" type="image/avif" srcset="/assets/screenshots/alloy-catalog-part-dark-640.avif 640w, /assets/screenshots/alloy-catalog-part-dark-1280.avif 1280w" sizes="(min-width: 70rem) 1088px, 100vw"><source data-theme-source="dark" media="(prefers-color-scheme: dark)" type="image/webp" srcset="/assets/screenshots/alloy-catalog-part-dark-640.webp 640w, /assets/screenshots/alloy-catalog-part-dark-1280.webp 1280w" sizes="(min-width: 70rem) 1088px, 100vw"><source type="image/avif" srcset="/assets/screenshots/alloy-catalog-part-light-640.avif 640w, /assets/screenshots/alloy-catalog-part-light-1280.avif 1280w" sizes="(min-width: 70rem) 1088px, 100vw"><img src="/assets/screenshots/alloy-catalog-part-light-1280.webp" srcset="/assets/screenshots/alloy-catalog-part-light-640.webp 640w, /assets/screenshots/alloy-catalog-part-light-1280.webp 1280w" sizes="(min-width: 70rem) 1088px, 100vw" width="1440" height="900" loading="lazy" decoding="async" alt="An Alloy Catalog part page for a linear actuator assembly: its components with thumbnails and quantities beside a card with a product image, revision, state, material, mass and where-used count."></picture></figure></div>
+          </div>
         </div>
       </section>
 

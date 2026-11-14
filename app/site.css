@@ -385,12 +385,18 @@ pre {
 
   .site-nav {
     order: 3;
-    width: 100%;
+    width: calc(100% + 2 * var(--space-3));
     margin-inline: calc(-1 * var(--space-3));
   }
 
   .site-nav ul {
+    flex-wrap: wrap;
     gap: 0;
+  }
+
+  .site-nav a {
+    padding-inline: var(--space-2);
+    white-space: nowrap;
   }
 }
 
@@ -576,6 +582,74 @@ pre {
 
 .hero--home .window-bar {
   border-radius: calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0 0;
+}
+
+/* Product tabs in the home hero. Without JavaScript the tab list stays hidden
+   and both screenshots show, one after the other. */
+.product-tabs {
+  display: grid;
+  justify-items: center;
+  width: 100%;
+}
+
+.hero--home .product-tabs {
+  max-width: 68rem;
+  margin-top: var(--space-7);
+}
+
+.product-tabs .tab-panel {
+  width: 100%;
+}
+
+.product-tabs .tab-panel + .tab-panel {
+  margin-top: var(--space-6);
+}
+
+.product-tabs[data-tabs] .window {
+  margin-top: 0;
+}
+
+.tab-list {
+  display: inline-flex;
+  gap: 2px;
+  margin-bottom: var(--space-5);
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--bg-subtle);
+}
+
+.tab-list[hidden],
+.tab-panel[hidden] {
+  display: none;
+}
+
+.tab {
+  min-height: var(--target);
+  padding: 0 var(--space-5);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--fg-muted);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-strong);
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: var(--fg);
+}
+
+.tab[aria-selected="true"] {
+  border-color: var(--line);
+  background: var(--card);
+  color: var(--fg);
+}
+
+/* With tabs, the selected panel is the only one, so it sits right under the list. */
+.tab-list:not([hidden]) ~ .tab-panel + .tab-panel {
+  margin-top: 0;
 }
 
 .window-bar {
@@ -1278,6 +1352,15 @@ a.card-link:hover::after {
   .hero .container > :nth-child(5) { animation-delay: 0.32s; }
   .hero .container > :nth-child(6) { animation-delay: 0.4s; }
 
+  .tab {
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+
+  /* A switched-to screenshot slides in instead of replaying the page entrance. */
+  .tab-panel.is-entering .window {
+    animation: tab-in 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
   .hero--home .window {
     animation: rise-window 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.35s both;
   }
@@ -1346,6 +1429,13 @@ a.card-link:hover::after {
   from {
     opacity: 0;
     transform: translateY(14px);
+  }
+}
+
+@keyframes tab-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
   }
 }
 
