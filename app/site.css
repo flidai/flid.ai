@@ -624,15 +624,16 @@ pre {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.facts-strip div {
+.facts-strip dl > div {
   display: flex;
   flex-direction: column-reverse;
+  justify-content: flex-end;
   gap: var(--space-1);
   padding: var(--space-6) var(--space-5);
   border-left: 1px solid var(--line);
 }
 
-.facts-strip div:nth-child(odd) {
+.facts-strip dl > div:nth-child(odd) {
   border-left: 0;
   padding-left: 0;
 }
@@ -643,22 +644,28 @@ pre {
 }
 
 .facts-strip dd {
-  font-size: 1.75rem;
+  font-size: 1.375rem;
+  line-height: 1.2;
   font-weight: var(--weight-strong);
   letter-spacing: -0.03em;
+  white-space: nowrap;
 }
 
 @media (min-width: 56rem) {
+  .facts-strip dd {
+    font-size: 1.75rem;
+  }
+
   .facts-strip dl {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
-  .facts-strip div:nth-child(odd) {
+  .facts-strip dl > div:nth-child(odd) {
     border-left: 1px solid var(--line);
     padding-left: var(--space-5);
   }
 
-  .facts-strip div:first-child {
+  .facts-strip dl > div:first-child {
     border-left: 0;
     padding-left: 0;
   }
@@ -1178,8 +1185,6 @@ a.card-link:hover::after {
 .ticker-track {
   flex: 1;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(90deg, transparent, black 10%, black 90%, transparent);
-  mask-image: linear-gradient(90deg, transparent, black 10%, black 90%, transparent);
 }
 
 .ticker-list {
@@ -1303,6 +1308,12 @@ a.card-link:hover::after {
 
   .ticker-list[aria-hidden="true"] {
     display: flex;
+  }
+
+  /* Edges fade only while the list moves; the still list wraps and shows every item. */
+  .ticker-track {
+    -webkit-mask-image: linear-gradient(90deg, transparent, black 10%, black 90%, transparent);
+    mask-image: linear-gradient(90deg, transparent, black 10%, black 90%, transparent);
   }
 
   .ticker-inner {

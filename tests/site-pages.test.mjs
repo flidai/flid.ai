@@ -175,12 +175,24 @@ test("says what Flid sells and how to start on the home page", async () => {
 
   const main = region(html, /<main id="main">[\s\S]*?<\/main>/);
 
-  assert.match(main, /<h1>Software for engineering <span>and analytics data\.<\/span><\/h1>/);
-  assert.match(main, /Flid builds products for engineering and analytics data, and consults on the systems behind them\./);
+  assert.match(main, /<h1>We build LeapView <span>and Alloy Catalog\.<\/span><\/h1>/);
+  assert.match(main, /LeapView is open-source business intelligence/);
+  assert.match(main, /Flid builds both, and consults on the systems behind them\./);
   assert.match(main, /href="\/products\/alloy-catalog\/"/);
   assert.match(main, /href="\/products\/leapview\/"/);
-  assert.match(main, /four-week Alloy Catalog pilot/);
-  assert.match(main, /class="button button--primary button--large" href="mailto:hello@flid\.ai"/);
+  assert.match(main, /class="button button--secondary button--large" href="mailto:hello@flid\.ai"/);
+});
+
+test("puts LeapView before Alloy Catalog wherever both appear", async () => {
+  const pages = await Promise.all(["index.html", "products/index.html", "cases/index.html"].map(built));
+  for (const html of pages) {
+    const main = region(html, /<main id="main">[\s\S]*?<\/main>/);
+    const leapview = main.indexOf("LeapView");
+    assert.ok(leapview >= 0, "LeapView is named");
+    assert.ok(leapview < main.indexOf("Alloy Catalog"), "LeapView comes first");
+  }
+  const footer = region(pages[0], /<footer[\s\S]*?<\/footer>/);
+  assert.ok(footer.indexOf("/products/leapview/") < footer.indexOf("/products/alloy-catalog/"));
 });
 
 test("states each product's status next to it", async () => {
