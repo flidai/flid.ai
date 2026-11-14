@@ -79,14 +79,19 @@ for (const [path, file] of allPages) {
     assert.equal((html.match(/<link rel="stylesheet"/g) ?? []).length, 1);
     assert.doesNotMatch(html, /favicon\.svg|lockup-primary-on-(dark|light)\.svg|mark-primary/);
 
-    assert.doesNotMatch(html, /<script\b/i, "public pages ship no JavaScript");
+    // The only scripts: the theme initialiser in <head> and the theme module.
+    const scripts = html.match(/<script\b[^>]*>/g) ?? [];
+    assert.deepEqual(scripts, ["<script>", '<script type="module" src="/assets/theme.js">']);
+    assert.match(html, /<script>try\{var t=localStorage\.getItem\("theme"\);[^<]{0,160}<\/script>/);
+    assert.doesNotMatch(html, /<script[^>]+src="https?:/);
+    assert.match(html, /<button class="theme-switch" type="button" data-theme-switch data-requires-js hidden aria-label="Switch theme">/);
     assert.doesNotMatch(html, /<iframe\b|<canvas\b|<video\b/i);
 
     assert.match(html, /<body>\n {4}<a class="skip-link" href="#main">Skip to content<\/a>/);
     assert.equal((html.match(/<main id="main">/g) ?? []).length, 1);
     assert.equal((html.match(/<h1\b/g) ?? []).length, 1);
     assert.match(html, /<nav class="site-nav" aria-label="Main">/);
-    assert.match(html, /<nav aria-label="Footer">/);
+    assert.match(html, /<nav class="footer-nav" aria-label="Footer">/);
     assert.match(html, /Flid AI ApS · CVR 43463217 · Odense, Denmark/);
   });
 
@@ -112,7 +117,9 @@ for (const [path, file] of allPages) {
     for (const image of images) {
       assert.match(image, /\bwidth="\d+"/, image);
       assert.match(image, /\bheight="\d+"/, image);
-      assert.match(image, /\balt="[^"]{5,}"/, image);
+      // Decorative images (the footer logo, card screenshots beside their
+      // own description) have empty alt text; the rest describe themselves.
+      assert.match(image, /\balt="([^"]{5,})?"/, image);
     }
     const sources = new Set(
       [...html.matchAll(/(?:src|srcset)="([^"]+)"/g)].flatMap(([, value]) =>
@@ -139,7 +146,8 @@ test("every page shares one header and footer", async () => {
     assert.equal(region(html, /<footer class="site-footer">[\s\S]*?<\/footer>/), footer);
   }
   const labels = [...header.matchAll(/<li><a href="[^"]+">([^<]+)<\/a><\/li>/g)].map(([, label]) => label);
-  assert.deepEqual(labels, ["Products", "Services", "Cases", "About", "Contact"]);
+  assert.deepEqual(labels, ["Products", "Services", "Cases", "About"]);
+  assert.match(header, /<a class="button button--primary" href="\/contact\/">Contact<\/a>/);
 });
 
 test("marks the current section in the navigation", async () => {
@@ -150,7 +158,6 @@ test("marks the current section in the navigation", async () => {
     ["/services/", "services/index.html", "/services/"],
     ["/cases/", "cases/index.html", "/cases/"],
     ["/about/", "about/index.html", "/about/"],
-    ["/contact/", "contact/index.html", "/contact/"],
   ]) {
     const html = await built(file);
     const nav = region(html, /<nav class="site-nav"[\s\S]*?<\/nav>/);
@@ -159,17 +166,21 @@ test("marks the current section in the navigation", async () => {
   }
   const home = region(await built("index.html"), /<nav class="site-nav"[\s\S]*?<\/nav>/);
   assert.doesNotMatch(home, /aria-current/);
+  const contact = region(await built("contact/index.html"), /<header class="site-header">[\s\S]*?<\/header>/);
+  assert.match(contact, /href="\/contact\/" aria-current="page">Contact</);
 });
 
 test("says what Flid sells and how to start on the home page", async () => {
   const html = await built("index.html");
 
-  assert.match(html, /<h1>Flid builds products for engineering and analytics data, and consults on the systems behind them\.<\/h1>/);
-  assert.match(html, /href="\/products\/alloy-catalog\/">Alloy Catalog</);
-  assert.match(html, /href="\/products\/leapview\/">LeapView</);
-  assert.match(html, /four-week pilot/);
-  assert.match(html, /class="button button--primary" href="mailto:hello@flid\.ai"/);
-  assert.equal((html.match(/button--primary/g) ?? []).length, 1);
+  const main = region(html, /<main id="main">[\s\S]*?<\/main>/);
+
+  assert.match(main, /<h1>Software for engineering <span>and analytics data\.<\/span><\/h1>/);
+  assert.match(main, /Flid builds products for engineering and analytics data, and consults on the systems behind them\./);
+  assert.match(main, /href="\/products\/alloy-catalog\/"/);
+  assert.match(main, /href="\/products\/leapview\/"/);
+  assert.match(main, /four-week Alloy Catalog pilot/);
+  assert.match(main, /class="button button--primary button--large" href="mailto:hello@flid\.ai"/);
 });
 
 test("states each product's status next to it", async () => {
@@ -178,9 +189,9 @@ test("states each product's status next to it", async () => {
     built("products/alloy-catalog/index.html"),
   ]);
 
-  assert.match(leapview, /<p class="status">Open source, Apache-2\.0\. Alpha, v0\.4\.0-alpha\.1, for controlled evaluation\.<\/p>/);
+  assert.match(leapview, /<span class="pill">Open source, Apache-2\.0 · Alpha v0\.4\.0-alpha\.1, for controlled evaluation<\/span>/);
   assert.match(leapview, /26 visual types/);
-  assert.match(alloy, /<p class="status">Available as a pilot\.<\/p>/);
+  assert.match(alloy, /<span class="pill">Available as a pilot<\/span>/);
   assert.match(alloy, /does not change them/);
 });
 
@@ -251,7 +262,7 @@ test("gives navigation, buttons and standalone links a 44 px target", async () =
   const css = await readFile(new URL("app/site.css", root), "utf8");
 
   assert.match(css, /--target:\s*44px/);
-  for (const selector of [".site-nav a", ".site-footer a", ".button", ".more a", ".contact-block__address", ".product-row h3 a"]) {
+  for (const selector of [".site-nav a", ".footer-nav a", ".button", ".contact-address", "a.card-link"]) {
     const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const rule = css.match(new RegExp(`(^|\\n)${escaped} \\{[^}]*\\}`))?.[0] ?? "";
     assert.match(rule, /min-height: var\(--target\)/, selector);

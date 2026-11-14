@@ -20,86 +20,108 @@
     <meta name="twitter:description" content="Two use cases: engineering master data from CAD and ERP with Alloy Catalog, and governed metrics as code with LeapView.">
     <meta name="twitter:image" content="https://flid.ai/brand-assets/social/share-light-1200x630.png">
     <meta name="color-scheme" content="light dark">
+    <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
     <link rel="icon" href="/brand-assets/favicon/favicon.ico" sizes="any">
     <link rel="icon" href="/brand-assets/favicon/favicon-32.png" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="/brand-assets/favicon/apple-touch-icon.png">
     <link rel="manifest" href="/brand-assets/favicon/site.webmanifest">
     <link rel="preload" href="/assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="/assets/site.css">
+    <script type="module" src="/assets/theme.js"></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header">
       <div class="container">
-        <a class="site-logo" href="/">
-          <picture>
-            <source media="(prefers-color-scheme: dark)" srcset="/assets/images/flid-lockup-dark.webp">
-            <img src="/assets/images/flid-lockup-light.webp" width="297" height="128" alt="Flid home">
-          </picture>
-        </a>
+        <a class="site-logo" href="/"><picture><source data-theme-source="dark" media="(prefers-color-scheme: dark)" srcset="/assets/images/flid-lockup-dark.webp"><img src="/assets/images/flid-lockup-light.webp" width="297" height="128" alt="Flid home"></picture></a>
         <nav class="site-nav" aria-label="Main">
           <ul>
             <li><a href="/products/">Products</a></li>
             <li><a href="/services/">Services</a></li>
             <li><a href="/cases/" aria-current="page">Cases</a></li>
             <li><a href="/about/">About</a></li>
-            <li><a href="/contact/">Contact</a></li>
           </ul>
         </nav>
+        <div class="header-actions">
+          <button class="theme-switch" type="button" data-theme-switch data-requires-js hidden aria-label="Switch theme">
+            <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+            <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          </button>
+          <a class="button button--primary" href="/contact/">Contact</a>
+        </div>
       </div>
     </header>
 
     <main id="main">
-      <div class="container">
-        <header class="page-header">
-          <h1>Cases</h1>
-          <p class="lead">Two use cases: the situation, what Flid does, what changes and what it runs on.</p>
-        </header>
-
-        <div class="grid grid--2">
-          <article class="case-card">
-            <h2>Engineering master data from CAD and ERP</h2>
-            <dl class="dl">
-              <dt>Situation</dt>
-              <dd>A manufacturer with CAD and ERP data. Parts, drawings and assemblies live in the vault; item numbers, stock and transactions live in the ERP. Answering “where is this part used, and does the drawing match the ERP?” means opening several systems.</dd>
-              <dt>What Flid does</dt>
-              <dd>A four-week Alloy Catalog pilot reads the vault database read-only, matches files to the ERP item master, and publishes one page per part with bill of materials, where-used, drawings, stock and data quality checks.</dd>
-              <dt>What changes</dt>
-              <dd>Engineering, purchasing and service search one catalog and ask the assistant, which cites the files and records it used. Conflicts between CAD and ERP are listed for clean-up.</dd>
-              <dt>Runs on</dt>
-              <dd>Alloy Catalog, the vault database (read-only), the existing ERP.</dd>
-            </dl>
-          </article>
-          <article class="case-card">
-            <h2>Governed metrics as code</h2>
-            <dl class="dl">
-              <dt>Situation</dt>
-              <dd>A data team whose dashboards each define revenue and margin slightly differently, with access rules kept by hand per report.</dd>
-              <dt>What Flid does</dt>
-              <dd>Moves connections, models, metrics and dashboards into YAML in Git with LeapView, validated before publishing, with row filters and column masks applied in one place. LeapView is an alpha, so this starts as an evaluation.</dd>
-              <dt>What changes</dt>
-              <dd>One definition per metric, used by dashboards, headless queries and AI tools. Changes go through review like code.</dd>
-              <dt>Runs on</dt>
-              <dd>LeapView, DuckDB and PostgreSQL on the team’s own infrastructure.</dd>
-            </dl>
-          </article>
+      <section class="hero hero--page">
+        <div class="container">
+          <span class="pill">Use cases</span>
+          <h1>Two use cases.</h1>
+          <p class="hero-sub">The situation, what Flid does, what changes and what it runs on.</p>
         </div>
-      </div>
+      </section>
+
+      <section class="section section--tight" aria-label="Use cases">
+        <div class="container">
+          <div class="bento bento--2">
+            <article class="card">
+              <div class="card-top"><span class="label">Alloy Catalog</span></div>
+              <h2>Engineering master data from CAD and ERP</h2>
+              <dl class="case-steps">
+                <div><dt>Situation</dt><dd>A manufacturer with CAD and ERP data. Parts, drawings and assemblies live in the vault; item numbers, stock and transactions live in the ERP. Answering “where is this part used, and does the drawing match the ERP?” means opening several systems.</dd></div>
+                <div><dt>What Flid does</dt><dd>A four-week Alloy Catalog pilot reads the vault database read-only, matches files to the ERP item master, and publishes one page per part with bill of materials, where-used, drawings, stock and data quality checks.</dd></div>
+                <div><dt>What changes</dt><dd>Engineering, purchasing and service search one catalog and ask the assistant, which cites the files and records it used. Conflicts between CAD and ERP are listed for clean-up.</dd></div>
+                <div><dt>Runs on</dt><dd>Alloy Catalog, the vault database (read-only), the existing ERP.</dd></div>
+              </dl>
+            </article>
+            <article class="card">
+              <div class="card-top"><span class="label">LeapView</span></div>
+              <h2>Governed metrics as code</h2>
+              <dl class="case-steps">
+                <div><dt>Situation</dt><dd>A data team whose dashboards each define revenue and margin slightly differently, with access rules kept by hand per report.</dd></div>
+                <div><dt>What Flid does</dt><dd>Moves connections, models, metrics and dashboards into YAML in Git with LeapView, validated before publishing, with row filters and column masks applied in one place. LeapView is an alpha, so this starts as an evaluation.</dd></div>
+                <div><dt>What changes</dt><dd>One definition per metric, used by dashboards, headless queries and AI tools. Changes go through review like code.</dd></div>
+                <div><dt>Runs on</dt><dd>LeapView, DuckDB and PostgreSQL on the team’s own infrastructure.</dd></div>
+              </dl>
+            </article>
+          </div>
+        </div>
+      </section>
     </main>
 
     <footer class="site-footer">
       <div class="container">
-        <nav aria-label="Footer">
-          <ul>
-            <li><a href="/products/alloy-catalog/">Alloy Catalog</a></li>
-            <li><a href="/products/leapview/">LeapView</a></li>
-            <li><a href="/services/">Services</a></li>
-            <li><a href="/cases/">Cases</a></li>
-            <li><a href="/about/">About</a></li>
-            <li><a href="/contact/">Contact</a></li>
-          </ul>
-        </nav>
-        <p>Flid AI ApS · CVR 43463217 · Odense, Denmark</p>
+        <div class="footer-top">
+          <div class="footer-brand">
+            <picture><source data-theme-source="dark" media="(prefers-color-scheme: dark)" srcset="/assets/images/flid-lockup-dark.webp"><img src="/assets/images/flid-lockup-light.webp" width="297" height="128" loading="lazy" alt=""></picture>
+            <p>Products and consulting for engineering and analytics data.</p>
+          </div>
+          <nav class="footer-nav" aria-label="Footer">
+            <div>
+              <h2>Products</h2>
+              <ul>
+                <li><a href="/products/alloy-catalog/">Alloy Catalog</a></li>
+                <li><a href="/products/leapview/">LeapView</a></li>
+              </ul>
+            </div>
+            <div>
+              <h2>Company</h2>
+              <ul>
+                <li><a href="/services/">Services</a></li>
+                <li><a href="/cases/">Cases</a></li>
+                <li><a href="/about/">About</a></li>
+              </ul>
+            </div>
+            <div>
+              <h2>Contact</h2>
+              <ul>
+                <li><a href="/contact/">Contact</a></li>
+                <li><a href="mailto:hello@flid.ai">hello@flid.ai</a></li>
+              </ul>
+            </div>
+          </nav>
+        </div>
+        <p class="footer-legal">Flid AI ApS · CVR 43463217 · Odense, Denmark</p>
       </div>
     </footer>
   </body>

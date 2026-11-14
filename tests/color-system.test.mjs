@@ -56,36 +56,20 @@ test("ships the shared Primer palette with the static build", async () => {
   assert.match(builtPalette, /export const primerColors/);
 });
 
-test("uses only Primer colours in the public site stylesheet", async () => {
-  const [site, palette, primitives] = await Promise.all([
-    read("app/site.css"),
-    read("lib/primer-colors.mjs"),
-    read("site/assets/primer-primitives.css"),
-  ]);
-  // Primer 11.9.0 values the site adds to the brand subset: text on the
-  // emphasis background, and the hover shade of the primary button.
-  const additions = ["#ffffff", "#0550ae", "#1158c7"];
-  const allowed = new Set(
-    [...`${palette}${primitives}`.matchAll(/#[0-9a-f]{6}\b/gi)]
-      .map(([hex]) => hex.toLowerCase())
-      .concat(additions),
-  );
+test("defines public site colours only as theme tokens", async () => {
+  const site = await read("app/site.css");
+  // Colours live in the light and dark theme blocks; components use tokens.
+  const themeBlocks = [...site.matchAll(/(?::root,\n:root\[data-theme="light"\]|:root:not\(\[data-theme="light"\]\)|:root\[data-theme="dark"\]) \{[^}]*\}/g)]
+    .map(([block]) => block);
+  assert.equal(themeBlocks.length, 3);
 
-  const used = [...site.matchAll(/#[0-9a-f]{3,8}\b/gi)].map(([hex]) => hex.toLowerCase());
-  assert.ok(used.length > 0);
-  for (const hex of used) {
-    assert.ok(allowed.has(hex), `${hex} is not a Primer colour`);
-  }
-  assert.match(site, /@media \(prefers-color-scheme: dark\)/);
-  for (const token of [
-    "--bgColor-default",
-    "--fgColor-default",
-    "--fgColor-muted",
-    "--fgColor-accent",
-    "--borderColor-default",
-    "--bgColor-accent-emphasis",
-    "--focus-outlineColor",
-  ]) {
-    assert.match(site, new RegExp(`var\\(${token}\\)`));
-  }
+  let outside = site;
+  for (const block of themeBlocks) outside = outside.replace(block, "");
+  assert.doesNotMatch(outside, /#[0-9a-f]{3,8}\b|rgb\(/i, "colour outside the theme blocks");
+
+  const tokens = (block) => [...block.matchAll(/(--[a-z-]+):/g)].map(([, name]) => name).sort();
+  assert.deepEqual(tokens(themeBlocks[1]), tokens(themeBlocks[0]), "dark defines every light token");
+  assert.deepEqual(tokens(themeBlocks[2]), tokens(themeBlocks[0]), "chosen dark defines every light token");
+  const body = (block) => block.replace(/^[^{]+/, "").replace(/\s+/g, " ");
+  assert.equal(body(themeBlocks[1]), body(themeBlocks[2]), "system dark and chosen dark match");
 });
