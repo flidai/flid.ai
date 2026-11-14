@@ -108,7 +108,7 @@ test("keeps .ai out of visual wordmarks while preserving the domain", async () =
   ]);
   const combined = pages.join("\n");
 
-  assert.doesNotMatch(combined, /class="[^"]*wordmark[^"]*"[^>]*>\\s*flid\\.ai/i);
+  assert.doesNotMatch(combined, /class="[^"]*wordmark[^"]*"[^>]*>\s*flid\.ai/i);
   assert.match(combined, /flid\.ai/);
   assert.match(combined, /Flid AI ApS/);
 });

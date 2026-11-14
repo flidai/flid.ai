@@ -327,6 +327,8 @@ code {
 .site-nav a {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  min-width: var(--target);
   min-height: var(--target);
   color: var(--fgColor-default);
   text-decoration: none;
@@ -379,6 +381,8 @@ code {
 .site-footer a {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  min-width: var(--target);
   min-height: var(--target);
   color: var(--fgColor-default);
 }
@@ -475,22 +479,7 @@ code {
   color: var(--fgColor-muted);
 }
 
-/* ---------- Cards ---------- */
-
-.card {
-  display: grid;
-  gap: var(--space-4);
-  align-content: start;
-}
-
-.card h3 a {
-  color: inherit;
-  text-decoration: none;
-}
-
-.card h3 a:hover {
-  text-decoration-line: underline;
-}
+/* ---------- Status and case card ---------- */
 
 .status {
   font-size: var(--text-sm);
@@ -575,6 +564,9 @@ code {
 }
 
 .contact-block__address {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
   font-size: var(--text-xl);
   font-weight: var(--weight-strong);
   line-height: var(--leading-heading);
@@ -615,18 +607,16 @@ code {
   margin-top: var(--space-6);
 }
 
+/* A paragraph holding only a link: the link gets a 44 px target. */
+.more a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
+}
+
 .plain-list {
   padding: 0;
   list-style: none;
-}
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
 }
 
 .code {
@@ -643,13 +633,6 @@ code {
 
 .hero__text h1 {
   max-width: 24ch;
-}
-
-/* Product cards show screenshots at one shape so the cards line up. */
-.card .screenshot img {
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  object-position: top left;
 }
 
 @media (max-width: 40rem) {
@@ -678,6 +661,9 @@ code {
 }
 
 .product-row h3 a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
   color: inherit;
   text-decoration: none;
 }

@@ -146,7 +146,10 @@ test("marks the current section in the navigation", async () => {
   for (const [path, file, section] of [
     ["/products/", "products/index.html", "/products/"],
     ["/products/leapview/", "products/leapview/index.html", "/products/"],
+    ["/products/alloy-catalog/", "products/alloy-catalog/index.html", "/products/"],
     ["/services/", "services/index.html", "/services/"],
+    ["/cases/", "cases/index.html", "/cases/"],
+    ["/about/", "about/index.html", "/about/"],
     ["/contact/", "contact/index.html", "/contact/"],
   ]) {
     const html = await built(file);
@@ -220,6 +223,10 @@ test("keeps the header lockup small", async () => {
   }
 });
 
+// Static estimate of a first load: HTML, the stylesheet, the font, one header
+// lockup, and for every <img> the larger of its AVIF sources (1280 px). It does
+// not add the dark lockup or dark screenshots, which replace the light ones.
+// Transfer sizes are measured separately in a browser before release.
 test("stays under 300 KB per page with every image loaded", async () => {
   const shared =
     (await stat(new URL("assets/site.css", dist))).size +
@@ -232,10 +239,21 @@ test("stays under 300 KB per page with every image loaded", async () => {
     for (const [, src] of html.matchAll(/<img\b[^>]*\bsrc="([^"]+)"/g)) {
       if (src.includes("flid-lockup")) continue;
       // Worst case: the larger AVIF a wide screen picks, or the WebP fallback.
-      const avif = src.replace(/-\d+\.webp$/, "-1280.avif");
+      const avif = src.includes("/screenshots/") ? src.replace(/-\d+\.webp$/, "-1280.avif") : src;
       const candidate = avif !== src ? avif : src;
       total += (await stat(new URL(`.${candidate}`, dist))).size;
     }
     assert.ok(total < 300_000, `${path} is ${total} bytes`);
+  }
+});
+
+test("gives navigation, buttons and standalone links a 44 px target", async () => {
+  const css = await readFile(new URL("app/site.css", root), "utf8");
+
+  assert.match(css, /--target:\s*44px/);
+  for (const selector of [".site-nav a", ".site-footer a", ".button", ".more a", ".contact-block__address", ".product-row h3 a"]) {
+    const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const rule = css.match(new RegExp(`(^|\\n)${escaped} \\{[^}]*\\}`))?.[0] ?? "";
+    assert.match(rule, /min-height: var\(--target\)/, selector);
   }
 });

@@ -71,7 +71,7 @@ async function applyBasePath(directory, basePath) {
 // Header lockups: the approved primary lockup at the 64 px minimum mark size
 // (2x pixels), rasterised so the header
 // does not carry the 180 KB vector master on every page.
-export const headerLockupHeight = 128;
+const headerLockupHeight = 128;
 
 async function buildHeaderLockups(directory) {
   await mkdir(directory, { recursive: true });
@@ -87,7 +87,7 @@ async function buildHeaderLockups(directory) {
 
 // Product screenshots: PNG masters in product-screenshots/ become AVIF and
 // WebP at two widths. Pages reference <name>-<width>.<format>.
-export const screenshotWidths = [640, 1280];
+const screenshotWidths = [640, 1280];
 
 async function buildScreenshots(directory) {
   await mkdir(directory, { recursive: true });

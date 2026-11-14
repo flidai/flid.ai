@@ -92,7 +92,7 @@
             <h2 id="type">Type</h2>
             <p>Geist, the typeface in the lockup, at two weights: 400 for text, 600 for headings and buttons. Five sizes. Sentence case everywhere.</p>
           </div>
-          <div class="table-wrap" role="region" aria-labelledby="type" tabindex="0">
+          <div class="table-wrap" role="region" aria-label="Type scale" tabindex="0">
             <table class="table">
               <thead>
                 <tr><th scope="col">Token</th><th scope="col">Size</th><th scope="col">Use</th><th scope="col">Sample</th></tr>
@@ -129,7 +129,7 @@
               <dt>Radius</dt><dd><code>--radius</code> 6 px</dd>
               <dt>Border</dt><dd><code>--border</code> 1 px, <code>--borderColor-default</code></dd>
               <dt>Focus ring</dt><dd>2 px solid accent, offset 2 px, on every focusable element</dd>
-              <dt>Target</dt><dd>44 px minimum height for links in navigation and buttons</dd>
+              <dt>Target</dt><dd>44 px minimum for navigation, buttons and standalone links (<code>.more</code>)</dd>
               <dt>Widths</dt><dd><code>--measure</code> 72ch, <code>--layout</code> 1200 px, <code>--gutter</code> 16–32 px</dd>
             </dl>
           </div>
@@ -146,6 +146,7 @@
               <a class="button button--secondary" href="/products/">See the products</a>
             </div>
             <p>A link in text: <a href="https://leapview.dev/docs">read the LeapView documentation</a>.</p>
+            <p class="more"><a href="/products/">A standalone link, with a 44 px target</a></p>
           </div>
         </section>
 
@@ -165,29 +166,34 @@
 
         <section class="section" aria-labelledby="products">
           <div class="section-header">
-            <h2 id="products">Product card, 2-column grid</h2>
-            <p>A product without a real screenshot is shown as text; no drawn previews.</p>
+            <h2 id="products">Product row</h2>
+            <p>Text on the left; on the right a real screenshot, or a list of facts when no real screenshot exists. No drawn previews.</p>
           </div>
-          <div class="grid grid--2">
-            <article class="card">
-              <figure class="screenshot">
-                <picture>
-                  <source media="(prefers-color-scheme: dark)" type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-dark-640.avif 640w, /assets/screenshots/leapview-executive-sales-dark-1280.avif 1280w" sizes="(min-width: 48rem) 600px, 100vw">
-                  <source media="(prefers-color-scheme: dark)" type="image/webp" srcset="/assets/screenshots/leapview-executive-sales-dark-640.webp 640w, /assets/screenshots/leapview-executive-sales-dark-1280.webp 1280w" sizes="(min-width: 48rem) 600px, 100vw">
-                  <source type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-light-640.avif 640w, /assets/screenshots/leapview-executive-sales-light-1280.avif 1280w" sizes="(min-width: 48rem) 600px, 100vw">
-                  <img src="/assets/screenshots/leapview-executive-sales-light-1280.webp" srcset="/assets/screenshots/leapview-executive-sales-light-640.webp 640w, /assets/screenshots/leapview-executive-sales-light-1280.webp 1280w" sizes="(min-width: 48rem) 600px, 100vw" width="1296" height="704" loading="lazy" decoding="async" alt="A LeapView dashboard with date, state and category filters, total orders, revenue and average order value, and a monthly revenue chart.">
-                </picture>
-              </figure>
-              <h3><a href="/products/leapview/">LeapView</a></h3>
-              <p class="status">Open source. Alpha, v0.4.0-alpha.1.</p>
-              <p>Business intelligence where metrics are defined once in code and used in dashboards, queries and AI tools.</p>
-            </article>
-            <article class="card">
+          <article class="product-row">
+            <div class="stack">
               <h3><a href="/products/alloy-catalog/">Alloy Catalog</a></h3>
               <p class="status">Available as a pilot.</p>
-              <p>Engineering master data from your CAD files and ERP, one page per part, with an assistant that cites its sources.</p>
-            </article>
-          </div>
+              <p>Engineering master data from your CAD files and ERP, with one page per part number.</p>
+            </div>
+            <ul class="fact-list">
+              <li>Reads your vault database or Inventor files read-only</li>
+              <li>Matches parts to the ERP item master</li>
+            </ul>
+          </article>
+          <article class="product-row">
+            <div class="stack">
+              <h3><a href="/products/leapview/">LeapView</a></h3>
+              <p class="status">Open source, Apache-2.0. Alpha, v0.4.0-alpha.1.</p>
+              <p>Business intelligence where each metric is defined once in code.</p>
+            </div>
+            <div class="screenshot">
+              <picture>
+                <source media="(prefers-color-scheme: dark)" type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-dark-640.avif 640w, /assets/screenshots/leapview-executive-sales-dark-1280.avif 1280w" sizes="(min-width: 48rem) 680px, 100vw">
+                <source type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-light-640.avif 640w, /assets/screenshots/leapview-executive-sales-light-1280.avif 1280w" sizes="(min-width: 48rem) 680px, 100vw">
+                <img src="/assets/screenshots/leapview-executive-sales-light-1280.webp" width="1296" height="704" loading="lazy" decoding="async" alt="A LeapView dashboard with date, state and category filters, cards for total orders, revenue and average order value, and a revenue-by-month chart.">
+              </picture>
+            </div>
+          </article>
         </section>
 
         <section class="section" aria-labelledby="three">
@@ -245,7 +251,7 @@
               <picture>
                 <source media="(prefers-color-scheme: dark)" type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-dark-1280.avif">
                 <source type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-light-1280.avif">
-                <img src="/assets/screenshots/leapview-executive-sales-light-1280.webp" width="1296" height="704" loading="lazy" decoding="async" alt="The LeapView Executive Sales dashboard with filters, three KPI cards and a revenue-by-month area chart.">
+                <img src="/assets/screenshots/leapview-executive-sales-light-1280.webp" width="1296" height="704" loading="lazy" decoding="async" alt="A LeapView dashboard with date, state and category filters, cards for total orders, revenue and average order value, and a revenue-by-month chart.">
               </picture>
             </div>
             <figcaption>Executive Sales, LeapView's showcase dashboard on the public Olist e-commerce dataset.</figcaption>
@@ -268,7 +274,7 @@
             <p>Every page: skip link, header, one <code>main</code> with one <code>h1</code> in a page header, sections separated by a rule, footer. This page uses the template.</p>
           </div>
           <div class="ds-frame">
-            <pre class="small"><code>&lt;a class="skip-link" href="#main"&gt;
+            <pre class="code" tabindex="0" aria-label="Page template markup"><code>&lt;a class="skip-link" href="#main"&gt;
 &lt;header class="site-header"&gt;   logo, Products, Services, Cases, About, Contact
 &lt;main id="main"&gt;
   &lt;div class="container"&gt;
@@ -285,8 +291,8 @@
       <div class="container">
         <nav aria-label="Footer">
           <ul>
-            <li><a href="/products/leapview/">LeapView</a></li>
             <li><a href="/products/alloy-catalog/">Alloy Catalog</a></li>
+            <li><a href="/products/leapview/">LeapView</a></li>
             <li><a href="/services/">Services</a></li>
             <li><a href="/cases/">Cases</a></li>
             <li><a href="/about/">About</a></li>
