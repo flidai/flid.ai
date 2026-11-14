@@ -268,3 +268,26 @@ test("gives navigation, buttons and standalone links a 44 px target", async () =
     assert.match(rule, /min-height: var\(--target\)/, selector);
   }
 });
+
+test("keeps every animation and transition behind the reduced-motion setting", async () => {
+  const css = await readFile(new URL("app/site.css", root), "utf8");
+  const start = css.indexOf("@media (prefers-reduced-motion: no-preference) {");
+  assert.ok(start > 0);
+
+  // Find the end of the motion block by matching braces.
+  let depth = 0;
+  let end = start;
+  for (let i = css.indexOf("{", start); i < css.length; i++) {
+    if (css[i] === "{") depth++;
+    if (css[i] === "}" && --depth === 0) {
+      end = i + 1;
+      break;
+    }
+  }
+  const outside = (css.slice(0, start) + css.slice(end))
+    .replace(/@keyframes [\w-]+ \{[\s\S]*?\n\}/g, "")
+    .replace(/::view-transition-(old|new)\(root\)[\s\S]*?\}/g, "");
+
+  assert.doesNotMatch(outside, /^\s*(animation|transition)(-[a-z-]+)?\s*:/m);
+  assert.equal((css.match(/prefers-reduced-motion: no-preference/g) ?? []).length, 1);
+});

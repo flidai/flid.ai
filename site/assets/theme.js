@@ -36,12 +36,36 @@ export function setTheme(theme) {
   syncSources();
 }
 
+// The new theme opens as a circle from the switch, where the browser supports
+// view transitions and the reader has not asked for reduced motion.
+function switchWithReveal(button, change) {
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!document.startViewTransition || reduce) {
+    change();
+    return;
+  }
+  const box = button.getBoundingClientRect();
+  const x = box.left + box.width / 2;
+  const y = box.top + box.height / 2;
+  const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+  const transition = document.startViewTransition(change);
+  transition.ready.then(() => {
+    root.animate(
+      { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
+      { duration: 550, easing: "cubic-bezier(0.2, 0.8, 0.2, 1)", pseudoElement: "::view-transition-new(root)" },
+    );
+  });
+}
+
 for (const button of document.querySelectorAll("[data-theme-switch]")) {
   button.hidden = false;
   label(button);
   button.addEventListener("click", () => {
-    setTheme(currentTheme() === "dark" ? "light" : "dark");
-    label(button);
+    const next = currentTheme() === "dark" ? "light" : "dark";
+    switchWithReveal(button, () => {
+      setTheme(next);
+      label(button);
+    });
   });
   systemDark.addEventListener("change", () => label(button));
 }
