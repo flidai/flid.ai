@@ -1371,7 +1371,21 @@ a.card-link:hover::after {
   }
 }
 
-/* ---------- Working with Flid (home) ---------- */
+/* ---------- Product cards with screenshots (home) ---------- */
+
+.bento--shots .card-link {
+  margin-top: 0;
+}
+
+.bento--shots .card-shot {
+  margin-top: auto;
+}
+
+.bento--shots .card > p {
+  margin-bottom: var(--space-2);
+}
+
+/* ---------- Working with Flid (contact) ---------- */
 
 .engagement {
   display: grid;
@@ -1672,8 +1686,20 @@ a.card-link:hover::after {
   }
 
   /* Home heading: each word rises out of a mask in turn. */
-  .hero--home h1 {
+  .hero h1:has(.word) {
     animation: none;
+  }
+
+  /* Moving between pages: the page body fades out on an internal link
+     (theme.js adds is-leaving), and each page's body fades up as it opens. */
+  main {
+    animation: page-in 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
+  html.is-leaving main {
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity 0.16s ease, transform 0.16s ease;
   }
 
   .hero h1 .word {
@@ -1843,6 +1869,23 @@ a.card-link:hover::after {
       animation-timeline: view();
       animation-range: entry 0% entry 55%;
     }
+  }
+
+  /* A product page's first screenshot starts tilted back and lies flat as the page scrolls. */
+  @supports (animation-timeline: scroll()) {
+    .section > .container > .window--tilt {
+      transform-origin: 50% 0;
+      animation: flatten linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 50vh;
+    }
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
   }
 }
 

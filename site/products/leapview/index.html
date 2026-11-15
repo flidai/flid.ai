@@ -28,6 +28,7 @@
     <link rel="preload" href="/assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="/assets/site.css">
     <script type="module" src="/assets/theme.js"></script>
+    <script type="module" src="/assets/motion.js"></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -57,7 +58,7 @@
       <section class="hero hero--page">
         <div class="container">
           <span class="pill">Open source, Apache-2.0 · Alpha v0.4.0-alpha.1, for controlled evaluation</span>
-          <h1>LeapView</h1>
+          <h1><span class="word" style="--i:0"><span>LeapView</span></span></h1>
           <p class="hero-sub">Metrics your whole team can build on. Define each business metric once in code, then use it in dashboards, APIs and AI assistants, with the same access rules everywhere, on your own infrastructure.</p>
           <div class="actions">
             <a class="button button--primary button--large" href="https://leapview.dev/docs">Read the documentation</a>
@@ -68,7 +69,7 @@
 
       <section class="section section--tight" aria-label="Screenshot">
         <div class="container">
-          <figure class="window"><div class="window-bar" aria-hidden="true"><i></i><i></i><i></i><span>LeapView · Executive Sales</span></div><picture><source data-theme-source="dark" media="(prefers-color-scheme: dark)" type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-dark-640.avif 640w, /assets/screenshots/leapview-executive-sales-dark-1280.avif 1280w" sizes="(min-width: 70rem) 1088px, 100vw"><source data-theme-source="dark" media="(prefers-color-scheme: dark)" type="image/webp" srcset="/assets/screenshots/leapview-executive-sales-dark-640.webp 640w, /assets/screenshots/leapview-executive-sales-dark-1280.webp 1280w" sizes="(min-width: 70rem) 1088px, 100vw"><source type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-light-640.avif 640w, /assets/screenshots/leapview-executive-sales-light-1280.avif 1280w" sizes="(min-width: 70rem) 1088px, 100vw"><img src="/assets/screenshots/leapview-executive-sales-light-1280.webp" srcset="/assets/screenshots/leapview-executive-sales-light-640.webp 640w, /assets/screenshots/leapview-executive-sales-light-1280.webp 1280w" sizes="(min-width: 70rem) 1088px, 100vw" width="1296" height="704" fetchpriority="high" decoding="async" alt="A LeapView dashboard with date, state and category filters, cards for total orders, revenue and average order value, and a revenue-by-month chart."></picture><figcaption>Executive Sales, LeapView’s showcase dashboard on the public Olist e-commerce dataset.</figcaption></figure>
+          <figure class="window window--tilt"><div class="window-bar" aria-hidden="true"><i></i><i></i><i></i><span>LeapView · Executive Sales</span></div><picture><source data-theme-source="dark" media="(prefers-color-scheme: dark)" type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-dark-640.avif 640w, /assets/screenshots/leapview-executive-sales-dark-1280.avif 1280w" sizes="(min-width: 70rem) 1088px, 100vw"><source data-theme-source="dark" media="(prefers-color-scheme: dark)" type="image/webp" srcset="/assets/screenshots/leapview-executive-sales-dark-640.webp 640w, /assets/screenshots/leapview-executive-sales-dark-1280.webp 1280w" sizes="(min-width: 70rem) 1088px, 100vw"><source type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-light-640.avif 640w, /assets/screenshots/leapview-executive-sales-light-1280.avif 1280w" sizes="(min-width: 70rem) 1088px, 100vw"><img src="/assets/screenshots/leapview-executive-sales-light-1280.webp" srcset="/assets/screenshots/leapview-executive-sales-light-640.webp 640w, /assets/screenshots/leapview-executive-sales-light-1280.webp 1280w" sizes="(min-width: 70rem) 1088px, 100vw" width="1296" height="704" fetchpriority="high" decoding="async" alt="A LeapView dashboard with date, state and category filters, cards for total orders, revenue and average order value, and a revenue-by-month chart."></picture><figcaption>Executive Sales, LeapView’s showcase dashboard on the public Olist e-commerce dataset.</figcaption></figure>
         </div>
       </section>
 
@@ -76,10 +77,36 @@
         <div class="container">
           <dl>
             <div><dt>licence</dt><dd>Apache-2.0</dd></div>
-            <div><dt>visual types</dt><dd>26</dd></div>
+            <div><dt>visual types</dt><dd data-count="26">26</dd></div>
             <div><dt>where it runs</dt><dd>Your servers</dd></div>
             <div><dt>current release</dt><dd>v0.4 alpha</dd></div>
           </dl>
+        </div>
+      </section>
+
+      <section class="section story" aria-labelledby="leapview-story">
+        <div class="container">
+          <div class="section-head">
+            <div><span class="label">In practice</span><h2 id="leapview-story">Define a metric once. Use it everywhere.</h2></div>
+            <p>From a few lines of YAML to the numbers on a dashboard and the answers in chat.</p>
+          </div>
+          <div class="story-body" data-story>
+            <ol class="story-steps">
+              <li class="story-step" data-frame="code"><span class="story-num">01</span><h3>Write it once, in code</h3><p>Revenue is a few lines of YAML in a semantic model, kept in Git and reviewed like any other change.</p>
+                <div class="story-inline"><figure class="window window--code"><div class="window-bar" aria-hidden="true"><i></i><i></i><i></i><span>semantic-models/sales.yaml</span></div><pre class="code" tabindex="0" aria-label="YAML for a revenue metric"><code><span class="ln" style="--i:0">- <span class="k">name</span>: revenue</span><span class="ln" style="--i:1">  <span class="k">type</span>: simple</span><span class="ln" style="--i:2">  <span class="k">empty</span>: zero</span><span class="ln" style="--i:3">  <span class="k">label</span>: Revenue</span><span class="ln" style="--i:4">  <span class="k">format</span>: currency</span><span class="ln" style="--i:5">  <span class="k">agg</span>: sum</span><span class="ln" style="--i:6">  <span class="k">field</span>: amount</span></code></pre></figure></div></li>
+              <li class="story-step" data-frame="dash"><span class="story-num">02</span><h3>Put it on a dashboard</h3><p>KPI cards, charts and tables ask for the metric by name. LeapView plans each query, applies access rules and runs it in DuckDB.</p>
+                <div class="story-inline"><figure class="window"><div class="window-bar" aria-hidden="true"><i></i><i></i><i></i><span>LeapView · Executive Sales</span></div><picture><source data-theme-source="dark" media="(prefers-color-scheme: dark)" type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-dark-640.avif 640w, /assets/screenshots/leapview-executive-sales-dark-1280.avif 1280w" sizes="(min-width: 70rem) 736px, (min-width: 56rem) 64vw, 100vw"><source data-theme-source="dark" media="(prefers-color-scheme: dark)" type="image/webp" srcset="/assets/screenshots/leapview-executive-sales-dark-640.webp 640w, /assets/screenshots/leapview-executive-sales-dark-1280.webp 1280w" sizes="(min-width: 70rem) 736px, (min-width: 56rem) 64vw, 100vw"><source type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-light-640.avif 640w, /assets/screenshots/leapview-executive-sales-light-1280.avif 1280w" sizes="(min-width: 70rem) 736px, (min-width: 56rem) 64vw, 100vw"><img src="/assets/screenshots/leapview-executive-sales-light-1280.webp" srcset="/assets/screenshots/leapview-executive-sales-light-640.webp 640w, /assets/screenshots/leapview-executive-sales-light-1280.webp 1280w" sizes="(min-width: 70rem) 736px, (min-width: 56rem) 64vw, 100vw" width="1296" height="704" loading="lazy" decoding="async" alt="A LeapView dashboard with date, state and category filters, cards for total orders, revenue and average order value, and a revenue-by-month chart."></picture></figure></div></li>
+              <li class="story-step" data-frame="dash" data-zoom="46% 30% 2"><span class="story-num">03</span><h3>The same number everywhere</h3><p>Dashboards, the API and AI tools all read the one definition of revenue, so the totals agree.</p></li>
+              <li class="story-step" data-frame="dash" data-zoom="100% 0% 2.4"><span class="story-num">04</span><h3>Ask in plain language</h3><p>Built-in chat answers from the same models with each person’s own access. Other AI assistants connect through an MCP endpoint.</p></li>
+            </ol>
+            <div class="story-media" data-requires-js hidden>
+              <div class="story-stage">
+              <div class="story-frame" data-frame-key="code"><figure class="window window--code"><div class="window-bar" aria-hidden="true"><i></i><i></i><i></i><span>semantic-models/sales.yaml</span></div><pre class="code" tabindex="0" aria-label="YAML for a revenue metric"><code><span class="ln" style="--i:0">- <span class="k">name</span>: revenue</span><span class="ln" style="--i:1">  <span class="k">type</span>: simple</span><span class="ln" style="--i:2">  <span class="k">empty</span>: zero</span><span class="ln" style="--i:3">  <span class="k">label</span>: Revenue</span><span class="ln" style="--i:4">  <span class="k">format</span>: currency</span><span class="ln" style="--i:5">  <span class="k">agg</span>: sum</span><span class="ln" style="--i:6">  <span class="k">field</span>: amount</span></code></pre></figure></div>
+              <div class="story-frame" data-frame-key="dash"><figure class="window"><div class="window-bar" aria-hidden="true"><i></i><i></i><i></i><span>LeapView · Executive Sales</span></div><picture><source data-theme-source="dark" media="(prefers-color-scheme: dark)" type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-dark-640.avif 640w, /assets/screenshots/leapview-executive-sales-dark-1280.avif 1280w" sizes="(min-width: 70rem) 736px, (min-width: 56rem) 64vw, 100vw"><source data-theme-source="dark" media="(prefers-color-scheme: dark)" type="image/webp" srcset="/assets/screenshots/leapview-executive-sales-dark-640.webp 640w, /assets/screenshots/leapview-executive-sales-dark-1280.webp 1280w" sizes="(min-width: 70rem) 736px, (min-width: 56rem) 64vw, 100vw"><source type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-light-640.avif 640w, /assets/screenshots/leapview-executive-sales-light-1280.avif 1280w" sizes="(min-width: 70rem) 736px, (min-width: 56rem) 64vw, 100vw"><img src="/assets/screenshots/leapview-executive-sales-light-1280.webp" srcset="/assets/screenshots/leapview-executive-sales-light-640.webp 640w, /assets/screenshots/leapview-executive-sales-light-1280.webp 1280w" sizes="(min-width: 70rem) 736px, (min-width: 56rem) 64vw, 100vw" width="1296" height="704" loading="lazy" decoding="async" alt="A LeapView dashboard with date, state and category filters, cards for total orders, revenue and average order value, and a revenue-by-month chart."></picture></figure></div>
+              </div>
+              <div class="story-count" aria-hidden="true"><span data-story-index>01</span> / 04</div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -115,25 +142,6 @@
             <li class="feature"><h3>Present</h3><p>Dashboards, the API and AI tools ask for metrics by name. LeapView plans each query, applies access rules and runs it in DuckDB.</p></li>
             <li class="feature"><h3>Publish</h3><p>Validate the project, preview the candidate, then publish that exact revision. Pipelines refresh the data without interrupting readers.</p></li>
           </ol>
-        </div>
-      </section>
-
-      <section class="section" aria-labelledby="example">
-        <div class="container">
-          <div class="section-head">
-            <div><span class="label">Example</span><h2 id="example">A metric in code.</h2></div>
-            <p>Revenue, defined once in a semantic model. A KPI card shows the total, a trend groups it by month and a chart by category; all three refer to it by name.</p>
-          </div>
-          <figure class="window">
-            <div class="window-bar" aria-hidden="true"><i></i><i></i><i></i><span>semantic-models/sales.yaml</span></div>
-            <pre class="code" tabindex="0" aria-label="YAML for a revenue metric"><code>- name: revenue
-  type: simple
-  empty: zero
-  label: Revenue
-  format: currency
-  agg: sum
-  field: amount</code></pre>
-          </figure>
         </div>
       </section>
 

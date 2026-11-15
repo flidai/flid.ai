@@ -83,8 +83,10 @@ for (const [path, file] of allPages) {
     const scripts = html.match(/<script\b[^>]*>/g) ?? [];
     const expected = ["<script>", '<script type="module" src="/assets/theme.js">'];
     // Pages with screenshot tabs also load the tabs module.
-    if (path === "/" || path === "/products/alloy-catalog/") expected.push('<script type="module" src="/assets/tabs.js">');
-    if (path === "/") expected.push('<script type="module" src="/assets/motion.js">');
+    if (path === "/") expected.push('<script type="module" src="/assets/tabs.js">');
+    if (["/", "/products/leapview/", "/products/alloy-catalog/", "/about/"].includes(path)) {
+      expected.push('<script type="module" src="/assets/motion.js">');
+    }
     assert.deepEqual(scripts, expected);
     assert.match(html, /<script>try\{var t=localStorage\.getItem\("theme"\);[^<]{0,160}<\/script>/);
     assert.doesNotMatch(html, /<script[^>]+src="https?:/);
@@ -212,9 +214,14 @@ test("shows both products in the home hero behind tabs that work without JavaScr
 });
 
 test("walks through each product in a story of real screens that works without JavaScript", async () => {
-  const main = region(await built("index.html"), /<main id="main">[\s\S]*?<\/main>/);
-  const stories = [...main.matchAll(/<section class="section story" aria-labelledby="([a-z-]+)">([\s\S]*?)\n {6}<\/section>/g)];
+  const story = async (file) => {
+    const main = region(await built(file), /<main id="main">[\s\S]*?<\/main>/);
+    return [...main.matchAll(/<section class="section story" aria-labelledby="([a-z-]+)">([\s\S]*?)\n {6}<\/section>/g)];
+  };
+  const stories = [...(await story("products/leapview/index.html")), ...(await story("products/alloy-catalog/index.html"))];
   assert.deepEqual(stories.map(([, id]) => id), ["leapview-story", "alloy-story"]);
+  // The home page stays short: products are cards that link to these pages.
+  assert.deepEqual(await story("index.html"), []);
 
   for (const [, id, body] of stories) {
     const steps = [...body.matchAll(/<li class="story-step" data-frame="([a-z]+)"/g)].map(([, f]) => f);
@@ -264,8 +271,6 @@ test("shows real Alloy Catalog screens on its page", async () => {
   const main = region(await built("products/alloy-catalog/index.html"), /<main id="main">[\s\S]*?<\/main>/);
   assert.match(main, /alloy-catalog-part-light-1280\.webp/);
   assert.match(main, /made-up demo catalog/);
-  const panels = [...main.matchAll(/<div class="tab-panel" id="(panel-[a-z]+)">/g)].map(([, id]) => id);
-  assert.deepEqual(panels, ["panel-search", "panel-quality", "panel-assistant"]);
   for (const name of ["search", "quality", "assistant"]) {
     assert.match(main, new RegExp(`alloy-catalog-${name}-dark-1280\\.avif`));
   }
@@ -372,13 +377,12 @@ test("keeps every animation and transition behind the reduced-motion setting", a
   assert.equal((css.match(/prefers-reduced-motion: no-preference/g) ?? []).length, 1);
 });
 
-test("says who stands behind Flid on the home page, and keeps its no-cookies promise", async () => {
-  const html = await built("index.html");
-  const main = region(html, /<main id="main">[\s\S]*?<\/main>/);
-  assert.match(main, /<h2 id="trust">Danish, and your data stays yours\.<\/h2>/);
-  assert.match(main, /CVR 43463217/);
-  assert.equal((main.match(/<li class="person-row">/g) ?? []).length, 3);
-  assert.match(main, /<h2 id="start-here">How an engagement starts\.<\/h2>/);
+test("says who stands behind Flid, and keeps its no-cookies promise", async () => {
+  const [html, about, contact] = await Promise.all(["index.html", "about/index.html", "contact/index.html"].map(built));
+  assert.match(about, /<h2 id="trust">Danish, and your data stays yours\.<\/h2>/);
+  assert.match(region(about, /<main id="main">[\s\S]*?<\/main>/), /CVR 43463217/);
+  assert.equal((contact.match(/<li class="person-row">/g) ?? []).length, 3);
+  assert.match(contact, /<h2 id="engagement">How an engagement starts\.<\/h2>/);
 
   // The footer says the site sets no cookies and runs no analytics; no script may.
   assert.match(html, /This site sets no cookies and runs no analytics\./);

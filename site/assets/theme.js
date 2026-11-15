@@ -71,3 +71,22 @@ for (const button of document.querySelectorAll("[data-theme-switch]")) {
 }
 
 syncSources();
+
+// Leaving for another page on this site: the page body fades out first, so the
+// next page's fade-in reads as one movement. Only for a plain left click on a
+// same-site link that opens in this tab, and never with reduced motion.
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+document.addEventListener("click", (event) => {
+  if (reduceMotion.matches || event.defaultPrevented || event.button !== 0) return;
+  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  const link = event.target.closest("a[href]");
+  if (!link || link.target || link.hasAttribute("download")) return;
+  const url = new URL(link.href, location.href);
+  if (url.origin !== location.origin) return;
+  if (url.pathname === location.pathname && url.search === location.search) return; // same page or #anchor
+  event.preventDefault();
+  root.classList.add("is-leaving");
+  setTimeout(() => location.assign(url.href), 160);
+});
+// Coming back through the back-forward cache shows the page again.
+window.addEventListener("pageshow", () => root.classList.remove("is-leaving"));
