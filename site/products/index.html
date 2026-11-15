@@ -28,6 +28,7 @@
     <link rel="preload" href="/assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="/assets/site.css">
     <script type="module" src="/assets/theme.js"></script>
+    <script type="module" src="/assets/motion.js"></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -58,37 +59,53 @@
         <div class="container">
           <span class="pill">Products</span>
           <h1><span class="word" style="--i:0"><span>What</span></span> <span class="word" style="--i:1"><span>we</span></span> <span class="word" style="--i:2"><span>build.</span></span></h1>
-          <p class="hero-sub">LeapView for analytics data, and Alloy Catalog for engineering data.</p>
+          <p class="hero-sub">Software for analytics and engineering data, built to run on your own infrastructure.</p>
         </div>
       </section>
 
       <section class="section section--tight" aria-label="Products">
         <div class="container">
-          <div class="bento bento--2">
-            <a class="card" href="/products/leapview/">
-              <div class="card-top"><span class="label">01 · Analytics data</span><span class="tag">Open source · Alpha v0.4.0</span></div>
-              <h2>LeapView</h2>
-              <p>For data teams who want one definition of each metric, reviewed like code, shared with the right people and run on their own infrastructure.</p>
+          <ul class="product-row" aria-label="Our products" data-spotlight-group>
+            <li class="product" style="--i:0;--side:-1">
+              <a class="product-link" href="/products/leapview/">
+                <div class="product-head">
+                  <div class="card-top"><span class="label">01 · Analytics data</span><span class="tag">Open source · Alpha v0.4.0</span></div>
+                  <h2>LeapView</h2>
+                  <p>For data teams who want one definition of each metric, reviewed like code, shared with the right people and run on their own infrastructure.</p>
+                </div>
+                <figure class="window"><div class="window-bar" aria-hidden="true"><i></i><i></i><i></i><span>LeapView · Executive Sales</span></div><picture><source data-theme-source="dark" media="(prefers-color-scheme: dark)" type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-dark-640.avif 640w, /assets/screenshots/leapview-executive-sales-dark-1280.avif 1280w" sizes="(min-width: 72rem) 560px, (min-width: 48rem) 50vw, 100vw"><source data-theme-source="dark" media="(prefers-color-scheme: dark)" type="image/webp" srcset="/assets/screenshots/leapview-executive-sales-dark-640.webp 640w, /assets/screenshots/leapview-executive-sales-dark-1280.webp 1280w" sizes="(min-width: 72rem) 560px, (min-width: 48rem) 50vw, 100vw"><source type="image/avif" srcset="/assets/screenshots/leapview-executive-sales-light-640.avif 640w, /assets/screenshots/leapview-executive-sales-light-1280.avif 1280w" sizes="(min-width: 72rem) 560px, (min-width: 48rem) 50vw, 100vw"><img src="/assets/screenshots/leapview-executive-sales-light-1280.webp" srcset="/assets/screenshots/leapview-executive-sales-light-640.webp 640w, /assets/screenshots/leapview-executive-sales-light-1280.webp 1280w" sizes="(min-width: 72rem) 560px, (min-width: 48rem) 50vw, 100vw" width="1296" height="704" loading="lazy" decoding="async" alt="A LeapView dashboard with date, state and category filters, cards for total orders, revenue and average order value, and a revenue-by-month chart."></picture></figure>
+                <div class="product-foot">
+                  <dl class="product-facts"><div><dt>Licence</dt><dd>Apache-2.0</dd></div><div><dt>Visual types</dt><dd><span data-count="26">26</span></dd></div></dl>
               <dl class="fact-rows">
                 <div><dt>Metrics</dt><dd>Defined once in YAML, reviewed in Git</dd></div>
                 <div><dt>Visuals</dt><dd>26 types, from KPI cards to pivots</dd></div>
                 <div><dt>Access</dt><dd>Roles, row filters, column masks, SSO</dd></div>
                 <div><dt>AI</dt><dd>Built-in chat and an MCP endpoint</dd></div>
               </dl>
-              <span class="card-link">Read about LeapView</span>
-            </a>
-            <a class="card" href="/products/alloy-catalog/">
-              <div class="card-top"><span class="label">02 · Engineering data</span><span class="tag">Available as a pilot</span></div>
-              <h2>Alloy Catalog</h2>
-              <p>For people who need to find parts, drawings and assemblies across CAD files and the ERP, and to see where they disagree.</p>
+                  <span class="card-link">See LeapView</span>
+                </div>
+              </a>
+            </li>
+            <li class="product" style="--i:1;--side:1">
+              <a class="product-link" href="/products/alloy-catalog/">
+                <div class="product-head">
+                  <div class="card-top"><span class="label">02 · Engineering data</span><span class="tag">Available as a pilot</span></div>
+                  <h2>Alloy Catalog</h2>
+                  <p>For people who need to find parts, drawings and assemblies across CAD files and the ERP, and to see where they disagree.</p>
+                </div>
+                <figure class="window"><div class="window-bar" aria-hidden="true"><i></i><i></i><i></i><span>Alloy Catalog · Part page</span></div><picture><source data-theme-source="dark" media="(prefers-color-scheme: dark)" type="image/avif" srcset="/assets/screenshots/alloy-catalog-part-dark-640.avif 640w, /assets/screenshots/alloy-catalog-part-dark-1280.avif 1280w" sizes="(min-width: 72rem) 560px, (min-width: 48rem) 50vw, 100vw"><source data-theme-source="dark" media="(prefers-color-scheme: dark)" type="image/webp" srcset="/assets/screenshots/alloy-catalog-part-dark-640.webp 640w, /assets/screenshots/alloy-catalog-part-dark-1280.webp 1280w" sizes="(min-width: 72rem) 560px, (min-width: 48rem) 50vw, 100vw"><source type="image/avif" srcset="/assets/screenshots/alloy-catalog-part-light-640.avif 640w, /assets/screenshots/alloy-catalog-part-light-1280.avif 1280w" sizes="(min-width: 72rem) 560px, (min-width: 48rem) 50vw, 100vw"><img src="/assets/screenshots/alloy-catalog-part-light-1280.webp" srcset="/assets/screenshots/alloy-catalog-part-light-640.webp 640w, /assets/screenshots/alloy-catalog-part-light-1280.webp 1280w" sizes="(min-width: 72rem) 560px, (min-width: 48rem) 50vw, 100vw" width="1440" height="900" loading="lazy" decoding="async" alt="An Alloy Catalog part page for a linear actuator assembly: its components with thumbnails and quantities beside a card with a product image, revision, state, material, mass and where-used count."></picture></figure>
+                <div class="product-foot">
+                  <dl class="product-facts"><div><dt>Pilot</dt><dd><span data-count="4">4</span> weeks</dd></div><div><dt>Your CAD and ERP</dt><dd>Read-only</dd></div></dl>
               <dl class="fact-rows">
                 <div><dt>Sources</dt><dd>Vault database or Inventor files, read-only</dd></div>
                 <div><dt>Per part</dt><dd>Bill of materials, where-used, drawings, stock</dd></div>
                 <div><dt>Assistant</dt><dd>Cites every file and record it names</dd></div>
               </dl>
-              <span class="card-link">Read about Alloy Catalog</span>
-            </a>
-          </div>
+                  <span class="card-link">See Alloy Catalog</span>
+                </div>
+              </a>
+            </li>
+          </ul>
         </div>
       </section>
     </main>

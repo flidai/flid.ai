@@ -1,4 +1,4 @@
-// Home page motion: product stories, counting facts and the pointer spotlight.
+// Page motion: product stories, counting facts and the pointer spotlight.
 //
 // Stories: a sticky screen beside numbered steps. As a step reaches the middle
 // of the viewport the screen switches to that step's screenshot, or zooms into
@@ -85,7 +85,7 @@ if (!reduceMotion) {
   }, { threshold: 0.6 });
   document.querySelectorAll("[data-count]").forEach((el) => counter.observe(el));
 
-  // A soft light follows the pointer over the hero grid and the service cards.
+  // A soft light follows the pointer over the hero grid, the product cards and the service cards.
   if (window.matchMedia("(pointer: fine)").matches) {
     const track = (surface, target) => {
       surface.addEventListener("pointermove", (event) => {
@@ -98,7 +98,7 @@ if (!reduceMotion) {
     };
     document.querySelectorAll("[data-spotlight]").forEach((el) => track(el, () => el));
     document.querySelectorAll("[data-spotlight-group]").forEach((group) =>
-      track(group, (event) => event.target.closest(".feature")),
+      track(group, (event) => event.target.closest(".feature, .product-link")),
     );
   }
 }

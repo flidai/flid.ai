@@ -82,9 +82,7 @@ for (const [path, file] of allPages) {
     // The only scripts: the theme initialiser in <head> and the theme module.
     const scripts = html.match(/<script\b[^>]*>/g) ?? [];
     const expected = ["<script>", '<script type="module" src="/assets/theme.js">'];
-    // Pages with screenshot tabs also load the tabs module.
-    if (path === "/") expected.push('<script type="module" src="/assets/tabs.js">');
-    if (["/", "/products/leapview/", "/products/alloy-catalog/", "/about/"].includes(path)) {
+    if (["/", "/products/", "/products/leapview/", "/products/alloy-catalog/", "/about/"].includes(path)) {
       expected.push('<script type="module" src="/assets/motion.js">');
     }
     assert.deepEqual(scripts, expected);
@@ -183,34 +181,49 @@ test("says what Flid sells and how to start on the home page", async () => {
   const main = region(html, /<main id="main">[\s\S]*?<\/main>/);
 
   const h1 = region(main, /<h1>[\s\S]*?<\/h1>/);
-  assert.equal(visibleText(h1).replace(/\s+/g, " ").trim(), "We build LeapView and Alloy Catalog.");
-  // Each product name is marked so the heading can follow the hero tabs.
-  assert.match(h1, /data-product="leapview"[^>]*><span>LeapView<\/span>/);
-  assert.match(h1, /data-product="alloy"[^>]*><span>Alloy<\/span>/);
-  assert.match(main, /LeapView is open-source business intelligence/);
-  assert.match(main, /Flid builds both, and consults on the systems behind them\./);
+  // The heading says what Flid does without naming products, so it still
+  // holds when another product is added.
+  assert.equal(visibleText(h1).replace(/\s+/g, " ").trim(), "We turn your company’s data into tools people use.");
+  assert.doesNotMatch(h1, /LeapView|Alloy/);
+  assert.match(main, /<span class="pill"><strong>Products and consulting<\/strong> from Odense, Denmark<\/span>/);
+  assert.match(main, /We build software products for analytics and engineering data/);
+  assert.match(main, /class="button button--primary button--large" href="\/contact\/">Talk to us</);
+  assert.match(main, /class="button button--secondary button--large" href="\/products\/">See all products</);
   assert.match(main, /href="\/products\/alloy-catalog\/"/);
   assert.match(main, /href="\/products\/leapview\/"/);
-  assert.match(main, /<span class="pill"><strong>LeapView<\/strong> open source · <strong>Alloy Catalog<\/strong> pilots open<\/span>/);
-  assert.match(main, /class="button button--primary button--large" href="\/products\/leapview\/">See LeapView</);
-  assert.match(main, /class="button button--secondary button--large" href="\/products\/alloy-catalog\/">See Alloy Catalog</);
   assert.match(main, /href="mailto:hello@flid\.ai"/);
 });
 
-test("shows both products in the home hero behind tabs that work without JavaScript", async () => {
-  const main = region(await built("index.html"), /<main id="main">[\s\S]*?<\/main>/);
-  const tabs = region(main, /<div class="product-tabs" data-tabs data-autoplay>[\s\S]*?\n {10}<\/div>/);
-  assert.ok(tabs, "the hero has product tabs");
-  // The tab list is hidden until the script runs; both panels are visible without it.
-  assert.match(tabs, /<div class="tab-list" data-tab-list data-requires-js hidden aria-label="Product screenshots">/);
-  const panels = [...tabs.matchAll(/<div class="tab-panel" id="(panel-[a-z]+)">/g)].map(([, id]) => id);
-  assert.deepEqual(panels, ["panel-leapview", "panel-alloy"]);
-  assert.doesNotMatch(tabs, /class="tab-panel"[^>]*hidden/);
-  // Autoplay comes with a pause button, shown only once the script starts it.
-  assert.match(tabs, /<button class="tab-play" type="button" data-tab-play hidden aria-pressed="false" aria-label="Pause the screenshots">/);
-  assert.match(tabs, /alloy-catalog-part-light-1280\.webp/);
-  // Only the first screenshot loads eagerly.
-  assert.equal((tabs.match(/fetchpriority="high"/g) ?? []).length, 1);
+test("shows every product side by side in the home hero, with nothing rotating", async () => {
+  const html = await built("index.html");
+  const hero = region(html, /<section class="hero hero--home"[\s\S]*?\n {6}<\/section>/);
+  const row = region(hero, /<ul class="product-row" aria-label="Our products"[\s\S]*?\n {10}<\/ul>/);
+  assert.ok(row, "the hero lists the products");
+  const cards = [...row.matchAll(/<li class="product" style="--i:(\d);--side:([-\d.]+)">([\s\S]*?)<\/li>/g)];
+  assert.deepEqual(cards.map(([, , , body]) => body.match(/<h2>([^<]+)<\/h2>/)[1]), ["LeapView", "Alloy Catalog"]);
+  assert.deepEqual(cards.map(([, , side]) => side), ["-1", "1"]);
+  for (const [, , , body] of cards) {
+    // Name, status, one line, a real screenshot, facts and one link, all visible at once.
+    assert.match(body, /<span class="tag">[^<]+<\/span>/);
+    assert.match(body, /<figure class="window">/);
+    assert.match(body, /<dl class="product-facts">/);
+    assert.match(body, /<span class="card-link">See [^<]+<\/span>/);
+    assert.doesNotMatch(body, /\shidden[\s>]/);
+  }
+  assert.match(cards[1][3], /alloy-catalog-part-light-1280\.webp/);
+  // Only the first screenshot asks for high priority.
+  assert.equal((row.match(/fetchpriority="high"/g) ?? []).length, 1);
+  // No tabs, autoplay or carousel anywhere on the site.
+  for (const [, file] of pages) {
+    assert.doesNotMatch(await built(file), /data-tabs|data-autoplay|role="tablist"|carousel/, file);
+  }
+  await assert.rejects(readFile(new URL("site/assets/tabs.js", root)));
+
+  // The Products page lists the same cards, with who each product is for.
+  const products = region(await built("products/index.html"), /<main id="main">[\s\S]*?<\/main>/);
+  assert.equal((products.match(/<li class="product" /g) ?? []).length, 2);
+  assert.match(products, /For data teams who want one definition of each metric/);
+  assert.match(products, /<dl class="fact-rows">/);
 });
 
 test("walks through each product in a story of real screens that works without JavaScript", async () => {
