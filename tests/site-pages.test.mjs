@@ -84,6 +84,7 @@ for (const [path, file] of allPages) {
     const expected = ["<script>", '<script type="module" src="/assets/theme.js">'];
     // Pages with screenshot tabs also load the tabs module.
     if (path === "/" || path === "/products/alloy-catalog/") expected.push('<script type="module" src="/assets/tabs.js">');
+    if (path === "/") expected.push('<script type="module" src="/assets/motion.js">');
     assert.deepEqual(scripts, expected);
     assert.match(html, /<script>try\{var t=localStorage\.getItem\("theme"\);[^<]{0,160}<\/script>/);
     assert.doesNotMatch(html, /<script[^>]+src="https?:/);
@@ -179,7 +180,11 @@ test("says what Flid sells and how to start on the home page", async () => {
 
   const main = region(html, /<main id="main">[\s\S]*?<\/main>/);
 
-  assert.match(main, /<h1>We build LeapView <span>and Alloy Catalog\.<\/span><\/h1>/);
+  const h1 = region(main, /<h1>[\s\S]*?<\/h1>/);
+  assert.equal(visibleText(h1).replace(/\s+/g, " ").trim(), "We build LeapView and Alloy Catalog.");
+  // Each product name is marked so the heading can follow the hero tabs.
+  assert.match(h1, /data-product="leapview"[^>]*><span>LeapView<\/span>/);
+  assert.match(h1, /data-product="alloy"[^>]*><span>Alloy<\/span>/);
   assert.match(main, /LeapView is open-source business intelligence/);
   assert.match(main, /Flid builds both, and consults on the systems behind them\./);
   assert.match(main, /href="\/products\/alloy-catalog\/"/);
@@ -192,16 +197,43 @@ test("says what Flid sells and how to start on the home page", async () => {
 
 test("shows both products in the home hero behind tabs that work without JavaScript", async () => {
   const main = region(await built("index.html"), /<main id="main">[\s\S]*?<\/main>/);
-  const tabs = region(main, /<div class="product-tabs" data-tabs>[\s\S]*?\n {10}<\/div>/);
+  const tabs = region(main, /<div class="product-tabs" data-tabs data-autoplay>[\s\S]*?\n {10}<\/div>/);
   assert.ok(tabs, "the hero has product tabs");
   // The tab list is hidden until the script runs; both panels are visible without it.
   assert.match(tabs, /<div class="tab-list" data-tab-list data-requires-js hidden aria-label="Product screenshots">/);
   const panels = [...tabs.matchAll(/<div class="tab-panel" id="(panel-[a-z]+)">/g)].map(([, id]) => id);
   assert.deepEqual(panels, ["panel-leapview", "panel-alloy"]);
   assert.doesNotMatch(tabs, /class="tab-panel"[^>]*hidden/);
+  // Autoplay comes with a pause button, shown only once the script starts it.
+  assert.match(tabs, /<button class="tab-play" type="button" data-tab-play hidden aria-pressed="false" aria-label="Pause the screenshots">/);
   assert.match(tabs, /alloy-catalog-part-light-1280\.webp/);
   // Only the first screenshot loads eagerly.
   assert.equal((tabs.match(/fetchpriority="high"/g) ?? []).length, 1);
+});
+
+test("walks through each product in a story of real screens that works without JavaScript", async () => {
+  const main = region(await built("index.html"), /<main id="main">[\s\S]*?<\/main>/);
+  const stories = [...main.matchAll(/<section class="section story" aria-labelledby="([a-z-]+)">([\s\S]*?)\n {6}<\/section>/g)];
+  assert.deepEqual(stories.map(([, id]) => id), ["leapview-story", "alloy-story"]);
+
+  for (const [, id, body] of stories) {
+    const steps = [...body.matchAll(/<li class="story-step" data-frame="([a-z]+)"/g)].map(([, f]) => f);
+    assert.equal(steps.length, 4, id);
+    const frames = [...body.matchAll(/data-frame-key="([a-z]+)"/g)].map(([, f]) => f);
+    assert.deepEqual([...new Set(steps)], frames, `${id}: every frame belongs to a step`);
+    // Without the script the sticky screen stays hidden and each frame shows
+    // under the first step that uses it.
+    assert.match(body, /<div class="story-media" data-requires-js hidden>/);
+    assert.equal((body.match(/<div class="story-inline">/g) ?? []).length, frames.length, id);
+    for (const [, alt] of body.matchAll(/<img\b[^>]*\balt="([^"]*)"/g)) assert.ok(alt.length > 20, `${id} alt text`);
+  }
+
+  const alloy = stories[1][2];
+  for (const name of ["search", "part", "quality", "assistant"]) {
+    assert.match(alloy, new RegExp(`alloy-catalog-${name}-light-1280\\.webp`));
+  }
+  assert.match(alloy, /made-up demo catalog/);
+  assert.match(stories[0][2], /semantic-models\/sales\.yaml/);
 });
 
 test("puts LeapView before Alloy Catalog wherever both appear", async () => {
@@ -293,7 +325,9 @@ test("stays under 300 KB per page with every image loaded", async () => {
   for (const [path, file] of allPages) {
     const html = await built(file);
     let total = shared + Buffer.byteLength(html);
-    for (const [, src] of html.matchAll(/<img\b[^>]*\bsrc="([^"]+)"/g)) {
+    // A screenshot used twice (a story's inline and sticky copies) loads once.
+    const sources = new Set([...html.matchAll(/<img\b[^>]*\bsrc="([^"]+)"/g)].map(([, src]) => src));
+    for (const src of sources) {
       if (src.includes("flid-lockup")) continue;
       // Worst case: the larger AVIF a wide screen picks, or the WebP fallback.
       const avif = src.includes("/screenshots/") ? src.replace(/-\d+\.webp$/, "-1280.avif") : src;

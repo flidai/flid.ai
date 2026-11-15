@@ -1,9 +1,17 @@
-// Product tabs in the home hero.
+// Product tabs: the home hero and the Alloy Catalog screens.
 //
-// The markup works without JavaScript: the tab list is hidden and both
-// screenshots show one after the other. This module turns it into an
+// The markup works without JavaScript: the tab list is hidden and every
+// screenshot shows, one after the other. This module turns it into an
 // accessible tab set (WAI-ARIA tabs pattern with automatic activation: click,
 // arrow keys, Home and End).
+//
+// A tab set marked data-autoplay also advances on its own. The clock is the
+// progress bar under the selected tab (a CSS animation), so pausing the bar
+// pauses the slideshow. It stops for good once the reader picks a tab, pauses
+// while the pointer or focus is on it or it is off screen, has a pause button,
+// and never starts for readers who ask for reduced motion.
+
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 for (const root of document.querySelectorAll("[data-tabs]")) {
   const list = root.querySelector("[data-tab-list]");
@@ -19,7 +27,10 @@ for (const root of document.querySelectorAll("[data-tabs]")) {
     panels[i].setAttribute("aria-labelledby", tab.id);
   });
 
+  let current = 0;
+
   function select(index, { focus = false, animate = false } = {}) {
+    current = index;
     tabs.forEach((tab, i) => {
       const selected = i === index;
       tab.setAttribute("aria-selected", String(selected));
@@ -35,26 +46,79 @@ for (const root of document.querySelectorAll("[data-tabs]")) {
     if (focus) tabs[index].focus();
   }
 
+  const autoplay = "autoplay" in root.dataset && !reduceMotion.matches ? startAutoplay() : null;
+
+  function choose(index, options) {
+    autoplay?.stop();
+    if (index !== current) select(index, { ...options, animate: true });
+    else if (options.focus) tabs[index].focus();
+  }
+
   list.addEventListener("click", (event) => {
     const index = tabs.indexOf(event.target.closest("[data-tab]"));
-    if (index >= 0 && tabs[index].getAttribute("aria-selected") !== "true") select(index, { animate: true });
+    if (index >= 0) choose(index, {});
   });
 
   list.addEventListener("keydown", (event) => {
-    const current = tabs.indexOf(document.activeElement);
-    if (current < 0) return;
+    const at = tabs.indexOf(document.activeElement);
+    if (at < 0) return;
     const last = tabs.length - 1;
     const next = {
-      ArrowRight: current === last ? 0 : current + 1,
-      ArrowLeft: current === 0 ? last : current - 1,
+      ArrowRight: at === last ? 0 : at + 1,
+      ArrowLeft: at === 0 ? last : at - 1,
       Home: 0,
       End: last,
     }[event.key];
     if (next === undefined) return;
     event.preventDefault();
-    select(next, { focus: true, animate: true });
+    choose(next, { focus: true });
   });
 
   select(0);
   list.hidden = false;
+  root.classList.add("is-tabbed");
+
+  function startAutoplay() {
+    const button = root.querySelector("[data-tab-play]");
+    const holds = new Set();
+
+    function update() {
+      root.classList.toggle("is-paused", holds.size > 0);
+      if (button) {
+        const pausedByReader = holds.has("button");
+        button.setAttribute("aria-pressed", String(pausedByReader));
+        button.setAttribute("aria-label", pausedByReader ? "Play the screenshots" : "Pause the screenshots");
+      }
+    }
+    const hold = (reason, on) => {
+      on ? holds.add(reason) : holds.delete(reason);
+      update();
+    };
+
+    root.classList.add("is-playing");
+    if (button) {
+      button.hidden = false;
+      button.addEventListener("click", () => hold("button", !holds.has("button")));
+    }
+    root.addEventListener("pointerenter", () => hold("pointer", true));
+    root.addEventListener("pointerleave", () => hold("pointer", false));
+    list.addEventListener("focusin", () => hold("focus", true));
+    list.addEventListener("focusout", () => hold("focus", false));
+    new IntersectionObserver(([entry]) => hold("offscreen", !entry.isIntersecting)).observe(root);
+    document.addEventListener("visibilitychange", () => hold("hidden", document.hidden));
+
+    // The selected tab's progress bar finishing is the signal to move on.
+    list.addEventListener("animationend", (event) => {
+      if (event.animationName !== "tab-progress" || !root.classList.contains("is-playing")) return;
+      select((current + 1) % tabs.length, { animate: true });
+    });
+
+    reduceMotion.addEventListener("change", () => reduceMotion.matches && stop());
+
+    function stop() {
+      root.classList.remove("is-playing", "is-paused");
+      if (button) button.hidden = true;
+    }
+    return { stop };
+  }
 }
