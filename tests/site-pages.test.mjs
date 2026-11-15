@@ -194,11 +194,14 @@ test("says what Flid sells and how to start on the home page", async () => {
   assert.match(main, /href="mailto:hello@flid\.ai"/);
 });
 
-test("shows every product side by side in the home hero, with nothing rotating", async () => {
+test("shows every product side by side under the hero, with nothing rotating", async () => {
   const html = await built("index.html");
-  const hero = region(html, /<section class="hero hero--home"[\s\S]*?\n {6}<\/section>/);
-  const row = region(hero, /<ul class="product-row" aria-label="Our products"[\s\S]*?\n {10}<\/ul>/);
-  assert.ok(row, "the hero lists the products");
+  const main = region(html, /<main id="main">[\s\S]*?<\/main>/);
+  const hero = region(main, /<section class="hero hero--home"[\s\S]*?\n {6}<\/section>/);
+  const products = region(main, /<section class="section section--products" aria-label="Products">[\s\S]*?\n {6}<\/section>/);
+  assert.ok(main.indexOf(products) > main.indexOf(hero), "the products follow the hero");
+  const row = region(products, /<ul class="product-row" aria-label="Our products"[\s\S]*?\n {10}<\/ul>/);
+  assert.ok(row, "the product section lists the products");
   const cards = [...row.matchAll(/<li class="product" style="--i:(\d);--side:([-\d.]+)">([\s\S]*?)<\/li>/g)];
   assert.deepEqual(cards.map(([, , , body]) => body.match(/<h2>([^<]+)<\/h2>/)[1]), ["LeapView", "Alloy Catalog"]);
   assert.deepEqual(cards.map(([, , side]) => side), ["-1", "1"]);
@@ -211,8 +214,26 @@ test("shows every product side by side in the home hero, with nothing rotating",
     assert.doesNotMatch(body, /\shidden[\s>]/);
   }
   assert.match(cards[1][3], /alloy-catalog-part-light-1280\.webp/);
-  // Only the first screenshot asks for high priority.
+  // Only the first product screenshot asks for high priority.
   assert.equal((row.match(/fetchpriority="high"/g) ?? []).length, 1);
+
+  // The hero stage is decoration: the Flid mark with real product screenshots
+  // floating around it and a turning badge, hidden from assistive technology.
+  const stage = region(hero, /<div class="hero-stage" aria-hidden="true">[\s\S]*?\n {10}<\/div>/);
+  assert.ok(stage, "the hero has a stage");
+  assert.match(stage, /src="\/assets\/images\/flid-mark-light\.webp"/);
+  assert.match(stage, /<svg class="hero-badge"/);
+  const floating = [...stage.matchAll(/<li class="hero-card[^"]*" style="[^"]*">[\s\S]*?<\/li>/g)].map(([card]) => card);
+  assert.ok(floating.length >= 4);
+  for (const card of floating) {
+    assert.match(card, /\/assets\/screenshots\/(leapview|alloy-catalog)-[a-z-]+-light-1280\.webp/);
+    assert.match(card, /alt=""/);
+  }
+  assert.match(hero, /<p class="hero-note">Real product screens, on public and made-up demo data\.<\/p>/);
+  assert.match(hero, /class="word word--serif"[^>]*><span>tools<\/span>/);
+
+  // The floating call button needs the script to know when to show itself.
+  assert.match(main, /<a class="float-cta" href="\/contact\/" data-float-cta data-requires-js hidden>/);
   // No tabs, autoplay or carousel anywhere on the site.
   for (const [, file] of pages) {
     assert.doesNotMatch(await built(file), /data-tabs|data-autoplay|role="tablist"|carousel/, file);
@@ -220,10 +241,10 @@ test("shows every product side by side in the home hero, with nothing rotating",
   await assert.rejects(readFile(new URL("site/assets/tabs.js", root)));
 
   // The Products page lists the same cards, with who each product is for.
-  const products = region(await built("products/index.html"), /<main id="main">[\s\S]*?<\/main>/);
-  assert.equal((products.match(/<li class="product" /g) ?? []).length, 2);
-  assert.match(products, /For data teams who want one definition of each metric/);
-  assert.match(products, /<dl class="fact-rows">/);
+  const productsPage = region(await built("products/index.html"), /<main id="main">[\s\S]*?<\/main>/);
+  assert.equal((productsPage.match(/<li class="product" /g) ?? []).length, 2);
+  assert.match(productsPage, /For data teams who want one definition of each metric/);
+  assert.match(productsPage, /<dl class="fact-rows">/);
 });
 
 test("walks through each product in a story of real screens that works without JavaScript", async () => {

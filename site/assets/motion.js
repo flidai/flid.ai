@@ -1,4 +1,5 @@
-// Page motion: product stories, counting facts and the pointer spotlight.
+// Page motion: product stories, counting facts, the pointer spotlight, the
+// home hero's depth and the floating call button.
 //
 // Stories: a sticky screen beside numbered steps. As a step reaches the middle
 // of the viewport the screen switches to that step's screenshot, or zooms into
@@ -101,4 +102,43 @@ if (!reduceMotion) {
       track(group, (event) => event.target.closest(".feature, .product-link")),
     );
   }
+}
+
+// The floating call button shows once the hero has scrolled away, and steps
+// aside while the closing section or the footer is on screen, where a call to
+// talk is already in view. It works with reduced motion too, without the fade.
+const cta = document.querySelector("[data-float-cta]");
+if (cta) {
+  const covers = [document.querySelector("[data-hero]"), document.querySelector(".closing"), document.querySelector(".site-footer")].filter(Boolean);
+  const visible = new Set();
+  cta.hidden = false;
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) entry.isIntersecting ? visible.add(entry.target) : visible.delete(entry.target);
+    cta.classList.toggle("is-shown", visible.size === 0);
+  });
+  covers.forEach((el) => observer.observe(el));
+}
+
+// Home hero depth: the mark and the floating screenshots follow the pointer by
+// different amounts. --px and --py ease towards the pointer, from -1 to 1.
+const hero = document.querySelector("[data-hero]");
+if (hero && !reduceMotion && window.matchMedia("(pointer: fine)").matches) {
+  let tx = 0, ty = 0, x = 0, y = 0, frame = 0;
+  const step = () => {
+    x += (tx - x) * 0.08;
+    y += (ty - y) * 0.08;
+    hero.style.setProperty("--px", x.toFixed(3));
+    hero.style.setProperty("--py", y.toFixed(3));
+    frame = Math.abs(tx - x) + Math.abs(ty - y) > 0.002 ? requestAnimationFrame(step) : 0;
+  };
+  const aim = (nx, ny) => {
+    tx = nx;
+    ty = ny;
+    if (!frame) frame = requestAnimationFrame(step);
+  };
+  hero.addEventListener("pointermove", (event) => {
+    const box = hero.getBoundingClientRect();
+    aim(((event.clientX - box.left) / box.width) * 2 - 1, ((event.clientY - box.top) / box.height) * 2 - 1);
+  });
+  hero.addEventListener("pointerleave", () => aim(0, 0));
 }
