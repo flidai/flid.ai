@@ -371,3 +371,21 @@ test("keeps every animation and transition behind the reduced-motion setting", a
   assert.doesNotMatch(outside, /^\s*(animation|transition)(-[a-z-]+)?\s*:/m);
   assert.equal((css.match(/prefers-reduced-motion: no-preference/g) ?? []).length, 1);
 });
+
+test("says who stands behind Flid on the home page, and keeps its no-cookies promise", async () => {
+  const html = await built("index.html");
+  const main = region(html, /<main id="main">[\s\S]*?<\/main>/);
+  assert.match(main, /<h2 id="trust">Danish, and your data stays yours\.<\/h2>/);
+  assert.match(main, /CVR 43463217/);
+  assert.equal((main.match(/<li class="person-row">/g) ?? []).length, 3);
+  assert.match(main, /<h2 id="start-here">How an engagement starts\.<\/h2>/);
+
+  // The footer says the site sets no cookies and runs no analytics; no script may.
+  assert.match(html, /This site sets no cookies and runs no analytics\./);
+  const assets = new URL("site/assets/", root);
+  for (const name of await readdir(assets)) {
+    if (!name.endsWith(".js")) continue;
+    const source = await readFile(new URL(name, assets), "utf8");
+    assert.doesNotMatch(source, /document\.cookie|sendBeacon|gtag|googletagmanager|plausible|analytics/i, name);
+  }
+});

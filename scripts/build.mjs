@@ -112,6 +112,10 @@ async function buildScreenshots(directory) {
   );
 }
 
+export function stripCssComments(css) {
+  return css.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\n\s*\n+/g, "\n");
+}
+
 export async function buildSite({
   outputDirectory = output,
   basePath = "",
@@ -126,6 +130,10 @@ export async function buildSite({
     await copyFile(join(root, source), target);
   }
 
+  // The public stylesheet ships without its comments; the source keeps them.
+  const siteCss = join(outputDirectory, "assets/site.css");
+  await writeFile(siteCss, stripCssComments(await readFile(siteCss, "utf8")));
+
   const portraits = [
     ["Jacob Østergaard 1.png", "jacob-oestergaard.webp"],
     ["Ganesh Kambli.png", "ganesh-kambli.webp"],
@@ -135,7 +143,7 @@ export async function buildSite({
   await mkdir(portraitDirectory, { recursive: true });
   await Promise.all(
     portraits.flatMap(([source, destination]) =>
-      [960, 480].map((size) =>
+      [960, 480, 112].map((size) =>
         sharp(join(root, source))
           .resize(size, size, { fit: "cover", position: "center" })
           .webp({ quality: 82, effort: 4 })

@@ -1371,6 +1371,52 @@ a.card-link:hover::after {
   }
 }
 
+/* ---------- Working with Flid (home) ---------- */
+
+.engagement {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.people-row {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.person-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.person-row img {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  filter: grayscale(1);
+}
+
+.person-row div {
+  display: grid;
+}
+
+.person-row span {
+  font-size: var(--text-sm);
+  color: var(--fg-muted);
+}
+
+@media (min-width: 56rem) {
+  .engagement {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
+    align-items: start;
+    gap: var(--space-7);
+  }
+}
+
 /* ---------- Product stories ----------
  * Steps beside a sticky screen on wide screens (home.js); without the script
  * and on narrow screens each step shows its own screenshot under its text.
