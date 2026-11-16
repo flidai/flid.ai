@@ -217,11 +217,12 @@ test("shows every product side by side under the hero, with nothing rotating", a
   // Only the first product screenshot asks for high priority.
   assert.equal((row.match(/fetchpriority="high"/g) ?? []).length, 1);
 
-  // The hero stage is decoration: the Flid mark with real product screenshots
-  // floating around it and a turning badge, hidden from assistive technology.
+  // The hero stage is decoration: real product screenshots floating on both
+  // sides of the centred copy and a turning badge, hidden from assistive
+  // technology. The large Flid mark was taken out at the owner's request.
   const stage = region(hero, /<div class="hero-stage" aria-hidden="true">[\s\S]*?\n {10}<\/div>/);
   assert.ok(stage, "the hero has a stage");
-  assert.match(stage, /src="\/assets\/images\/flid-mark-light\.webp"/);
+  assert.doesNotMatch(hero, /hero-mark|flid-mark/);
   assert.match(stage, /<svg class="hero-badge"/);
   const floating = [...stage.matchAll(/<li class="hero-card[^"]*" style="[^"]*">[\s\S]*?<\/li>/g)].map(([card]) => card);
   assert.ok(floating.length >= 4);

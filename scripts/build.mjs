@@ -85,19 +85,6 @@ async function buildHeaderLockups(directory) {
   );
 }
 
-// The Flid mark for the home hero: the approved primary mark, rasterised at
-// 512 px so the hero does not carry the 180 KB vector master.
-async function buildHeroMarks(directory) {
-  await mkdir(directory, { recursive: true });
-  await Promise.all(
-    ["light", "dark"].map((mode) =>
-      sharp(join(root, `brand-assets/png/mark-primary-on-${mode}@4x.png`))
-        .webp({ quality: 88, effort: 6, alphaQuality: 90 })
-        .toFile(join(directory, `flid-mark-${mode}.webp`)),
-    ),
-  );
-}
-
 // Product screenshots: PNG masters in product-screenshots/ become AVIF and
 // WebP at two widths. Pages reference <name>-<width>.<format>.
 const screenshotWidths = [640, 1280];
@@ -171,7 +158,6 @@ export async function buildSite({
   );
 
   await buildHeaderLockups(join(outputDirectory, "assets/images"));
-  await buildHeroMarks(join(outputDirectory, "assets/images"));
   await buildScreenshots(join(outputDirectory, "assets/screenshots"));
   await generateBrandAssets(join(outputDirectory, "brand-assets"));
   await applyBasePath(outputDirectory, basePath);

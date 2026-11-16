@@ -119,8 +119,8 @@ if (cta) {
   covers.forEach((el) => observer.observe(el));
 }
 
-// Home hero depth: the mark and the floating screenshots follow the pointer by
-// different amounts. --px and --py ease towards the pointer, from -1 to 1.
+// Home hero depth: the floating screenshots follow the pointer by different
+// amounts. --px and --py ease towards the pointer, from -1 to 1.
 const hero = document.querySelector("[data-hero]");
 if (hero && !reduceMotion && window.matchMedia("(pointer: fine)").matches) {
   let tx = 0, ty = 0, x = 0, y = 0, frame = 0;
