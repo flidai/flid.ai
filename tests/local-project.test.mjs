@@ -68,45 +68,37 @@ test("keeps the procedural identity independent and shared", async () => {
 });
 
 test("keeps the public site at the root and the brand guide as a reference", async () => {
-  await access(new URL("site/brand/index.html", root));
-  await access(new URL("site/products/index.html", root));
-  await access(new URL("site/about/index.html", root));
-  await access(new URL("site/assets/home.js", root));
+  for (const page of [
+    "site/index.html",
+    "site/products/index.html",
+    "site/products/leapview/index.html",
+    "site/products/alloy-catalog/index.html",
+    "site/services/index.html",
+    "site/cases/index.html",
+    "site/about/index.html",
+    "site/contact/index.html",
+    "site/404.html",
+    "site/brand/index.html",
+    "site/design-system/index.html",
+  ]) {
+    await access(new URL(page, root));
+  }
 
-  const [rootPage, homeScript, productsPage, aboutPage] = await Promise.all([
-    readFile(new URL("site/index.html", root), "utf8"),
-    readFile(new URL("site/assets/home.js", root), "utf8"),
-    readFile(new URL("site/products/index.html", root), "utf8"),
-    readFile(new URL("site/about/index.html", root), "utf8"),
-  ]);
-  const brandPage = await readFile(
-    new URL("site/brand/index.html", root),
-    "utf8",
-  );
-
-  assert.match(rootPage, /We build products where agents do real work/i);
-  assert.doesNotMatch(rootPage, /01 \/ Thesis|01 \/ Premise|02 \/ Foundation|04 \/ The lab/i);
-  assert.doesNotMatch(rootPage, /data-story-counter|signal-story-progress/i);
-  assert.doesNotMatch(rootPage, /data-color-mode="light"|id="contact"|05 \/ Contact/i);
-  assert.doesNotMatch(rootPage, /href="\/brand\/?"/);
-  assert.match(rootPage, /href="\/products\/"[^>]*>Products\s*</i);
-  assert.match(rootPage, /href="\/about\/"[^>]*>About\s*</i);
-  assert.match(rootPage, /mailto:jacob@flid\.ai/);
-  assert.match(rootPage, /Start a conversation/);
-  assert.match(rootPage, /Jacob Østergaard/);
-  assert.doesNotMatch(rootPage, /Ganesh Kambli|Meet the team/);
-  assert.match(productsPage, /LeapView/);
-  assert.match(productsPage, /href="\/products\/"[^>]*>Products\s*</i);
-  assert.match(productsPage, /href="\/about\/"[^>]*>About\s*</i);
-  assert.match(aboutPage, /A Danish product lab building\s*<span>durable systems\.<\/span>/i);
-  assert.match(aboutPage, /Ganesh Kambli/);
-  assert.match(aboutPage, /Anand Bora/);
-  assert.match(aboutPage, /AI Engineer/);
-  assert.doesNotMatch(rootPage, /id="leapview"|id="field-work"/i);
-  assert.doesNotMatch(rootPage, /href="#leapview"|href="#field-work"/i);
-  assert.doesNotMatch(homeScript, /hero-signal-field\.mjs/);
-  assert.match(homeScript, /hero-scroll-transition\.mjs/);
-  assert.match(homeScript, /signal-scroll-story\.mjs/);
-  assert.doesNotMatch(homeScript, /React|Next|jsx|tsx/);
+  const brandPage = await readFile(new URL("site/brand/index.html", root), "utf8");
   assert.match(brandPage, /The source of truth for the Flid identity/i);
+});
+
+test("ships no scroll-driven hero, depth video or WebGL code", async () => {
+  for (const path of [
+    "site/assets/home.js",
+    "site/assets/depth-reference/depth-story.mp4",
+    "lib/depth-video-story.mjs",
+    "lib/hero-scroll-transition.mjs",
+    "lib/hero-signal-field.mjs",
+    "lib/signal-scroll-story.mjs",
+    "research/datacurve",
+    "design-qa.md",
+  ]) {
+    await assert.rejects(access(new URL(path, root)), `${path} should be removed`);
+  }
 });
